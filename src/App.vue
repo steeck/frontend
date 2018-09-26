@@ -12,8 +12,8 @@ import SimpleLayout from './layouts/SimpleLayout'
 export default {
   mounted () {
     if (localStorage.getItem('user')) {
-      this.$store.commit('setAccessToken', localStorage.getItem('access_token'))
-      this.$store.commit('login', JSON.parse(localStorage.getItem('user')))
+      this.$store.commit('steemconnect/setAccessToken', localStorage.getItem('access_token'))
+      this.$store.commit('steemconnect/login', JSON.parse(localStorage.getItem('user')))
       this.$steemconnect.setAccessToken(this.$store.state.steemconnect.accessToken)
     }
   },

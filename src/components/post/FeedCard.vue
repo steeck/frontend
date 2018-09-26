@@ -98,6 +98,8 @@
               color="light-blue"
               flat="flat"
               @click="vote"
+              :loading="isVoting"
+              :disabled="isVoted"
             >
               승인
             </v-btn>
@@ -226,7 +228,9 @@ export default {
       steemGlobalProperties: {
         totalVestingShares: 0,
         totalVestingFund: 0
-      }
+      },
+      isVoting: false,
+      isVoted: false
     }
   },
   mounted () {
@@ -234,6 +238,7 @@ export default {
     // this.getCurrentPrice()
     this.steemGlobalProperties = this.$store.getters.steemGlobalProperties
     this.steemPrice = this.$store.getters.steemPrice
+    this.isVoted = this.getVoted()
   },
   filters: {
     tag: (tag) => {
@@ -276,6 +281,17 @@ export default {
     //     vm.steemPrice = result.base.replace(' SBD', '') / result.quote.replace(' STEEM', '')
     //   })
     // },
+    getVoted: function () {
+      let vm = this
+      let voted = false
+      this.item.content.active_votes.forEach(function (obj) {
+        if (obj.voter === vm.$store.state.steemconnect.user.user) {
+          voted = true
+          return false
+        }
+      })
+      return voted
+    },
     getMe: function () {
       let vm = this
       this.$client.database
@@ -323,14 +339,20 @@ export default {
     vote: function () {
       let vote = {
         voter: this.$store.state.steemconnect.user.user,
-        author: this.blog.content.author,
-        permlink: this.blog.content.permlink,
-        weight: 10000
+        author: this.item.content.author,
+        permlink: this.item.content.permlink,
+        weight: this.weight * 100
       }
+      console.log(vote)
+      let vm = this
+      this.isVoting = true
+      this.$steemconnect.setAccessToken(this.$store.state.steemconnect.accessToken)
       this.$steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
         if (!err) {
           console.log('ok')
+          vm.isVoted = true
         }
+        vm.isVoting = false
       })
     }
   }
