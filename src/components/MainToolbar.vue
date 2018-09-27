@@ -8,7 +8,7 @@
       <li v-bind:class="{ active: menu == 'Main'}"><router-link to="/">추천</router-link></li>
       <li v-bind:class="{ active: menu == 'Feeds'}"><router-link to="feeds">피드</router-link></li>
       <li v-bind:class="{ active: menu == 'Activities'}"><router-link to="activities">활동</router-link></li>
-      <li v-bind:class="{ active: menu == 'my'}"><router-link to="my">MY</router-link></li>
+      <li v-bind:class="{ active: menu == 'My'}"><router-link to="my">MY</router-link></li>
     </ul>
   </v-toolbar>
 </template>
@@ -29,23 +29,20 @@
 .main-toolbar ul li {
   list-style-type: none;
   float: left;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  padding: 1rem 1.5rem;
 }
-.main-toolbar ul li + li {
-  /* margin-left: 3vw; */
-  margin-left: 5rem;
-}
-/* .main-toolbar ul li + li:before {
-  content: '|';
-  width: 30px;
-  display: inline-block;
-} */
 .main-toolbar ul li a {
   color: rgba(0,0,0,.87);
   text-decoration: none;
 }
+.main-toolbar .active {
+  border-bottom: 2px solid #6633ff;
+}
 .main-toolbar .active a {
   font-weight: bold;
-  color: #673AB7;
+  color: #6633ff;
 }
 </style>
 

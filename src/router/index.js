@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Main from '@/pages/Main'
 import Feeds from '@/pages/Feeds'
 import Activities from '@/pages/Activities'
+import My from '@/pages/My'
 import Login from '@/components/auth/Login'
 import Logout from '@/components/auth/Logout'
 import store from '@/store'
@@ -28,6 +29,11 @@ const router = new Router({
       component: Activities
     },
     {
+      path: '/my',
+      name: 'My',
+      component: My
+    },
+    {
       path: '/auth',
       name: 'Login',
       component: Login
@@ -40,7 +46,7 @@ const router = new Router({
   ]
 })
 router.beforeResolve((to, from, next) => {
-  const defaultLayout = ['Feeds', 'Activities']
+  const defaultLayout = ['Feeds', 'Activities', 'My']
   if (to.name === 'Main') {
     store.commit('SET_LAYOUT', 'main-layout')
   } else if (defaultLayout.indexOf(to.name) >= 0) {
