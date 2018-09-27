@@ -1,31 +1,31 @@
 <template>
-  <v-card>
+  <v-card
+    flat
+    class="card"
+  >
     <v-card-actions>
-      <v-flex
-        align-center
-        justify-center
-        layout
+      <v-avatar
+        color="grey lighten-4"
       >
-        <v-avatar
-          color="grey lighten-4"
-        >
-          <img :src="item.profile" alt="avatar">
-        </v-avatar>
-        <v-flex
-          align-center
-          justify-center
-        >
-          <div>
-            {{ item.account.name }}
-          </div>
-          <div>
-            {{ item.created | ago }}
-          </div>
-        </v-flex>
-        <v-btn>
-          +팔로우
-        </v-btn>
-      </v-flex>
+        <img :src="item.profile" alt="avatar">
+      </v-avatar>
+      <div class="ml-3">
+        <div class="card-author">
+          {{ item.account.name }}
+        </div>
+        <div class="card-created">
+          {{ item.created | ago }}
+        </div>
+      </div>
+      <v-btn
+        outline
+        round
+        color="deep-purple"
+        class="ml-3"
+      >
+        +팔로우
+      </v-btn>
+      <v-spacer></v-spacer>
       <v-menu bottom left>
         <v-btn
           slot="activator"
@@ -34,7 +34,7 @@
           <v-icon>more_vert</v-icon>
         </v-btn>
 
-        <v-list>
+        <v-list class="card-more">
           <v-list-tile
             @click=""
           >
@@ -58,7 +58,10 @@
         </v-list>
       </v-menu>
     </v-card-actions>
-    <v-card-title primary-title>
+    <v-card-title
+      primary-title
+      class="card-title"
+    >
       {{ item.content.title }}
     </v-card-title>
     <v-card-text>
@@ -150,6 +153,35 @@
 }
 >>>.v-messages {
   display: none;
+}
+>>>.v-card__title, >>>.v-card__text {
+  padding: 8px;
+}
+.card {
+  padding: 20px 30px;
+  border: 1px solid #d1d1d1;
+  margin-bottom: 20px;
+}
+.card-author {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #425363;
+}
+.card-created {
+  font-size: .9rem;
+  color: #9ba2ac;
+}
+.card-more >>>.v-list__tile.v-list__tile--link {
+  font-size: .9rem;
+  font-weight: 600;
+  color: #425363;
+  padding: 6px 20px;
+  height: auto;
+}
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #425363;
 }
 .vote-dialog {
   background-color: white;
@@ -321,13 +353,12 @@ export default {
     getVoteValue: function () {
       const sp = this.getSteemPower()
       const vp = this.me.voting_power
-
       const i = this.rewardFund.rewardBalance / this.rewardFund.recentClaims
       const a = this.steemGlobalProperties.totalVestingFund / this.steemGlobalProperties.totalVestingShares
-
       const r = sp / a
       const m = parseInt(((vp * this.weight / 100) + 49) / 50)
       const l = parseInt(r * m * 100) * i * this.steemPrice
+      // console.log(l)
 
       return isNaN(l) ? '(계산 중...)' : l.toFixed(2)
     },
