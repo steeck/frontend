@@ -37,7 +37,7 @@
         </v-flex>
       </v-layout>
       <div class="my-me-created">
-        가입일 {{ me.created }}
+        가입일 {{ created }}
       </div>
       <div class="my-me-link">
         <a :href="me.json_metadata.profile.website" target="website">{{ me.json_metadata.profile.website }}</a>
@@ -124,6 +124,11 @@ export default {
       this.getFollow()
     })
   },
+  computed: {
+    created: function () {
+      return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
+    }
+  },
   methods: {
     getMe: function () {
       let vm = this
@@ -133,7 +138,6 @@ export default {
         .then(function (result) {
           result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
           vm.me = result[0]
-          vm.me.created = vm.me.created.substr(0, 10).replace(/-/g, '/')
         })
     },
     getFollow: function () {
