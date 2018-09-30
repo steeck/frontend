@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import client from './steem'
 import Vuetify from 'vuetify'
+import './filter'
 import 'vuetify/dist/vuetify.min.css'
 
 const steem = require('steem')
