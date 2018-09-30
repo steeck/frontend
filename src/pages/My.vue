@@ -244,6 +244,11 @@
         this.getFollow()
       })
     },
+    computed: {
+      created: function () {
+        return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
+      }
+    },
     watch: {
       'page.subSelect': function () {
         if (this.page.subSelect === 'my' && this.page.midSelect === 'sticker') {
