@@ -16,7 +16,7 @@
 <script>
 import Navbar from '@/components/common/Navbar'
 import Footbar from '@/components/common/Footbar'
-import MainToolbar from '@/components/MainToolbar'
+import MainToolbar from '@/components/common/MainToolbar'
 
 export default {
   props: {

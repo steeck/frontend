@@ -95,7 +95,7 @@
       color="indigo" dark fixed app
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title>Steeck <span class="v-toolbar__subtitle">스틱베타</span></v-toolbar-title>
+      <v-toolbar-title><router-link to="/">Steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
       <v-text-field
         flat
         solo-inverted
@@ -112,6 +112,10 @@
 </template>
 
 <style scoped>
+>>>.v-toolbar__title a {
+  color: #fff;
+  text-decoration: none;
+}
 .v-toolbar__subtitle {
   font-size: 0.8em;
   padding-left: 0.4em;
