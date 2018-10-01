@@ -5,7 +5,8 @@
       <v-layout justify-space-between align-center xs12 row>
         <v-flex d-inline-block>
           <v-avatar size="80" color="grey lighten-4" >
-            <v-img :src="author.json_metadata.profile.profile_image" contain></v-img>
+            <v-img v-if="author.json_metadata.profile.profile_image !== ''" :src="author.json_metadata.profile.profile_image" contain></v-img>
+            <v-icon v-else x-large contain>sentiment_satisfied_alt</v-icon>
           </v-avatar>
           <v-flex d-inline-block>
             <div>{{ item.author }}</div>
@@ -91,7 +92,7 @@
         author: {
           json_metadata: {
             profile: {
-              profile_image: 'https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png',
+              profile_image: '',
               about: 'Update about me',
               name: '',
               location: '',

@@ -285,12 +285,11 @@
       setSubMenu: function (value) {
         this.page.subSelect = value
       },
-      getMyPost: function () {
+      getMyPost: async function () {
         if (this.page.lastPermlink === '') {
           this.resetPageContent()
         }
         console.log('get my post')
-        // console.log(this.me)
         let filter = 'blog'
         let author = 'clayop'
         // let author = this.me.name
@@ -302,19 +301,17 @@
           query.start_author = this.page.lastAuthor
           query.start_permlink = this.page.lastPermlink
         }
-        console.log(query)
-        this.page.isLoading = true
-        this.$client.database.getDiscussions(filter, query)
+        await this.$client.database.getDiscussions(filter, query)
           .then(result => {
             let resultLength = result.length
-            console.log(this.page.list.length)
+            // console.log(this.page.list.length)
             if (this.page.list.length > 0) {
               result.shift()
               this.page.list = this.page.list.concat(result)
             } else {
               this.page.list = result
             }
-            console.log(resultLength)
+            // console.log(resultLength)
             this.page.ableLoading = resultLength === this.page.loadingForOnce
             if (result.length > 0) {
               this.page.lastPermlink = result[result.length - 1].permlink
@@ -332,19 +329,12 @@
         console.log('get bookmark')
       },
       infiniteHandler: async function ($state) {
-        console.log(this.page.isLoading)
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {
           if (!this.page.isLoading) {
+            this.page.isLoading = true
             console.log('call infiny my')
             await this.getMyPost()
             $state.loaded()
-            // setTimeout(() => {
-            //   console.log('call infiny my')
-            //   this.getMyPost()
-            //   $state.loaded()
-            // }, 1000)
-          } else {
-            console.log(1111)
           }
         } else {
           $state.loaded()
