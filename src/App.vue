@@ -7,26 +7,25 @@
 <script>
 import DefaultLayout from './layouts/DefaultLayout'
 import MainLayout from './layouts/MainLayout'
+import CenterLayout from './layouts/CenterLayout'
 import AppLayout from './layouts/AppLayout'
 import SimpleLayout from './layouts/SimpleLayout'
 export default {
-  mounted () {
-    if (localStorage.getItem('user')) {
-      this.$store.commit('steemconnect/setAccessToken', localStorage.getItem('access_token'))
-      this.$store.commit('steemconnect/login', JSON.parse(localStorage.getItem('user')))
-      this.$steemconnect.setAccessToken(this.$store.state.steemconnect.accessToken)
-    }
-  },
-  computed: {
-    layout () {
-      return this.$store.getters.layout
-    }
-  },
   components: {
     'default-layout': DefaultLayout,
     'main-layout': MainLayout,
+    'center-layout': CenterLayout,
     'app-layout': AppLayout,
     'simple-layout': SimpleLayout
+  },
+  created () {
+  },
+  computed: {
+    layout () {
+      return this.$store.state.layout
+    }
+  },
+  methods: {
   }
 }
 </script>

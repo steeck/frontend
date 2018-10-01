@@ -1,23 +1,55 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import VueSteemConnect from 'vue-steemconnect'
+import VuexPersistence from 'vuex-persist'
 
 Vue.use(Vuex)
-Vue.use(VueSteemConnect, {
-  app: 'app.steeck',
-  callbackURL: 'http://localhost:8080/#/auth',
-  scope: ['vote', 'comment', 'comment_options', 'custom_json']
-})
 
 export default new Vuex.Store({
   state: {
     layout: 'default-layout',
+    accessToken: null,
+    tokenExpires: 0,
+    username: null,
+    account: {},
+    profile: {
+      profileImage: 'https://via.placeholder.com/100x100',
+      about: 'Update about me',
+      name: '',
+      location: '',
+      website: 'https://steeck.io',
+      coverImage: ''
+    },
     steemGlobalProperties: {},
     steemPrice: 0
   },
   mutations: {
+    LOGIN (state, {accessToken, tokenExpires, username}) {
+      state.accessToken = accessToken
+      state.tokenExpires = tokenExpires
+      state.username = username
+    },
+    LOGOUT (state) {
+      state.accessToken = null
+      state.tokenExpires = 0
+      state.username = null
+      state.account = {}
+      state.profile = {
+        profileImage: 'https://via.placeholder.com/100x100',
+        about: 'Update about me',
+        name: '',
+        location: '',
+        website: 'https://steeck.io',
+        coverImage: ''
+      }
+    },
     SET_LAYOUT (state, payload) {
       state.layout = payload
+    },
+    SET_ACCOUNT (state, account) {
+      state.account = account
+    },
+    SET_PROFILE (state, profile) {
+      state.profile = profile
     },
     setSteemGlobalProperties (state, payload) {
       state.steemGlobalProperties = payload
@@ -27,9 +59,6 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    layout (state) {
-      return state.layout
-    },
     steemGlobalProperties (state) {
       return state.steemGlobalProperties
     },
@@ -38,6 +67,6 @@ export default new Vuex.Store({
     }
   },
   modules: {
-    steemconnect: Vue.SteemConnectStore
-  }
+  },
+  plugins: [(new VuexPersistence()).plugin]
 })
