@@ -6,7 +6,7 @@
         <v-flex d-inline-block>
           <v-avatar size="80" color="grey lighten-4" >
             <v-img v-if="author.json_metadata.profile.profile_image !== ''" :src="author.json_metadata.profile.profile_image" contain></v-img>
-            <v-icon v-else x-large contain>sentiment_satisfied_alt</v-icon>
+            <v-icon v-else :size="80">sentiment_satisfied_alt</v-icon>
           </v-avatar>
           <v-flex d-inline-block>
             <div>{{ item.author }}</div>

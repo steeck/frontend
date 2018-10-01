@@ -291,8 +291,8 @@
         }
         console.log('get my post')
         let filter = 'blog'
-        let author = 'clayop'
-        // let author = this.me.name
+        // let author = 'clayop'
+        let author = this.me.name
         let query = {
           tag: author,
           limit: this.page.loadingForOnce
