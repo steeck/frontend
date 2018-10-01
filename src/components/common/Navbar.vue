@@ -105,8 +105,8 @@
         class="ml-5 hidden-sm-and-down"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn v-if="this.$store.state.steemconnect.user" href="/#/logout">로그아웃</v-btn>
-      <v-btn v-else :href="$steemconnect.getLoginURL()">로그인</v-btn>
+      <v-btn v-if="this.$store.state.accessToken" href="/#/logout">로그아웃</v-btn>
+      <v-btn v-else :href="loginUrl">로그인</v-btn>
     </v-toolbar>
   </div>
 </template>
@@ -151,12 +151,25 @@ li a {
   color: inherit;
 }
 </style>
-</style>
 
 <script>
+import steemconnect from '@/services/steemconnect'
+
 export default {
-  data: () => ({
-    drawer: false
-  })
+  data () {
+    return {
+      drawer: false
+    }
+  },
+  mounted () {
+    // this.$eventBus.$on('profile-fetched', () => {
+    //   this.profile = this.$store.state.profile
+    // })
+  },
+  computed: {
+    loginUrl () {
+      return steemconnect.getLoginURL()
+    }
+  }
 }
 </script>

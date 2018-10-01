@@ -1,0 +1,23 @@
+<template>
+  <h1 style="padding: 100px">Logout...</h1>
+</template>
+<script>
+import steemconnect from '@/services/steemconnect'
+
+export default {
+  name: 'Logout',
+  async mounted () {
+    if (this.$store.state.accessToken) {
+      console.log('Try to logout')
+      steemconnect.setAccessToken(this.$store.state.accessToken)
+      await steemconnect.revokeToken((err, res) => {
+        if (err) {}
+        this.$store.commit('LOGOUT')
+      })
+    } else {
+      console.log('You are already logged out')
+    }
+    this.$router.push('/')
+  }
+}
+</script>
