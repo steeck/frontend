@@ -54,20 +54,20 @@
         <v-flex d-inline-block>
           <v-flex d-inline-block>
             <v-layout align-center>
-              <v-icon>more_vert</v-icon>
+              <v-icon>monetization_on</v-icon>
               <span>{{ getPayoutValue }}</span>
             </v-layout>
           </v-flex>
           <v-flex d-inline-block>
             <v-layout align-center>
-              <v-icon>more_vert</v-icon>
+              <v-icon>chat_bubble_outline</v-icon>
               <span>{{ item.children }}개</span>
             </v-layout>
           </v-flex>
         </v-flex>
         <v-menu d-inline-block>
           <v-btn slot="activator" icon >
-            <v-icon>more_vert</v-icon>
+            <v-icon>bookmark_border</v-icon>
           </v-btn>
           <v-list class="card-more">
             <v-list-tile @click="">
