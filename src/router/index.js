@@ -1,18 +1,27 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import Vuex from 'vuex'
+import store from '@/store'
+import Login from '@/pages/auth/Login'
+import Logout from '@/pages/auth/Logout'
 import Main from '@/pages/Main'
 import Feeds from '@/pages/Feeds'
 import Activities from '@/pages/Activities'
 import My from '@/pages/My'
-import Login from '@/components/auth/Login'
-import Logout from '@/components/auth/Logout'
-import store from '@/store'
 
 Vue.use(Router)
 
 const router = new Router({
   routes: [
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
+    },
+    {
+      path: '/logout',
+      name: 'Logout',
+      component: Logout
+    },
     {
       path: '/',
       name: 'Main',
@@ -32,21 +41,12 @@ const router = new Router({
       path: '/my',
       name: 'My',
       component: My
-    },
-    {
-      path: '/auth',
-      name: 'Login',
-      component: Login
-    },
-    {
-      path: '/logout',
-      name: 'Logout',
-      component: Logout
     }
   ]
 })
 router.beforeResolve((to, from, next) => {
   const defaultLayout = ['Feeds', 'Activities', 'My']
+
   if (to.name === 'Main') {
     store.commit('SET_LAYOUT', 'main-layout')
   } else if (defaultLayout.indexOf(to.name) >= 0) {
