@@ -41,7 +41,7 @@
       </v-layout>
     </v-card-title>
     <v-card-text v-if="jsonMetadata.image.length > 0">
-      <v-carousel :style="'height:20rem'">
+      <v-carousel  hide-delimiters>
         <v-carousel-item
           v-for="(image, i) in jsonMetadata.image"
           :key="i"
@@ -55,13 +55,13 @@
         <v-flex d-inline-block>
           <v-flex d-inline-block>
             <v-layout align-center>
-              <v-icon>monetization_on</v-icon>
+              <v-icon class="pr-1">monetization_on</v-icon>
               <span>{{ getPayoutValue }}</span>
             </v-layout>
           </v-flex>
-          <v-flex d-inline-block>
+          <v-flex d-inline-block class="ml-2">
             <v-layout align-center>
-              <v-icon>chat_bubble_outline</v-icon>
+              <v-icon class="pr-1">chat_bubble_outline</v-icon>
               <span>{{ item.children }}개</span>
             </v-layout>
           </v-flex>
