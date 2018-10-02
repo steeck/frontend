@@ -84,6 +84,7 @@
 </template>
 
 <script>
+  import steem from '@/services/steem'
   export default {
     name: 'CardMy',
     props: ['item'],
@@ -129,11 +130,11 @@
       // 작성자 정보를 확인
       getAuthor () {
         let vm = this
-        this.$client.database
-          .call('get_accounts', [[this.item.author]])
+        steem.api
+          .callAsync('get_accounts', [[this.item.author]])
           // .call('get_accounts', [['ura-soul']])
           .then(function (result) {
-            result[0].json_metadata = Object.assign(vm.author.json_metadata, JSON.parse(result[0].json_metadata))
+            result[0].json_metadata = result[0].json_metadata ? Object.assign(vm.author.json_metadata, JSON.parse(result[0].json_metadata)) : vm.author.json_metadata
             vm.author = result[0]
           })
           .catch(function (error) {

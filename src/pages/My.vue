@@ -202,6 +202,7 @@
 <script>
   import CardMy from '../components/post/CardMy'
   import InfiniteLoading from 'vue-infinite-loading'
+  import steem from '@/services/steem'
 
   export default {
     name: 'My',
@@ -238,7 +239,8 @@
     },
     mounted () {
       this.$nextTick(function () {
-        this.me.json_metadata.profile.name = this.$store.state.steemconnect.user.user
+        console.log(this.$store.state.account.name)
+        this.me.json_metadata.profile.name = this.$store.state.account.name
         this.getMe()
         this.getFollow()
       })
@@ -261,8 +263,9 @@
     methods: {
       getMe: function () {
         let vm = this
-        this.$client.database
-          .call('get_accounts', [[this.$store.state.steemconnect.user.user]])
+        console.log(steem)
+        steem.api
+          .callAsync('get_accounts', [[this.$store.state.account.name]])
           // .call('get_accounts', [['ura-soul']])
           .then(function (result) {
             result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
@@ -272,8 +275,8 @@
       },
       getFollow: function () {
         let vm = this
-        this.$client.database
-          .call('get_follow_count', [this.$store.state.steemconnect.user.user])
+        steem.api
+          .callAsync('get_follow_count', [this.$store.state.account.name])
           // .call('get_follow_count', ['ura-soul'])
           .then(function (result) {
             vm.follow = result
@@ -290,9 +293,9 @@
           this.resetPageContent()
         }
         console.log('get my post')
-        let filter = 'blog'
-        // let author = 'clayop'
-        let author = this.me.name
+        // let filter = 'blog'
+        let author = 'clayop'
+        // let author = this.me.name
         let query = {
           tag: author,
           limit: this.page.loadingForOnce
@@ -301,7 +304,8 @@
           query.start_author = this.page.lastAuthor
           query.start_permlink = this.page.lastPermlink
         }
-        await this.$client.database.getDiscussions(filter, query)
+        await steem.api
+          .getDiscussionsByBlogAsync(query)
           .then(result => {
             let resultLength = result.length
             // console.log(this.page.list.length)
@@ -332,7 +336,6 @@
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {
           if (!this.page.isLoading) {
             this.page.isLoading = true
-            console.log('call infiny my')
             await this.getMyPost()
             $state.loaded()
           }
