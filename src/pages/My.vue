@@ -81,7 +81,7 @@
         v-if="page.midSelect === 'sticker'"
       >
         <!--MY or 북마크 선택 -->
-        <v-flex sm12 justify-center class="area-sticker"  transition="slide-y-transition" key="'menu'">
+        <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'menu'">
           <v-flex text-xs-left>
             <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'my'}" @click="setSubMenu('my')">MY</v-flex>
             <v-flex d-inline-block class="item-separator">|</v-flex>
@@ -89,14 +89,38 @@
           </v-flex>
         </v-flex>
 
-        <v-flex key="'list'" v-if="page.list.length > 0">
+        <v-list key="'list'" v-if="page.list.length > 0">
           <div v-for="item in page.list" >
-            <card-my :item="item"></card-my>
+            <card-my :item="item" :post-type="'post'"></card-my>
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading"></infinite-loading>
-        </v-flex>
+        </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+      </v-slide-y-transition>
 
+      <!--댓글 관련 내용-->
+      <v-slide-y-transition
+        class="py-0"
+        group
+        tag="v-flex"
+        v-if="page.midSelect === 'comment'"
+      >
+        <!--내가 쓴 댓글 or 받은 댓글 선택 -->
+        <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'menu'">
+          <v-flex text-xs-left>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'myComment'}" @click="setSubMenu('myComment')">내가 쓴 댓글</v-flex>
+            <v-flex d-inline-block class="item-separator">|</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'receivedComment'}" @click="setSubMenu('receivedComment')">받은 댓글</v-flex>
+          </v-flex>
+        </v-flex>
+        <v-list key="'list'" v-if="page.commentList.length > 0">
+          <div v-for="item in page.commentList" >
+            <card-my :item="item" :post-type="'comment'"></card-my>
+          </div>
+          <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
+          <div v-if="page.ableLoading && page.isLoading">로딩중...</div>
+        </v-list>
+        <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
 
       </v-slide-y-transition>
 
@@ -158,8 +182,8 @@
     }
   }
 
-  /* 스티커 선택시 생성되는 영역 */
-  .area-sticker {
+  /* 컨텐츠 내 메뉴 선택시 생성되는 영역 */
+  .area-submenu {
     .item {
       @extend .basic-item;
       padding: 0.4rem;
@@ -227,13 +251,16 @@
         follow: {},
         page: {
           midSelect: 'sticker', // able : ['sticker','comment','reward','wallet']
-          subSelect: 'my', // able : {sticker : ['my','bookmark']}
+          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment']}
           list: [], // post arr
+          commentList: [], // comment arr
           loadingForOnce: 5,
-          ableLoading: false,
-          lastPermlink: '',
-          lastAuthor: '',
-          isLoading: false
+          ableLoading: false, // 로딩 가능한지 확인하는 변수
+          lastPermlink: '', // sticker post 조회시 조회된 마지막 게시글
+          lastAuthor: '', // sticker post 조회시 조회된 마지막 유저이름
+          lastCommentPermlink: '',
+          lastCommentAuthor: '',
+          isLoading: false // 인피니티 로딩 구동 토글 변수
         }
       }
     },
@@ -251,12 +278,30 @@
       }
     },
     watch: {
-      'page.subSelect': function () {
-        if (this.page.subSelect === 'my' && this.page.midSelect === 'sticker') {
-          this.getMyPost()
+      'page.midSelect': function () {
+        this.resetPageContent()
+        if (this.page.midSelect === 'sticker') {
+          this.page.subSelect = 'my'
+        } else if (this.page.midSelect === 'comment') {
+          this.page.subSelect = 'myComment'
         }
-        if (this.page.subSelect === 'bookmark' && this.page.midSelect === 'sticker') {
-          this.getBookMark()
+      },
+      'page.subSelect': function () {
+        this.resetPageContent()
+        if (this.page.midSelect === 'sticker') {
+          if (this.page.subSelect === 'my') {
+            this.getMyPost()
+          }
+          if (this.page.subSelect === 'bookmark') {
+            this.getBookMark()
+          }
+        } else if (this.page.midSelect === 'comment') {
+          if (this.page.subSelect === 'myComment') {
+            this.getComment()
+          }
+          if (this.page.subSelect === 'receivedComment') {
+            this.getComment()
+          }
         }
       }
     },
@@ -288,6 +333,10 @@
       setSubMenu: function (value) {
         this.page.subSelect = value
       },
+      /**
+       * 내 글 가져오기
+       * @returns {Promise<void>}
+       */
       getMyPost: async function () {
         if (this.page.lastPermlink === '') {
           this.resetPageContent()
@@ -332,11 +381,88 @@
         this.resetPageContent()
         console.log('get bookmark')
       },
+      getComment: async function () {
+        // console.log('getComment ' + this.page.subSelect)
+        // let methodStr = this.page.subSelect === 'myComment' ? '' : ''
+        // console.log(methodStr)
+        let author = 'clayop'
+        // let author = this.me.name
+        let query = {
+          tag: author,
+          limit: this.page.loadingForOnce
+        }
+        if (this.page.lastCommentPermlink !== '') {
+          query.start_author = this.page.lastCommentAuthor
+          query.start_permlink = this.page.lastCommentPermlink
+        } else {
+          query.start_author = author
+          query.start_permlink = ''
+        }
+        let vm = this
+        if (this.page.subSelect === 'myComment') {
+          // my comment
+          await steem.api.getDiscussionsByCommentsAsync(query)
+            .then(result => {
+              // console.log(result)
+              let resultLength = result.length
+              if (vm.page.commentList.length > 0) {
+                result.shift()
+                vm.page.commentList = vm.page.commentList.concat(result)
+              } else {
+                vm.page.commentList = result
+              }
+              // console.log(resultLength)
+              vm.page.ableLoading = resultLength === vm.page.loadingForOnce
+              if (result.length > 0) {
+                vm.page.lastCommentPermlink = result[result.length - 1].permlink
+                vm.page.lastCommentAuthor = result[result.length - 1].author
+              }
+              vm.page.isLoading = false
+            })
+            .catch(error => {
+              console.log(error)
+            })
+        } else if (this.page.subSelect === 'receivedComment') {
+          // received comment
+          try {
+            steem.api.getRepliesByLastUpdate(query.start_author, query.start_permlink, this.page.loadingForOnce, (error, result) => {
+              if (error) {
+                console.log(error)
+              }
+              if (result) {
+                // console.log(result)
+                let resultLength = result.length
+                if (vm.page.commentList.length > 0) {
+                  result.shift()
+                  vm.page.commentList = vm.page.commentList.concat(result)
+                } else {
+                  vm.page.commentList = result
+                }
+                // console.log(resultLength)
+                vm.page.ableLoading = resultLength === vm.page.loadingForOnce
+                if (result.length > 0) {
+                  vm.page.lastCommentPermlink = result[result.length - 1].permlink
+                  vm.page.lastCommentAuthor = result[result.length - 1].author
+                }
+                vm.page.isLoading = false
+              }
+            })
+          } catch ($e) {
+            console.log($e)
+          }
+        }
+      },
       infiniteHandler: async function ($state) {
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {
           if (!this.page.isLoading) {
             this.page.isLoading = true
             await this.getMyPost()
+            $state.loaded()
+          }
+        } else if (this.page.midSelect === 'comment' && ['myComment', 'receivedComment'].indexOf(this.page.subSelect) > -1) {
+          if (!this.page.isLoading) {
+            this.page.isLoading = true
+            await this.getComment()
             $state.loaded()
           }
         } else {
@@ -347,7 +473,10 @@
       },
       resetPageContent: function () {
         this.page.list = []
+        this.page.commentList = []
         this.page.lastPermlink = ''
+        this.page.lastCommentPermlink = ''
+        this.page.isLoading = false
       }
     }
   }

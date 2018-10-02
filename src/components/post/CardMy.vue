@@ -4,7 +4,7 @@
     <v-card-text>
       <v-layout justify-space-between align-center xs12 row>
         <v-flex d-inline-block>
-          <v-avatar size="80" color="grey lighten-4" >
+          <v-avatar size="80" color="grey lighten-4">
             <v-img v-if="author.json_metadata.profile.profile_image !== ''" :src="author.json_metadata.profile.profile_image" contain></v-img>
             <v-icon v-else :size="80">sentiment_satisfied_alt</v-icon>
           </v-avatar>
@@ -35,12 +35,15 @@
       </v-layout>
     </v-card-text>
     <v-card-title>
-      <v-layout column>
+      <v-layout column v-if="postType === 'post'">
         <div class="headline">{{ item.title }}</div>
         <div class="grey--text">{{ this.bodyChip}}</div>
       </v-layout>
+      <v-layout column v-else-if="postType === 'comment'">
+        <div class="headline">RE : {{ this.bodyChip}}</div>
+      </v-layout>
     </v-card-title>
-    <v-card-text v-if="jsonMetadata.image.length > 0">
+    <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
       <v-carousel  hide-delimiters>
         <v-carousel-item
           v-for="(image, i) in jsonMetadata.image"
@@ -87,7 +90,14 @@
   import steem from '@/services/steem'
   export default {
     name: 'CardMy',
-    props: ['item'],
+    props: {
+      item: {
+        type: Object
+      },
+      postType: {
+        type: String
+      }
+    },
     data () {
       return {
         author: {
@@ -116,10 +126,11 @@
         let originTime = new Date(this.item.created)
         return new Date(originTime.setHours(originTime.getHours() + 9)).toISOString()
       },
-      // 글 본문내용 중 일부를 반환
+      // 글 본문내용 중 일부를 반환 코멘트인경우 전체를 리턴
       bodyChip: function () {
-        let tmp = this.item.body.split('\n').join(' ')
-        return tmp.substring(0, tmp.length < 30 ? tmp.length : 30) + (tmp.length < 30 ? '' : '...')
+        // eslint-disable-next-line
+        let tmp = this.item.body.split('\n').join(' ').replace(/(\[|)\!\[(.*)\)/gi, '')
+        return this.postType === 'post' ? (tmp.substring(0, tmp.length < 30 ? tmp.length : 30) + (tmp.length < 30 ? '' : '...')) : tmp
       },
       getPayoutValue: function () {
         // console.log(this.item.content.pending_payout_value)
@@ -143,8 +154,10 @@
       }
     },
     mounted () {
-      // console.log(this.item)
-      this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
+      // console.log(this.postType)
+      if (this.item.json_metadata) {
+        this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
+      }
       this.getAuthor()
     }
   }
