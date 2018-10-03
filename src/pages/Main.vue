@@ -15,19 +15,62 @@
       </v-container>
     </div>
     <v-container grid-list-xl>
-      <div>
-        스틱30 | 뉴비30 | 주간 | 페이아웃
-      </div>
-      <v-layout row wrap>
-        <v-flex sm12 md4 v-for="(card, i) in cards1" :key="'c1'+i">
-          <card-best :item="card"></card-best>
-        </v-flex>
-      </v-layout>
-      <v-layout row wrap class="asd">
-        <v-flex md6 v-for="(card, i) in cards2" :key="'c2'+i">
-          <card :item="card"></card>
-        </v-flex>
-      </v-layout>
+      <v-tabs
+        hide-slider
+      >
+        <v-tab ripple>
+          스틱30
+        </v-tab>
+        <v-tab-item>
+          <div class="text-xs-center ma-5" v-if="!trending.length">
+            <v-progress-circular
+              indeterminate
+              color="deep-purple"
+            ></v-progress-circular>
+          </div>
+          <v-layout row wrap>
+            <v-flex sm12 md4 v-for="(card, i) in trending.slice(0, 3)" :key="'c1'+i">
+              <card-best :item="card" :rating="i + 1"></card-best>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap class="asd">
+            <v-flex md6 v-for="(card, i) in trending.slice(3)" :key="'c2'+i">
+              <card :item="card" :rating="i + 4"></card>
+            </v-flex>
+          </v-layout>
+        </v-tab-item>
+        <v-tab ripple>
+          뉴비30
+        </v-tab>
+        <v-tab-item>
+          <v-layout row wrap>
+            <v-flex sm12 md4 v-for="(card, i) in created.slice(0, 3)" :key="'c3'+i">
+              <card-best :item="card" :rating="i + 1"></card-best>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap class="asd">
+            <v-flex md6 v-for="(card, i) in created.slice(3)" :key="'c4'+i">
+              <card :item="card" :rating="i + 4"></card>
+            </v-flex>
+          </v-layout>
+        </v-tab-item>
+        <v-spacer></v-spacer>
+        <v-tab ripple>
+          주간
+        </v-tab>
+        <v-tab-item>
+          <v-layout row wrap>
+            <v-flex sm12 md4 v-for="(card, i) in hot.slice(0, 3)" :key="'c5'+i">
+              <card-best :item="card" :rating="i + 1"></card-best>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap class="asd">
+            <v-flex md6 v-for="(card, i) in hot.slice(3)" :key="'c6'+i">
+              <card :item="card" :rating="i + 4"></card>
+            </v-flex>
+          </v-layout>
+        </v-tab-item>
+      </v-tabs>
     </v-container>
   </div>
 </template>
@@ -49,7 +92,18 @@
 >>>.v-carousel__controls__item i {
   font-size: 12px !important;
 }
-
+>>>.v-tabs__bar {
+  border-bottom: solid 1px #bbbbbb;
+  margin-bottom: 30px;
+}
+>>>.v-tabs__item {
+  font-size: 18px;
+  color: #b1b1b1;
+}
+>>>.v-tabs__item--active {
+  color: #4321a9;
+  font-weight: 500;
+}
 .asd {
   margin: auto -24px !important;
 }
@@ -59,12 +113,17 @@
 </style>
 
 <script>
+import steem from '@/services/steem'
 import CardBest from '@/components/post/CardBest'
 import Card from '@/components/post/Card'
 
 export default {
   data () {
     return {
+      trending: [],
+      created: [],
+      hot: [],
+      payout: [],
       items: [
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
@@ -78,55 +137,39 @@ export default {
         {
           src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
         }
-      ],
-      cards1: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
-          rating: 1,
-          title: '수제 햄버거 먹고싶다. 나인온스는 줄이 너무 길어',
-          tag: 'steeck-life',
-          username: 'alice'
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
-          rating: 2,
-          title: '오이 당근',
-          tag: 'steeck-travel',
-          username: 'rolls'
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/cards/docks.jpg',
-          rating: 3,
-          title: '긴 제목 테스트 긴 제목 테스트 긴 제목 테스트 긴 제목 테스트 긴 제목 테스트 긴 제목 테스트 긴 제목 테스트 긴 제목 테스트',
-          tag: 'steeck-hot',
-          username: 'smtion'
-        }
-      ],
-      cards2: [
-        {
-          src: ''
-        },
-        {
-          src: ''
-        },
-        {
-          src: ''
-        },
-        {
-          src: ''
-        },
-        {
-          src: ''
-        },
-        {
-          src: ''
-        }
       ]
     }
   },
   components: {
     CardBest,
     Card
+  },
+  mounted () {
+    this.getPosts()
+  },
+  methods: {
+    getPosts: function () {
+      let vm = this
+      const query = {
+        tag: 'tasteem',
+        limit: 30
+      }
+      steem.api.getDiscussionsByTrending(query, function (err, res) {
+        if (err) {}
+        vm.trending = res
+      })
+      steem.api.getDiscussionsByHot(query, function (err, res) {
+        if (err) {}
+        vm.hot = res
+      })
+      steem.api.getDiscussionsByCreated(query, function (err, res) {
+        if (err) {}
+        vm.created = res
+      })
+      // steem.api.getDiscussionsByPayout(query, function (err, res) {
+      //   vm.payout = res
+      // })
+    }
   }
 }
 </script>

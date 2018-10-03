@@ -8,4 +8,4 @@ steem.api.setOptions({ url: 'https://api.steemit.com' })
 // const client = new Client('https://testnet.steem.vc', opts)
 // const client = new Client('https://api.steemit.com')
 
-export default steemconnect
+export default steem

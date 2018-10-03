@@ -1,25 +1,29 @@
 <template>
   <v-card>
     <v-img
-      height="150px"
-      :src="item.src"
+      height="130px"
+      :src="thumbnail"
        style="position: relative;"
     >
       <div class="rating">
-        {{ item.rating }}
+        {{ rating }}
       </div>
     </v-img>
     <v-card-title>
       {{ item.title }}
     </v-card-title>
     <v-card-text>
-      <v-btn flat color="orange">{{ item.tag | tag }}</v-btn>
-      <v-btn flat color="orange">{{ item.username }}</v-btn>
+      <span class="tag">{{ tag | tag }}</span><span class="author">{{ item.author }}</span>
     </v-card-text>
   </v-card>
 </template>
 
 <style scoped>
+.v-card {
+  box-shadow: none;
+  margin-bottom: 16px;
+  border: 1px solid #e6e6e6;
+}
 .v-card >>>.v-responsive {
   overflow: inherit;
 }
@@ -28,17 +32,19 @@
   bottom: -5px;
   text-align: center;
   color: white;
-  background-color: rgb(63, 81, 181);
-  width: 50px;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 2;
+  background-color: #6633ff;
+  width: 55px;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 55px;
 }
 >>>.v-card__title {
   display: -webkit-box;
-  font-size: 18px;
+  font-size: 16px;
   line-height: 1.5;
-  height: 70px;  /* font-size * line-height * line-clamp + padding-top */
+  padding-top: 12px;
+  padding-bottom: 0;
+  height: 60px;  /* font-size * line-height * line-clamp + padding-top */
   -webkit-box-align: start;
   -ms-flex-align: start;
   align-items: start;
@@ -47,18 +53,58 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+>>>.v-card__text {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.tag {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4321a9;
+}
+.author {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8e8e8e;
+}
+.author::before {
+  content: '|';
+  margin: 0 10px;
+}
 </style>
 
 <script>
 export default {
-  props: ['item'],
+  props: ['item', 'rating'],
+  data () {
+    return {
+      metadata: {}
+    }
+  },
   filters: {
     tag: (tag) => {
       if (tag === 'steeck-life') return '라이프'
       else if (tag === 'steeck-hot') return '핫이슈'
       else if (tag === 'steeck-game') return '게임'
       else if (tag === 'steeck-travel') return '여행'
-      else return tag
+      else return '임시태그'
+    }
+  },
+  mounted () {
+    this.metadata = JSON.parse(this.item.json_metadata)
+  },
+  computed: {
+    tag () {
+      if (this.metadata.tags) {
+        return this.metadata.tags[0]
+      }
+    },
+    thumbnail () {
+      if (this.metadata.image) {
+        return this.metadata.image[0]
+      } else {
+        return 'https://via.placeholder.com/350x150'
+      }
     }
   }
 }
