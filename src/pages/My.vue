@@ -121,10 +121,46 @@
           <div v-if="page.ableLoading && page.isLoading">로딩중...</div>
         </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+      </v-slide-y-transition>
+
+      <!--보상 관련 내용-->
+      <v-slide-y-transition
+        class="py-0"
+        group
+        tag="v-flex"
+        v-if="page.midSelect === 'reward'"
+      >
+        <!--보상 or 큐레이션 보상 선택 -->
+        <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'reward'">
+          <v-flex text-xs-left>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'reward'}" @click="setSubMenu('reward')">보상</v-flex>
+            <v-flex d-inline-block class="item-separator">|</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'curationReward'}" @click="setSubMenu('curationReward')">큐레이션 보상</v-flex>
+          </v-flex>
+        </v-flex>
+
+        <v-list v-if="page.subSelect === 'curationReward' && page.curationRewardList.length > 0" key="'reward-curationReward'">
+          <div v-for="item in page.curationRewardList">
+            <v-card class="my-3">
+              <v-card-text>
+                <v-layout row>
+                  <v-flex xs3>{{ item.timestamp | ago}}</v-flex>
+                  <v-flex xs9>
+                    <span>{{ item.reward}} STEEM POWER (계산필요)</span>
+                    <span>for {{ item.comment_author}} / {{ item.comment_permlink}}</span>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
+            </v-card>
+          </div>
+        </v-list>
 
       </v-slide-y-transition>
 
+
+
     </div>
+    <!--My 페이지 종료-->
 
 
 
@@ -251,9 +287,10 @@
         follow: {},
         page: {
           midSelect: 'sticker', // able : ['sticker','comment','reward','wallet']
-          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment']}
+          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment'], reward: ['reward', 'curationReward']}
           list: [], // post arr
           commentList: [], // comment arr
+          curationRewardList: [],
           loadingForOnce: 5,
           ableLoading: false, // 로딩 가능한지 확인하는 변수
           lastPermlink: '', // sticker post 조회시 조회된 마지막 게시글
@@ -284,6 +321,8 @@
           this.page.subSelect = 'my'
         } else if (this.page.midSelect === 'comment') {
           this.page.subSelect = 'myComment'
+        } else if (this.page.midSelect === 'reward') {
+          this.page.subSelect = 'reward'
         }
       },
       'page.subSelect': function () {
@@ -296,12 +335,9 @@
             this.getBookMark()
           }
         } else if (this.page.midSelect === 'comment') {
-          if (this.page.subSelect === 'myComment') {
-            this.getComment()
-          }
-          if (this.page.subSelect === 'receivedComment') {
-            this.getComment()
-          }
+          this.getComment()
+        } else if (this.page.midSelect === 'reward') {
+          this.getReward()
         }
       }
     },
@@ -381,6 +417,10 @@
         this.resetPageContent()
         console.log('get bookmark')
       },
+      /**
+       * 댓글 로딩
+       * @returns {Promise<void>}
+       */
       getComment: async function () {
         // console.log('getComment ' + this.page.subSelect)
         // let methodStr = this.page.subSelect === 'myComment' ? '' : ''
@@ -451,6 +491,33 @@
             console.log($e)
           }
         }
+      },
+      getReward: async function () {
+        console.log('get reward')
+        // let name = 'clayop'
+        let name = this.me.name
+        let vm = this
+        await steem.api.getStateAsync('/@' + name + '/transfers')
+          .then(result => {
+            console.log(result.accounts[name].transfer_history)
+            if (!result.accounts[name].transfer_history || result.accounts[name].transfer_history.length === 0) {
+              return
+            }
+            // 큐레이션 보상과 기타 보상을 추출
+            let curationArrTmp = []
+            result.accounts[name].transfer_history.forEach(line => {
+              console.log(line[1] && line[1].op[0])
+              if (line[1] && line[1].op[0] === 'curation_reward') {
+                curationArrTmp.push(Object.assign({timestamp: line[1].timestamp}, line[1].op[1]))
+              }
+            })
+            vm.page.curationRewardList = curationArrTmp.reverse()
+            console.log(vm.page.curationRewardList)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+        console.log('get reward done')
       },
       infiniteHandler: async function ($state) {
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {
