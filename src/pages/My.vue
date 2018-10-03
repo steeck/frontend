@@ -140,19 +140,39 @@
         </v-flex>
 
         <v-list v-if="page.subSelect === 'curationReward' && page.curationRewardList.length > 0" key="'reward-curationReward'">
-          <div v-for="item in page.curationRewardList">
-            <v-card class="my-3">
-              <v-card-text>
-                <v-layout row>
-                  <v-flex xs3>{{ item.timestamp | ago}}</v-flex>
-                  <v-flex xs9>
-                    <span>{{ item.reward}} STEEM POWER (계산필요)</span>
-                    <span>for {{ item.comment_author}} / {{ item.comment_permlink}}</span>
-                  </v-flex>
-                </v-layout>
-              </v-card-text>
-            </v-card>
-          </div>
+          <v-data-table
+            :items="page.curationRewardList"
+            class="elevation-5"
+            hide-headers
+            no-data-text="'조회 결과가 없습니다.'"
+            :rows-per-page-items="[10, 20, 30]"
+            :rows-per-page-text="'보상목록 표시 개수'"
+          >
+            <template slot="items" slot-scope="props">
+              <td>{{ props.item.timestamp | ago }}</td>
+              <td>
+                <span>({{ props.item.reward}} _todo)STEEM POWER</span>
+                <span>for {{ props.item.comment_author}} / {{ props.item.comment_permlink}}</span>
+              </td>
+            </template>
+            <template slot="pageText" slot-scope="props">
+              {{ props.pageStart }} - {{ props.pageStop }} / 총 {{ props.itemsLength }}
+            </template>
+          </v-data-table>
+
+          <!--<div v-for="item in page.curationRewardList">-->
+            <!--<v-card class="my-3">-->
+              <!--<v-card-text>-->
+                <!--<v-layout row>-->
+                  <!--<v-flex xs3>{{ item.timestamp | ago}}</v-flex>-->
+                  <!--<v-flex xs9>-->
+                    <!--<span>{{ item.reward}} STEEM POWER (계산필요)</span>-->
+                    <!--<span>for {{ item.comment_author}} / {{ item.comment_permlink}}</span>-->
+                  <!--</v-flex>-->
+                <!--</v-layout>-->
+              <!--</v-card-text>-->
+            <!--</v-card>-->
+          <!--</div>-->
         </v-list>
 
       </v-slide-y-transition>
