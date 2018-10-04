@@ -26,37 +26,7 @@
         +팔로우
       </v-btn>
       <v-spacer></v-spacer>
-      <v-menu bottom left>
-        <v-btn
-          slot="activator"
-          icon
-        >
-          <v-icon>more_vert</v-icon>
-        </v-btn>
-
-        <v-list class="card-more">
-          <v-list-tile
-            @click=""
-          >
-            <v-list-tile-title>공유하기</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            @click=""
-          >
-            <v-list-tile-title>팔로우 취소</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            @click=""
-          >
-            <v-list-tile-title>다운보트</v-list-tile-title>
-          </v-list-tile>
-          <v-list-tile
-            @click=""
-          >
-            <v-list-tile-title>신고하기</v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-menu>
+      <card-menu></card-menu>
     </v-card-actions>
     <v-card-title
       primary-title
@@ -64,7 +34,7 @@
     >
       {{ item.content.title }}
     </v-card-title>
-    <v-card-text>
+    <v-card-text v-if="item.images.length > 0">
       <v-carousel
         hide-delimiters
       >
@@ -72,7 +42,8 @@
           v-for="(image, i) in item.images"
           :key="i"
           :src="image"
-        ></v-carousel-item>
+        >
+        </v-carousel-item>
       </v-carousel>
     </v-card-text>
     <v-card-actions>
@@ -200,6 +171,8 @@
 
 <script>
 // import Vote from '@/components/Vote'
+import steem from '@/services/steem'
+import CardMenu from '@/components/post/menu'
 
 // export const calculateVoteValue = (
 //   vests,
@@ -245,6 +218,7 @@
 export default {
   props: ['item'],
   components: {
+    'card-menu': CardMenu
   },
   data () {
     return {
@@ -317,7 +291,7 @@ export default {
       let vm = this
       let voted = false
       this.item.content.active_votes.forEach(function (obj) {
-        if (obj.voter === vm.$store.state.steemconnect.user.user) {
+        if (obj.voter === vm.$store.state.account.name) {
           voted = true
           return false
         }
@@ -326,16 +300,14 @@ export default {
     },
     getMe: function () {
       let vm = this
-      this.$client.database
-        .call('get_accounts', [[this.$store.state.steemconnect.user.user]])
+      steem.callAsync('get_accounts', [[this.$store.state.account.name]])
         .then(function (result) {
           vm.me = result[0]
         })
     },
     getRewardFund: function () {
       let vm = this
-      this.$client.database
-        .call('get_reward_fund', ['post'])
+      steem.callAsync('get_reward_fund', ['post'])
         .then(function (result) {
           vm.rewardFund.recentClaims = result.recent_claims
           vm.rewardFund.rewardBalance = result.reward_balance.replace(' STEEM', '')
@@ -348,7 +320,7 @@ export default {
     },
     getSteemPower: function () {
       const vestingShares = this.getVestingShares()
-      return this.$steem.formatter.vestToSteem(vestingShares, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
+      return steem.formatter.vestToSteem(vestingShares, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
     },
     getVoteValue: function () {
       const sp = this.getSteemPower()
@@ -377,8 +349,9 @@ export default {
       console.log(vote)
       let vm = this
       this.isVoting = true
-      this.$steemconnect.setAccessToken(this.$store.state.steemconnect.accessToken)
-      this.$steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
+      steem.setAccessToken(this.$store.state.steemconnect.accessToken)
+      // old steemconnect
+      steem.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
         if (!err) {
           console.log('ok')
           vm.isVoted = true
