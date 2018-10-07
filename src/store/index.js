@@ -20,9 +20,16 @@ export default new Vuex.Store({
       coverImage: ''
     },
     steemGlobalProperties: {},
-    steemPrice: 0
+    steemPrice: 0,
+    draft: {}
   },
   mutations: {
+    ADD_CARD (state, contents) {
+      // contents = {
+      //   url: 'https://s3.~~'.
+      //   text: '',
+      // }
+    },
     LOGIN (state, {accessToken, tokenExpires, username}) {
       state.accessToken = accessToken
       state.tokenExpires = tokenExpires
