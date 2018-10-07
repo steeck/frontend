@@ -5,8 +5,7 @@
       <v-layout justify-space-between align-center xs12 row>
         <v-flex d-inline-block>
           <v-avatar size="80" color="grey lighten-4">
-            <v-img v-if="author.json_metadata.profile.profile_image !== ''" :src="author.json_metadata.profile.profile_image" contain></v-img>
-            <v-icon v-else :size="80">sentiment_satisfied_alt</v-icon>
+            <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
           </v-avatar>
           <v-flex d-inline-block>
             <div>{{ item.author }}</div>
@@ -87,7 +86,6 @@
 </template>
 
 <script>
-  import steem from '@/services/steem'
   export default {
     name: 'CardMy',
     props: {
@@ -138,27 +136,12 @@
       }
     },
     methods: {
-      // 작성자 정보를 확인
-      getAuthor () {
-        let vm = this
-        steem.api
-          .callAsync('get_accounts', [[this.item.author]])
-          // .call('get_accounts', [['ura-soul']])
-          .then(function (result) {
-            result[0].json_metadata = result[0].json_metadata ? Object.assign(vm.author.json_metadata, JSON.parse(result[0].json_metadata)) : vm.author.json_metadata
-            vm.author = result[0]
-          })
-          .catch(function (error) {
-            console.log(error)
-          })
-      }
     },
     mounted () {
       // console.log(this.postType)
       if (this.item.json_metadata) {
         this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
       }
-      this.getAuthor()
     }
   }
 </script>
