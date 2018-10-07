@@ -67,6 +67,8 @@ export default {
         if (err) {}
         // vm.steemGlobalProperties.totalVestingShares = result.total_vesting_shares.replace(' VESTS', '')
         // vm.steemGlobalProperties.totalVestingFund = result.total_vesting_fund_steem.replace(' STEEM', '')
+        console.log(result.total_vesting_shares)
+        console.log(parseFloat(result.total_vesting_shares))
         const steemGlobalProperties = {
           totalVestingShares: result.total_vesting_shares.replace(' VESTS', ''),
           totalVestingFund: result.total_vesting_fund_steem.replace(' STEEM', '')

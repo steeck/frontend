@@ -27,7 +27,8 @@ export default new Vuex.Store({
       mail: {
         report: 'report@gmail.com'
       }
-    }
+    },
+    draft: {}
   },
   mutations: {
     LOGIN (state, {accessToken, tokenExpires, username}) {
