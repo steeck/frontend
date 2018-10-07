@@ -20,7 +20,8 @@ export default new Vuex.Store({
       coverImage: ''
     },
     steemGlobalProperties: {},
-    steemPrice: 0
+    steemPrice: 0,
+    draft: {}
   },
   mutations: {
     LOGIN (state, {accessToken, tokenExpires, username}) {
