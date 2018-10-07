@@ -40,7 +40,7 @@
       </div>
     </v-card-title>
     <v-card-text>
-      {{ data.timestamp | ago }}
+      {{ data.timestamp | convdate | ago }}
     </v-card-text>
   </v-card>
 </template>

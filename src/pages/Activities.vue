@@ -22,7 +22,6 @@ import Activity from '@/components/activities/Activity'
 export default {
   data () {
     return {
-      date: '2018-04-04',
       history: [],
       lastId: -1,
       limit: 29,
