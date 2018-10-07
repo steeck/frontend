@@ -19,6 +19,7 @@
 import TagList from '@/components/TagList'
 import Vote from '@/components/Vote'
 import FeedCard from '@/components/post/FeedCard'
+import steem from '@/services/steem'
 
 export default {
   data () {
@@ -51,7 +52,7 @@ export default {
   methods: {
     getSteemGlobalProperties: function () {
       let vm = this
-      this.$steem.api.getDynamicGlobalProperties(function (err, result) {
+      steem.api.getDynamicGlobalProperties(function (err, result) {
         if (err) {}
         // vm.steemGlobalProperties.totalVestingShares = result.total_vesting_shares.replace(' VESTS', '')
         // vm.steemGlobalProperties.totalVestingFund = result.total_vesting_fund_steem.replace(' STEEM', '')
@@ -66,7 +67,7 @@ export default {
     },
     getCurrentPrice: function () {
       let vm = this
-      this.$steem.api.getCurrentMedianHistoryPrice(function (err, result) {
+      steem.api.getCurrentMedianHistoryPrice(function (err, result) {
         if (err) {}
         // vm.steemPrice = result.base.replace(' SBD', '') / result.quote.replace(' STEEM', '')
         const steemPrice = result.base.replace(' SBD', '') / result.quote.replace(' STEEM', '')
@@ -78,12 +79,12 @@ export default {
       //   tag: 'tasteem-kr',
       //   limit: 20
       // }
-      this.$client.database
-        .getState('/hot/tasteem')
+      steem.api
+        .getStateAsync('/hot/tasteem')
         .then(result => {
+          console.log(result)
           let idxes = result.discussion_idx.tasteem.hot
           idxes.forEach(idx => {
-            // console.log(result)
             // return
             // const { username, permlink } = post.split('/')
             const username = idx.split('/')[0]
@@ -94,19 +95,17 @@ export default {
             // const title = content.title
             const contentJson = JSON.parse(content.json_metadata)
             const contentImage = contentJson.image ? contentJson.image[0] : ''
-            const created = new Date(content.created)// .toDateString()
+            const contentImages = contentJson.image ? contentJson.image : ''
+            let created = new Date(content.created)// .toDateString()
+            let convTime = new Date(created.setHours(created.getHours() + 9))
 
             let post = {
               account: account,
               content: content,
               thumbnail: contentImage,
               profile: accountImage,
-              images: [
-                'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg',
-                'https://cdn.vuetifyjs.com/images/carousel/sky.jpg',
-                'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-              ],
-              created: created
+              images: contentImages,
+              created: convTime
             }
 
             this.list.push(post)
