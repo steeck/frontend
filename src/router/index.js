@@ -7,7 +7,9 @@ import Activities from '@/pages/Activities'
 import My from '@/pages/My'
 import Login from '@/components/auth/Login'
 import Logout from '@/components/auth/Logout'
+import Create from '@/pages/Create'
 import store from '@/store'
+
 
 Vue.use(Router)
 
@@ -42,6 +44,11 @@ const router = new Router({
       path: '/logout',
       name: 'Logout',
       component: Logout
+    },
+    {
+      path: '/create',
+      name: 'Create',
+      component: Create
     }
   ]
 })

@@ -7,10 +7,14 @@ import store from './store'
 import client from './steem'
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import axios from 'axios';
+import VueAxios from 'vue-axios';
 
 const steem = require('steem')
 
 Vue.use(Vuetify)
+Vue.use(VueAxios, axios);
+
 
 Vue.config.productionTip = false
 
