@@ -19,8 +19,15 @@ export default new Vuex.Store({
       website: 'https://steeck.io',
       coverImage: ''
     },
+    follower: [],
+    following: [],
     steemGlobalProperties: {},
-    steemPrice: 0
+    steemPrice: 0,
+    manage: {
+      mail: {
+        report: 'report@gmail.com'
+      }
+    }
   },
   mutations: {
     LOGIN (state, {accessToken, tokenExpires, username}) {
