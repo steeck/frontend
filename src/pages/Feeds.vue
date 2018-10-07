@@ -7,6 +7,7 @@
       <v-flex v-for="(card, i) in list" :key="'c1'+i">
         <feed-card :item="card"></feed-card>
       </v-flex>
+      <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading"></infinite-loading>
     </v-flex>
     <!-- <feed-card :item="item"></feed-card> -->
   </v-container>
@@ -20,6 +21,7 @@ import TagList from '@/components/TagList'
 import Vote from '@/components/Vote'
 import FeedCard from '@/components/post/FeedCard'
 import steem from '@/services/steem'
+import InfiniteLoading from 'vue-infinite-loading'
 
 export default {
   data () {
@@ -36,18 +38,27 @@ export default {
         }
       },
       list: [],
-      value: 1
+      value: 1,
+      page: {
+        lastPermlink: '', // 조회시 조회된 마지막 게시글
+        lastAuthor: '', // 조회시 조회된 마지막 유저이름
+        loadForPage: 20, // 한번에 조회할 양
+        ableLoading: false, // default false
+        isLoading: false
+      }
     }
   },
   components: {
     TagList,
     FeedCard,
-    Vote
+    Vote,
+    InfiniteLoading
   },
   mounted () {
     this.getSteemGlobalProperties()
     this.getCurrentPrice()
     this.fetchBlog()
+    // this.getMyFeed() // 피드 로딩방식 변경 manbok
   },
   methods: {
     getSteemGlobalProperties: function () {
@@ -72,6 +83,43 @@ export default {
         vm.$store.commit('setSteemPrice', steemPrice)
       })
     },
+    getMyFeed: async function () {
+      let name = this.$store.state.username
+      // let name = 'clayop'
+      let query = {
+        tag: name,
+        start_author: this.page.lastCommentAuthor,
+        start_permlink: this.page.lastPermlink,
+        limit: this.page.loadForPage
+      }
+      await steem.api.getDiscussionsByFeedAsync(query)
+        .then(result => {
+          console.log(result)
+          let resultLength = result.length
+          // console.log(this.page.list.length)
+          if (this.list.length > 0) {
+            result.shift()
+            this.list = this.page.list.concat(result)
+          } else {
+            this.list = result
+          }
+          // console.log(resultLength)
+          this.page.ableLoading = resultLength === this.page.loadingForOnce
+          if (result.length > 0) {
+            this.page.lastPermlink = result[result.length - 1].permlink
+            this.page.lastAuthor = result[result.length - 1].author
+          }
+          this.page.isLoading = false
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    infiniteHandler: async function ($state) {
+      this.page.isLoading = true
+      await this.getMyFeed()
+      $state.loaded()
+    },
     fetchBlog: function () {
       // const query = {
       //   tag: 'tasteem-kr',
@@ -86,6 +134,7 @@ export default {
             // return
             // const { username, permlink } = post.split('/')
             const username = idx.split('/')[0]
+            const permlink = idx.split('/')[1]
             const account = result.accounts[username]
             const accountJson = JSON.parse(account.json_metadata)
             const accountImage = accountJson.profile ? accountJson.profile.profile_image : ''
@@ -98,6 +147,7 @@ export default {
             let convTime = new Date(created.setHours(created.getHours() + 9))
 
             let post = {
+              permlink: permlink,
               account: account,
               content: content,
               thumbnail: contentImage,
@@ -119,7 +169,15 @@ export default {
         .catch(err => {
           console.log('Error occured' + err)
         })
+    },
+    getMyFallowdStatus: function () {
+
     }
+  },
+  beforeDestroy () {
+    this.page.lastPermlink = ''
+    this.page.lastAuthor = ''
+    this.list = []
   }
 }
 </script>

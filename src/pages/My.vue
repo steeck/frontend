@@ -1,4 +1,5 @@
 <template>
+  <!--보상영역 스팀보상 스틱보상-->
   <v-container grid-list-xl>
     <div class="my-profile text-xs-center">
       <v-avatar
