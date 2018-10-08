@@ -6,12 +6,12 @@
       </v-btn>
       <v-list class="card-more">
         <v-list-tile @click="" :key="'cardMenu1'">
-          <v-list-tile-title>공유하기</v-list-tile-title>
+          <v-list-tile-title>게시글 주소 복사</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="" :key="'cardMenu2'" v-if="isMyfollowing">
+        <v-list-tile @click="unFollowingAction" :key="'cardMenu2'" v-if="isMyfollowing">
           <v-list-tile-title>팔로우 취소</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="" :key="'cardMenu2'" v-else>
+        <v-list-tile @click="followingAction" :key="'cardMenu2'" v-else>
           <v-list-tile-title>팔로우</v-list-tile-title>
         </v-list-tile>
         <v-list-tile @click="" :key="'cardMenu3'">
@@ -29,6 +29,8 @@
 </template>
 
 <script>
+  import steemconnect from '@/services/steemconnect'
+
   export default {
     name: 'cardMenu',
     props: {
@@ -66,12 +68,23 @@
         let body = '게시글 링크 : ' + this.permlink
         let win = window.open('mailto:' + this.$store.state.manage.mail.report + '?subject=' + subject + '&body=' + body, 'report')
         win.close()
+      },
+      followingAction: function () {
+        steemconnect.follow(this.$store.state.username, this.author, function (err, res) {
+          console.log(err, res)
+        })
+      },
+      unFollowingAction: function () {
+        steemconnect.unfollow(this.$store.state.username, this.author, function (err, res) {
+          console.log(err, res)
+        })
       }
     },
     mounted: function () {
       // console.log('init menu')
       // console.log(this.isLogin)
-      console.log(this.author + ' / ' + this.permlink)
+      // console.log(this.author + ' / ' + this.permlink)
+      steemconnect.setAccessToken(this.$store.state.accessToken)
     }
   }
 </script>
