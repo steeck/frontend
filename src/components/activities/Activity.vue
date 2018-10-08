@@ -24,8 +24,9 @@
           <div v-if="item.author === this.$store.state.username && item.parent_author !== ''">
             <span class="font-weight-bold">{{ item.parent_author }}</span>님에게 코멘트를 남겼습니다.
           </div>
-          <div v-if="item.author === this.$store.state.username && item.parent_author === ''"></div>
+          <div v-if="item.author === this.$store.state.username && item.parent_author === ''">
             <span> <a :href="permlink(item.author, item.permlink)">게시글</a>을 작성/수정 했습니다.</span>
+          </div>
           <div v-if="item.author !== this.$store.state.username">
             <span class="font-weight-bold">{{ item.author }}</span>님이 코멘트를 남겼습니다.
           </div>
