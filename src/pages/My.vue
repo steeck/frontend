@@ -94,7 +94,10 @@
           <div v-for="item in page.list" >
             <card-my :item="item" :post-type="'post'"></card-my>
           </div>
-          <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading"></infinite-loading>
+          <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
+          <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
       </v-slide-y-transition>
@@ -119,7 +122,9 @@
             <card-my :item="item" :post-type="'comment'"></card-my>
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
-          <div v-if="page.ableLoading && page.isLoading">로딩중...</div>
+          <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
       </v-slide-y-transition>
@@ -131,49 +136,39 @@
         tag="v-flex"
         v-if="page.midSelect === 'reward'"
       >
-        <!--보상 or 큐레이션 보상 선택 -->
+        <!--스팀보상 스티밋보상 선택 -->
         <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'reward'">
           <v-flex text-xs-left>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'reward'}" @click="setSubMenu('reward')">보상</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'steemReward'}" @click="setSubMenu('steemReward')">STEEM 보상</v-flex>
             <v-flex d-inline-block class="item-separator">|</v-flex>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'curationReward'}" @click="setSubMenu('curationReward')">큐레이션 보상</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'steemitReward'}" @click="setSubMenu('steemitReward')">STEEMIT 보상</v-flex>
           </v-flex>
         </v-flex>
 
-        <v-list v-if="page.subSelect === 'curationReward' && page.curationRewardList.length > 0" key="'reward-curationReward'">
+        <v-list v-if="page.subSelect === 'steemReward' && page.steemRewardList.length > 0" key="'reward-curationReward'">
           <v-data-table
-            :items="page.curationRewardList"
-            class="elevation-5"
+            :items="page.steemRewardList"
+            class="elevation-5 table-steem-reward"
             hide-headers
-            no-data-text="'조회 결과가 없습니다.'"
-            :rows-per-page-items="[10, 20, 30]"
-            :rows-per-page-text="'보상목록 표시 개수'"
+            hide-actions
           >
             <template slot="items" slot-scope="props">
-              <td>{{ props.item.timestamp | ago }}</td>
-              <td>
-                <span>({{ props.item.reward}} _todo)STEEM POWER</span>
-                <span>for {{ props.item.comment_author}} / {{ props.item.comment_permlink}}</span>
+              <td class="reward-time">{{ props.item[1].timestamp | convdate | ago }}</td>
+              <td class="reward-title">{{ props.item[1].op[0] === 'curation_reward' ? '큐레이션 보상' : '저자 보상' }}</td>
+              <td v-if="props.item[1].op[0] === 'curation_reward'" class="reward-detail">
+                <span>{{ sp(props.item[1].op[1].reward) }} STEEM POWER</span>
+                <span class="tc-import">for {{ props.item[1].op[1].comment_author}} / {{ props.item[1].op[1].comment_permlink}}</span>
+              </td>
+              <td v-else-if="props.item[1].op[0] === 'author_reward'" class="reward-detail">
+                <span>{{ props.item[1].op[1].sbd_payout }} and {{ sp(props.item[1].op[1].vesting_payout) }} STEEM POWER</span>
+                <span class="tc-import">for {{ props.item[1].op[1].author}} / {{ props.item[1].op[1].permlink}}</span>
               </td>
             </template>
-            <template slot="pageText" slot-scope="props">
-              {{ props.pageStart }} - {{ props.pageStop }} / 총 {{ props.itemsLength }}
-            </template>
           </v-data-table>
-
-          <!--<div v-for="item in page.curationRewardList">-->
-            <!--<v-card class="my-3">-->
-              <!--<v-card-text>-->
-                <!--<v-layout row>-->
-                  <!--<v-flex xs3>{{ item.timestamp | ago}}</v-flex>-->
-                  <!--<v-flex xs9>-->
-                    <!--<span>{{ item.reward}} STEEM POWER (계산필요)</span>-->
-                    <!--<span>for {{ item.comment_author}} / {{ item.comment_permlink}}</span>-->
-                  <!--</v-flex>-->
-                <!--</v-layout>-->
-              <!--</v-card-text>-->
-            <!--</v-card>-->
-          <!--</div>-->
+          <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
+          <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
+            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+          </v-flex>
         </v-list>
 
       </v-slide-y-transition>
@@ -249,6 +244,19 @@
   }
 
 
+  /* 스팀 보상 테이블 */
+  .table-steem-reward {
+    .reward-time {
+      min-width: 8rem;
+    }
+    .reward-title {
+      min-width: 10rem;
+    }
+    .tc-import {
+      color: $colorForce;
+    }
+  }
+
   /* css class var for extend */
   .basic-item {
     transition: 0.2s;
@@ -308,17 +316,21 @@
         follow: {},
         page: {
           midSelect: 'sticker', // able : ['sticker','comment','reward','wallet']
-          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment'], reward: ['reward', 'curationReward']}
+          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment'], reward: ['steemReward', 'steemitReward']}
           list: [], // post arr
           commentList: [], // comment arr
-          curationRewardList: [],
+          steemRewardList: [],
+          steemRewardLoadingCount: 30,
           loadingForOnce: 5,
           ableLoading: false, // 로딩 가능한지 확인하는 변수
           lastPermlink: '', // sticker post 조회시 조회된 마지막 게시글
           lastAuthor: '', // sticker post 조회시 조회된 마지막 유저이름
           lastCommentPermlink: '',
           lastCommentAuthor: '',
-          isLoading: false // 인피니티 로딩 구동 토글 변수
+          isLoading: false, // 인피니티 로딩 구동 토글 변수
+          reward: {
+            lastId: -1
+          }
         }
       }
     },
@@ -343,7 +355,7 @@
         } else if (this.page.midSelect === 'comment') {
           this.page.subSelect = 'myComment'
         } else if (this.page.midSelect === 'reward') {
-          this.page.subSelect = 'reward'
+          this.page.subSelect = 'steemReward'
         }
       },
       'page.subSelect': function () {
@@ -358,7 +370,11 @@
         } else if (this.page.midSelect === 'comment') {
           this.getComment()
         } else if (this.page.midSelect === 'reward') {
-          this.getReward()
+          if (this.page.subSelect === 'steemReward') {
+            this.loadingSteemReward()
+          } else if (this.page.subSelect === 'steemitReward') {
+            console.log('TODO steemitReward loading')
+          }
         }
       }
     },
@@ -513,32 +529,48 @@
           }
         }
       },
-      getReward: async function () {
-        console.log('get reward')
-        // let name = 'clayop'
-        let name = this.me.name
+      loadingSteemReward: function () {
+        console.log('get author and curation reward')
         let vm = this
-        await steem.api.getStateAsync('/@' + name + '/transfers')
-          .then(result => {
-            console.log(result.accounts[name].transfer_history)
-            if (!result.accounts[name].transfer_history || result.accounts[name].transfer_history.length === 0) {
-              return
-            }
-            // 큐레이션 보상과 기타 보상을 추출
-            let curationArrTmp = []
-            result.accounts[name].transfer_history.forEach(line => {
-              console.log(line[1] && line[1].op[0])
-              if (line[1] && line[1].op[0] === 'curation_reward') {
-                curationArrTmp.push(Object.assign({timestamp: line[1].timestamp}, line[1].op[1]))
-              }
-            })
-            vm.page.curationRewardList = curationArrTmp.reverse()
-            console.log(vm.page.curationRewardList)
+        let allowed = ['curation_reward', 'author_reward']
+        steem.api.getAccountHistory(this.$store.state.username, vm.page.reward.lastId, this.page.steemRewardLoadingCount, function (err, result) {
+          if (err) {
+            vm.page.ableLoading = false
+            return
+          }
+          vm.page.reward.lastId = result[0][0] - 1
+          if (vm.lastId < vm.page.steemRewardLoadingCount) vm.page.steemRewardLoadingCount = vm.lastId
+          // console.log(vm.lastId, vm.limit)
+          result = result.filter(item => {
+            const isAllowed = item[1] && allowed.indexOf(item[1].op[0]) !== -1
+            return isAllowed
           })
-          .catch(error => {
-            console.log(error)
-          })
-        console.log('get reward done')
+          vm.page.steemRewardList = vm.page.steemRewardList.concat(result.slice().reverse())
+          vm.page.isLoading = false
+          // console.log(vm.page.steemRewardList)
+        })
+      },
+      sp: function (vests) {
+        // eslint-disable-next-line
+        vests = vests.replace(/[^0-9|\.]/g, '')
+        if (!this.$store.state.steemGlobalProperties.totalVestingShares || !this.$store.state.steemGlobalProperties.totalVestingFund) {
+          this.getSteemGlobalProperties()
+        }
+        return steem.formatter.vestToSteem(vests, this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+      },
+      getSteemGlobalProperties: async function () {
+        let vm = this
+        steem.api.getDynamicGlobalProperties(await function (err, result) {
+          if (err) {
+            console.log(err)
+            return
+          }
+          const steemGlobalProperties = {
+            totalVestingShares: result.total_vesting_shares.replace(' VESTS', ''),
+            totalVestingFund: result.total_vesting_fund_steem.replace(' STEEM', '')
+          }
+          vm.$store.commit('setSteemGlobalProperties', steemGlobalProperties)
+        })
       },
       infiniteHandler: async function ($state) {
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {
@@ -553,6 +585,12 @@
             await this.getComment()
             $state.loaded()
           }
+        } else if (this.page.midSelect === 'reward' && this.page.subSelect === 'steemReward') {
+          if (!this.page.isLoading) {
+            this.page.isLoading = true
+            await this.loadingSteemReward()
+            $state.loaded()
+          }
         } else {
           $state.loaded()
           console.log('call infiny other')
@@ -562,9 +600,13 @@
       resetPageContent: function () {
         this.page.list = []
         this.page.commentList = []
+        this.page.steemRewardList = []
         this.page.lastPermlink = ''
         this.page.lastCommentPermlink = ''
+        this.page.reward.lastId = -1
         this.page.isLoading = false
+        this.page.ableLoading = true
+        this.page.steemRewardLoadingCount = 30
       }
     }
   }
