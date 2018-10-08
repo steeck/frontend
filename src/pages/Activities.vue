@@ -1,8 +1,9 @@
 <template>
   <v-container grid-list-xl>
-    <v-layout row wrap>
-      <v-flex>
-        <v-btn>출석체크</v-btn>
+    <v-layout row wrap align-center justify-space-between>
+      <v-flex class="font-weight-bold body-2">{{ today }}</v-flex>
+      <v-flex justify-end class="text-xs-right">
+        <v-btn outline dark round color="deep-purple darken-1" class="font-weight-medium">출석체크</v-btn>
       </v-flex>
     </v-layout>
     <v-data-table :items="history" class="elevation-5" hide-headers hide-actions v-if="history.length > 0">
@@ -14,10 +15,6 @@
     <v-flex xs12 justify-center text-xs-center v-if="ableLoading && isLoading">
       <v-progress-circular indeterminate color="primary"></v-progress-circular>
     </v-flex>
-    <!--<div v-for="(item, i) in history">-->
-      <!--<activity :type="item[1].op[0]" :data="item[1]"></activity>-->
-    <!--</div>-->
-    <!--<v-btn :disabled="limit === -1" @click="fetchBlog()">more</v-btn>-->
   </v-container>
 </template>
 
@@ -44,12 +41,24 @@ export default {
         'vote', 'curation_reward', 'author_reward', 'claim_reward_balance', 'comment', 'transfer', 'transfer_to_vesting', 'custom_json'
       ],
       ableLoading: true,
-      isLoading: false
+      isLoading: false,
+      today: ''
     }
   },
   mounted () {
     this.isLoading = true
     this.fetchBlog()
+    let todayDate = new Date()
+    let dd = todayDate.getDate()
+    let mm = todayDate.getMonth() + 1
+    let yyyy = todayDate.getFullYear()
+    if (dd < 10) {
+      dd = '0' + dd
+    }
+    if (mm < 10) {
+      mm = '0' + mm
+    }
+    this.today = yyyy + '년 ' + mm + '월' + dd + '일'
   },
   methods: {
     fetchBlog: function () {
