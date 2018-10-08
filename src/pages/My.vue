@@ -542,8 +542,7 @@
           if (vm.lastId < vm.page.steemRewardLoadingCount) vm.page.steemRewardLoadingCount = vm.lastId
           // console.log(vm.lastId, vm.limit)
           result = result.filter(item => {
-            const isAllowed = item[1] && allowed.indexOf(item[1].op[0]) !== -1
-            return isAllowed
+            return item[1] && allowed.indexOf(item[1].op[0]) !== -1
           })
           vm.page.steemRewardList = vm.page.steemRewardList.concat(result.slice().reverse())
           vm.page.isLoading = false
