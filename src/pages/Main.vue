@@ -2,31 +2,41 @@
   <div>
     <v-container py-0>
       <v-carousel fullscreen>
-        <v-carousel-item
-          v-for="(item,i) in items"
-          :key="i"
-          :src="item.src"
-        ></v-carousel-item>
+        <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item>
       </v-carousel>
     </v-container>
     <div class="grey lighten-3">
-      <v-container>
-        태그
+      <v-container class="py-0">
+        <v-layout class="darken-3">
+          <table class="table-tag text-xs-center font-weight-bold">
+            <tbody>
+            <tr>
+              <td>핫이슈</td>
+              <td>암호화폐</td>
+              <td>패션뷰티</td>
+              <td>라이프</td>
+              <td>여행</td>
+              <td>문화예술</td>
+            </tr>
+            <tr>
+              <td>어학강좌</td>
+              <td>차테크</td>
+              <td>게임</td>
+              <td>푸드</td>
+              <td>공감에세이</td>
+              <td>스폰서</td>
+            </tr>
+            </tbody>
+          </table>
+        </v-layout>
       </v-container>
     </div>
     <v-container grid-list-xl>
-      <v-tabs
-        hide-slider
-      >
-        <v-tab ripple>
-          스틱30
-        </v-tab>
+      <v-tabs hide-slider>
+        <v-tab ripple>스틱30</v-tab>
         <v-tab-item>
           <div class="text-xs-center ma-5" v-if="!trending.length">
-            <v-progress-circular
-              indeterminate
-              color="deep-purple"
-            ></v-progress-circular>
+            <v-progress-circular indeterminate color="deep-purple"></v-progress-circular>
           </div>
           <v-layout row wrap>
             <v-flex sm12 md4 v-for="(card, i) in trending.slice(0, 3)" :key="'c1'+i">
@@ -39,9 +49,7 @@
             </v-flex>
           </v-layout>
         </v-tab-item>
-        <v-tab ripple>
-          뉴비30
-        </v-tab>
+        <v-tab ripple>뉴비30</v-tab>
         <v-tab-item>
           <v-layout row wrap>
             <v-flex sm12 md4 v-for="(card, i) in created.slice(0, 3)" :key="'c3'+i">
@@ -55,9 +63,7 @@
           </v-layout>
         </v-tab-item>
         <v-spacer></v-spacer>
-        <v-tab ripple>
-          주간
-        </v-tab>
+        <v-tab ripple>주간</v-tab>
         <v-tab-item>
           <v-layout row wrap>
             <v-flex sm12 md4 v-for="(card, i) in hot.slice(0, 3)" :key="'c5'+i">
@@ -75,7 +81,8 @@
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+  @import "../colorset.scss";
 >>>.v-carousel {
   height: 320px;
 }
@@ -109,6 +116,22 @@
 }
 .asd .flex {
   padding: 12px 24px !important;
+}
+
+table.table-tag {
+  width: 100%;
+  border-collapse: collapse;
+  td {
+    width: calc(100% / 6);
+    padding: 1rem;
+    color: #37474F;
+    border: 0.5px solid #dedede;
+    cursor: pointer;
+    transition: 0.2s;
+    &:hover {
+      color: black;
+    }
+  }
 }
 </style>
 

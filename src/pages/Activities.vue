@@ -13,7 +13,7 @@
     </v-data-table>
     <infinite-loading @infinite="infiniteHandler" v-if="ableLoading && !isLoading"></infinite-loading>
     <v-flex xs12 justify-center text-xs-center v-if="ableLoading && isLoading">
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
     </v-flex>
   </v-container>
 </template>

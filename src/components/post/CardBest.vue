@@ -3,7 +3,8 @@
     <v-img
       height="130px"
       :src="thumbnail"
-       style="position: relative;"
+      :lazy-src="defaultSrc"
+      style="position: relative;"
     >
       <div class="rating">
         {{ rating }}
@@ -78,7 +79,8 @@ export default {
   props: ['item', 'rating'],
   data () {
     return {
-      metadata: {}
+      metadata: {},
+      defaultSrc: 'https://via.placeholder.com/350x150'
     }
   },
   filters: {
@@ -103,7 +105,7 @@ export default {
       if (this.metadata.image) {
         return this.metadata.image[0]
       } else {
-        return 'https://via.placeholder.com/350x150'
+        return this.defaultSrc
       }
     }
   }

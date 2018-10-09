@@ -61,7 +61,7 @@
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
           <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
@@ -88,7 +88,7 @@
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
           <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
@@ -96,12 +96,12 @@
 
       <!--보상 관련 내용-->
       <v-slide-y-transition class="py-0" group tag="v-flex" v-if="page.midSelect === 'reward'">
-        <!--스팀보상 스티밋보상 선택 -->
+        <!--스팀보상 스틱보상 선택 -->
         <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'reward'">
           <v-flex text-xs-left>
             <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'steemReward'}" @click="setSubMenu('steemReward')">STEEM 보상</v-flex>
             <v-flex d-inline-block class="item-separator">|</v-flex>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'steemitReward'}" @click="setSubMenu('steemitReward')">STEEMIT 보상</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'steeckReward'}" @click="setSubMenu('steeckReward')">STEECK 보상</v-flex>
           </v-flex>
         </v-flex>
 
@@ -122,7 +122,7 @@
           </v-data-table>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
           <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
-            <v-progress-circular indeterminate color="primary"></v-progress-circular>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
 
@@ -162,7 +162,7 @@
         follow: {},
         page: {
           midSelect: 'sticker', // able : ['sticker','comment','reward','wallet']
-          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment'], reward: ['steemReward', 'steemitReward']}
+          subSelect: 'my', // able : {sticker : ['my','bookmark'], comment : ['myComment', 'receivedComment'], reward: ['steemReward', 'steeckReward']}
           list: [], // post arr
           commentList: [], // comment arr
           steemRewardList: [],
@@ -218,8 +218,8 @@
         } else if (this.page.midSelect === 'reward') {
           if (this.page.subSelect === 'steemReward') {
             this.loadingSteemReward()
-          } else if (this.page.subSelect === 'steemitReward') {
-            console.log('TODO steemitReward loading')
+          } else if (this.page.subSelect === 'steeckReward') {
+            console.log('TODO steeckReward loading')
           }
         }
       }
@@ -385,14 +385,18 @@
             return
           }
           vm.page.reward.lastId = result[0][0] - 1
-          if (vm.lastId < vm.page.steemRewardLoadingCount) vm.page.steemRewardLoadingCount = vm.lastId
-          // console.log(vm.lastId, vm.limit)
+          if (vm.page.reward.lastId < vm.page.steemRewardLoadingCount) {
+            vm.page.steemRewardLoadingCount = vm.page.reward.lastId
+            vm.page.ableLoading = false
+          }
+          console.log(vm.page.reward.lastId, vm.page.steemRewardLoadingCount)
           result = result.filter(item => {
             return item[1] && allowed.indexOf(item[1].op[0]) !== -1
           })
           vm.page.steemRewardList = vm.page.steemRewardList.concat(result.slice().reverse())
-          vm.page.isLoading = false
-          // console.log(vm.page.steemRewardList)
+          vm.$nextTick(() => {
+            vm.page.isLoading = false
+          })
         })
       },
       sp: function (vests) {
