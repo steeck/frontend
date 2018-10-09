@@ -39,12 +39,12 @@
             <v-progress-circular indeterminate color="deep-purple"></v-progress-circular>
           </div>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in trending.slice(0, 3)" :key="'c1'+i">
+            <v-flex sm12 md4 v-for="(card, i) in trending.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in trending.slice(3)" :key="'c2'+i">
+            <v-flex md6 v-for="(card, i) in trending.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>
@@ -52,12 +52,12 @@
         <v-tab ripple>뉴비30</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in created.slice(0, 3)" :key="'c3'+i">
+            <v-flex sm12 md4 v-for="(card, i) in created.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in created.slice(3)" :key="'c4'+i">
+            <v-flex md6 v-for="(card, i) in created.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>
@@ -66,12 +66,12 @@
         <v-tab ripple>주간</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in hot.slice(0, 3)" :key="'c5'+i">
+            <v-flex sm12 md4 v-for="(card, i) in hot.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in hot.slice(3)" :key="'c6'+i">
+            <v-flex md6 v-for="(card, i) in hot.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>

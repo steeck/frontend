@@ -81,6 +81,7 @@ export default {
   data () {
     return {
       metadata: {},
+      img: '',
       defaultSrc: 'https://via.placeholder.com/350x150'
     }
   },
@@ -95,6 +96,11 @@ export default {
   },
   mounted () {
     this.metadata = JSON.parse(this.item.json_metadata)
+    const regex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)/g
+    const result = this.item.body.match(regex)
+    if (result !== -1) {
+      this.img = result[0]
+    }
   },
   computed: {
     tag () {
@@ -105,6 +111,8 @@ export default {
     thumbnail () {
       if (this.metadata.image && this.metadata.image[0] !== '') {
         return this.metadata.image[0]
+      } else if (this.img) {
+        return this.img
       } else {
         return this.defaultSrc
       }
