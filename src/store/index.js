@@ -13,7 +13,8 @@ export default new Vuex.Store({
   state: {
     layout: 'default-layout',
     steemGlobalProperties: {},
-    steemPrice: 0
+    steemPrice: 0,
+    contentObj: {} //obj array with card contents
   },
   mutations: {
     SET_LAYOUT (state, payload) {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     },
     setSteemPrice (state, payload) {
       state.steemPrice = payload
+    },
+    setCardContents (state, payload) {
+      state.contentObj = payload
     }
   },
   getters: {
@@ -35,6 +39,9 @@ export default new Vuex.Store({
     },
     steemPrice (state) {
       return state.steemPrice
+    },
+    cardContents (state) {
+      return state.contentObj
     }
   },
   modules: {

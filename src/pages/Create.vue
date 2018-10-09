@@ -1,96 +1,104 @@
 <template>
   <v-container grid-list-xl>
-    <v-layout row wrap>
-      <v-flex>
-        <v-navigation-drawer
-        :width="width"
-        :value="true"
-        stateless
-      >
-        <v-img :aspect-ratio="16/9" src="https://cdn.vuetifyjs.com/images/parallax/material.jpg">
-          <v-layout pa-2 column fill-height class="lightbox white--text">
-            <v-spacer></v-spacer>
-            <v-flex shrink>
-              <div class="subheading">Jonathan Lee</div>
-              <div class="body-1">heyfromjonathan@gmail.com</div>
+    <v-layout row justify-space-around>
+
+      <v-flex xs12 sm6 md4>
+        <div class="thumbnail">
+          <v-layout flex align-center justify-center>
+            <v-flex xs5 >
+              <div v-for="(item,i) in items":key="i" >
+                <v-card-title class="black--text">title </v-card-title>
+                <v-card color ="white" dark class="black--text">hi</br></br></br></br></br>hi </v-card></br>
+              </div>
             </v-flex>
           </v-layout>
-        </v-img>
-
-        <v-list>
-          <template v-for="(item, i) in items">
-            <v-divider v-if="item.divider" :key="i"></v-divider>
-            <v-list-tile v-else :key="item.title" @click>
-              <v-list-tile-action>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-tile-action>
-              <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-navigation-drawer>
-    </v-flex>
-
-      <v-flex>
-        <v-card>
-          <input type="file" class="form-control" v-on:change="upload"/>
-          <!-- <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone> -->
-          <!-- <vue-dropzone id="myVueDropzone" v-on:vdropzone-success="success" :options="dropzoneOptions"></vue-dropzone> -->
-            <v-textarea v-model="onchangetext" auto-grow box label="text" rows="1"></v-textarea>
-          <v-btn color="submit" v-on:click="submitBtn">Submit</v-btn>
-
-        </v-card>
+        </div>
       </v-flex>
+
+      <v-layout flex align-center justify-center >
+        <v-flex>
+          <h3 style="margin-left:50px;">스티커</h3> </br>
+          <v-card class="contentCard" ></br>
+            <input type="file" class="form-control" v-on:change="upload"/>
+
+            <!-- <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone> -->
+            <!-- <vue-dropzone id="myVueDropzone" v-on:vdropzone-success="success" :options="dropzoneOptions"></vue-dropzone> -->
+            <v-textarea v-model="onchangetext" auto-grow box label="text" rows="1" v-on:change="objOnChange"></v-textarea>
+            <v-btn color="submit" v-on:click="submitBtn">Submit</v-btn>
+            <h1>{{this.onchangetext}}</h1>
+          </v-card>
+        </v-flex>
+    </v-layout>
 
       <!-- toolbar -->
-       <v-flex xs12 sm3 class="py-2">
-        <v-expansion-panel>
-          <v-expansion-panel-content>
-            <div slot="header">레이아웃</div>
-            <v-card>
-              <v-btn-toggle v-model="toggle_exclusive">
-                <v-btn flat>
-                  <v-icon>format_align_left</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_align_center</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_align_right</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_align_justify</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </v-card>
-          </v-expansion-panel-content>
-          <v-expansion-panel-content>
-            <div slot="header">글쓰기 도구</div>
-            <v-card>
-              <v-btn-toggle v-model="toggle_multiple" multiple>
-                <v-btn flat>
-                  <v-icon>format_bold</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_italic</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_underlined</v-icon>
-                </v-btn>
-                <v-btn flat>
-                  <v-icon>format_color_fill</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </v-card>
+      <v-layout row wrap class="toolbar">
+         <v-flex class="py-2">
+           <h3>도구</h3>
+          <v-expansion-panel>
+            <v-expansion-panel-content>
+              <div slot="header">레이아웃</div>
+              <v-card>
+                <v-btn-toggle v-model="toggle_exclusive">
+                  <v-btn flat>
+                    <v-icon>format_align_left</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_align_center</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_align_right</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_align_justify</v-icon>
+                  </v-btn>
+                </v-btn-toggle>
+              </v-card>
+            </v-expansion-panel-content>
+            <v-expansion-panel-content>
+              <div slot="header">글쓰기 도구</div>
+              <v-card>
+                <v-btn-toggle v-model="toggle_multiple" multiple>
+                  <v-btn flat>
+                    <v-icon>format_bold</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_italic</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_underlined</v-icon>
+                  </v-btn>
+                  <v-btn flat>
+                    <v-icon>format_color_fill</v-icon>
+                  </v-btn>
+                </v-btn-toggle>
+              </v-card>
 
-          </v-expansion-panel-content>
+            </v-expansion-panel-content>
 
 
 
-        </v-expansion-panel>
-      </v-flex>
+          </v-expansion-panel>
+        </br></br></br>
+
+      <!-- tag section -->
+      <h3>태그</h3>
+         <v-card>
+           <v-flex>
+              <v-text-field v-model="tagtext"
+                label="태그단어"
+                single-line
+              ></v-text-field>
+              <h3 v-if="this.tagtext.length > 0">#{{this.tagtext}}</h3>
+            </br>
+            </v-flex>
+         </v-card>
+       </v-flex>
+
+     </v-layout>
+
+
     </break>
-      <h1>{{this.onchangetext}}</h1>
+
 
 
 
@@ -110,11 +118,14 @@
 import axios from 'axios'
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import Card from '@/components/post/Card'
+
 // import PostsService from '@/services/PostsService'
 
 export default {
   data () {
     return {
+      tagtext: '',
       onchangetext: '',
       contents : [], //array of each page content ex. [0] = title page [1]
       toggle_exclusive: 2,
@@ -144,39 +155,18 @@ export default {
     }
   },
   components: {
-    vueDropzone: vue2Dropzone
-
-  },
-  mounted () {
+    vueDropzone: vue2Dropzone,
 
   },
   methods: {
-    // 'success': function(file) {
-    //   console.log("pls", file);
-    //   let uri = 'http://localhost:4000/create';
-    //    this.axios.post(uri, file).then((response) => {
-    //      this.file = response.data.Location;
-    //      console.log("file location", this.file);
-    //    })
-    //
-    // },
-    // 'sending': function (file,xhr,formData) {
-    //    console.log("hijson",formData);
-    //    console.log("tes1t",file)
-    //    console.log("f-9", file[0]);
-    //    formData.append('file',file[0])
-    //
-    //    // const formData = new FormData()
-    //    // formData.append('name', file);
-    //    for (var key of formData.entries()) {
-    //      console.log("cries",key[1]);
-    //    }
-    //    let uri = 'http://localhost:4000/create';
-    //      // this.axios.post(uri, formData).then((response) => {
-    //      //   this.file = response.data.Location;
-    //      //   console.log("file location", this.file);
-    //      // })
-    //  },
+    objOnChange: function() {
+      const obj =  {
+        url: this.file,
+        text: this.onchangetext
+      }
+      this.$store.commit('setCardContents', obj);
+      console.log('getter ',this.$store.getters.cardContents);
+    },
     async upload(event) {
       let file = event.target.files
       let formData = new FormData()
@@ -217,6 +207,10 @@ export default {
 <style lang="scss" scoped>
 @import 'main.scss'
 
+  .background: {
+    color: grey;
+  }
+
   .dropbox {
     outline: 2px dashed grey; /* the dash box */
     outline-offset: -10px;
@@ -245,4 +239,23 @@ export default {
     text-align: center;
     padding: 50px 0;
   }
+
+  .thumbnail {
+    background-color: white;
+    height: 600px;
+    width: 100%;
+    overflow: auto;
+  }
+  .contentCard {
+    height: 500px;
+    width: 300px;
+    margin-left: 50px;
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: rgba(0,0,0,0.3);
+  }
+  .toolbar {
+    width: 145px;
+  }
+
 </style>
