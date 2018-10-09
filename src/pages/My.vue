@@ -389,7 +389,7 @@
             vm.page.steemRewardLoadingCount = vm.page.reward.lastId
             vm.page.ableLoading = false
           }
-          console.log(vm.page.reward.lastId, vm.page.steemRewardLoadingCount)
+          // console.log(vm.page.reward.lastId, vm.page.steemRewardLoadingCount)
           result = result.filter(item => {
             return item[1] && allowed.indexOf(item[1].op[0]) !== -1
           })
