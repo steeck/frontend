@@ -36,12 +36,13 @@
           <input type="file" class="form-control" v-on:change="upload"/>
           <!-- <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone> -->
           <!-- <vue-dropzone id="myVueDropzone" v-on:vdropzone-success="success" :options="dropzoneOptions"></vue-dropzone> -->
-            <v-textarea v-model="text" auto-grow box label="text" rows="1"></v-textarea>
+            <v-textarea v-model="onchangetext" auto-grow box label="text" rows="1"></v-textarea>
           <v-btn color="submit" v-on:click="submitBtn">Submit</v-btn>
 
         </v-card>
       </v-flex>
 
+      <!-- toolbar -->
        <v-flex xs12 sm3 class="py-2">
         <v-expansion-panel>
           <v-expansion-panel-content>
@@ -88,6 +89,8 @@
 
         </v-expansion-panel>
       </v-flex>
+    </break>
+      <h1>{{this.onchangetext}}</h1>
 
 
 
@@ -112,6 +115,7 @@ import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 export default {
   data () {
     return {
+      onchangetext: '',
       contents : [], //array of each page content ex. [0] = title page [1]
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
@@ -191,7 +195,7 @@ export default {
                   "text": this.text}
       let uri = 'http://localhost:4000/insert';
       this.axios.post(uri, obj).then((response) =>{
-        console.log("done");
+        console.log("done", response.data);
       })
 
     }
