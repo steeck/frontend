@@ -4,6 +4,7 @@
       height="130px"
       :src="thumbnail"
       :lazy-src="defaultSrc"
+      @error="errorImg"
       style="position: relative;"
     >
       <div class="rating">
@@ -102,11 +103,16 @@ export default {
       }
     },
     thumbnail () {
-      if (this.metadata.image) {
+      if (this.metadata.image && this.metadata.image[0] !== '') {
         return this.metadata.image[0]
       } else {
         return this.defaultSrc
       }
+    }
+  },
+  methods: {
+    errorImg: function () {
+      this.metadata.image = false
     }
   }
 }
