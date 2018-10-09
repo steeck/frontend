@@ -26,7 +26,7 @@
         +팔로우
       </v-btn>
       <v-spacer></v-spacer>
-      <card-menu></card-menu>
+      <card-menu :author="item.account.name" :permlink="item.permlink"></card-menu>
     </v-card-actions>
     <v-card-title
       primary-title
