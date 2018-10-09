@@ -12,25 +12,7 @@
             <div>{{ this.createdTime | ago}}</div>
           </v-flex>
         </v-flex>
-        <v-menu d-inline-block>
-          <v-btn slot="activator" icon >
-            <v-icon>more_vert</v-icon>
-          </v-btn>
-          <v-list class="card-more">
-            <v-list-tile @click="">
-              <v-list-tile-title>공유하기</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="" >
-              <v-list-tile-title>팔로우 취소</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="" >
-              <v-list-tile-title>다운보트</v-list-tile-title>
-            </v-list-tile>
-            <v-list-tile @click="" >
-              <v-list-tile-title>신고하기</v-list-tile-title>
-            </v-list-tile>
-          </v-list>
-        </v-menu>
+        <card-menu :author="item.author" :permlink="item.permlink"></card-menu>
       </v-layout>
     </v-card-text>
     <v-card-title>
@@ -86,6 +68,8 @@
 </template>
 
 <script>
+  import CardMenu from '@/components/post/menu'
+
   export default {
     name: 'CardMy',
     props: {
@@ -95,6 +79,9 @@
       postType: {
         type: String
       }
+    },
+    components: {
+      'card-menu': CardMenu
     },
     data () {
       return {

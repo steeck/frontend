@@ -8,6 +8,8 @@ import 'vuetify/dist/vuetify.min.css'
 
 Vue.use(Vuetify)
 
+window.vm = store
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
