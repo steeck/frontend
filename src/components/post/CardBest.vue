@@ -78,7 +78,8 @@ export default {
   props: ['item', 'rating'],
   data () {
     return {
-      metadata: {}
+      metadata: {},
+      img: ''
     }
   },
   filters: {
@@ -92,6 +93,11 @@ export default {
   },
   mounted () {
     this.metadata = JSON.parse(this.item.json_metadata)
+    const regex = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png)/g
+    const result = this.item.body.match(regex)
+    if (result !== -1) {
+      this.img = result[0]
+    }
   },
   computed: {
     tag () {
@@ -102,6 +108,8 @@ export default {
     thumbnail () {
       if (this.metadata.image) {
         return this.metadata.image[0]
+      } else if (this.img) {
+        return this.img
       } else {
         return 'https://via.placeholder.com/350x150'
       }

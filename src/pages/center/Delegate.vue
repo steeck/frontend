@@ -1,19 +1,36 @@
 <template>
   <v-container grid-list-xl>
     <div class="my-profile text-xs-center">
-      SP : {{ sp }}
+      SP : {{ mineSP }}
+      received : {{ receivedSP }}
+      delegated : {{ delegatedSP }}
     </div>
     <div>
-      Delegatee : <input type="text" v-model="data.to">
+      <v-text-field
+        label="Delegatee"
+        v-model="data.to"
+      ></v-text-field>
     </div>
     <div>
-      보낼SP : <input type="text" v-model="data.amount">
+      <v-text-field
+        label="보낼SP"
+        v-model="data.amount"
+      ></v-text-field>
+      <div v-if="data.amount">
+        {{ spToVests(data.amount) + ' VESTS' }}
+      </div>
     </div>
     <div>
-      Active Key : <input type="text" v-model="data.wif">
+      <v-text-field
+        label="Active Key"
+        v-model="data.wif"
+      ></v-text-field>
     </div>
     <div>
-      임대기간 : <input type="text" v-model="data.weeks">
+      <v-text-field
+        label="임대기간"
+        v-model="data.weeks"
+      ></v-text-field>
     </div>
     <div>
       예상수익
@@ -23,6 +40,14 @@
     </div>
     <div>
       약관...<br>...
+    </div>
+    <div>
+      <v-btn @click="transfer">임대</v-btn>
+    </div>
+    <div>
+      <ul>
+        <li v-for="(item, i) in delegations">{{ item }}</li>
+      </ul>
     </div>
   </v-container>
 </template>
@@ -59,88 +84,72 @@
 </style>
 
 <script>
+import steem from '@/services/steem'
+import steemconnect from '@/services/steemconnect'
+import steemutil from '@/mixins/steemutil'
+
 export default {
   data () {
     return {
       data: {},
       me: {},
-      steempowers: {},
+      sp: {},
       steemGlobalProperties: {},
       delegations: []
     }
   },
+  mixins: [steemutil],
   components: {
   },
   created () {
   },
   mounted () {
-    this.getSteemGlobalProperties()
+    steemconnect.setAccessToken(this.$store.state.accessToken)
     this.getMe()
     this.getVestingDelegations()
-    this.$nextTick(function () {
-
-    })
   },
   computed: {
     created: function () {
       return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
     },
-    sp: function () {
-      const sp = this.getSteemPower()
-      return isNaN(sp) ? '' : sp
+    // sp: function () {
+    //   const sp = this.getSteemPower()
+    //   return isNaN(sp) ? '' : sp
+    // }
+    mineSP () {
+      return steem.formatter.vestToSteem(parseFloat(this.me.vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+    },
+    receivedSP () {
+      return steem.formatter.vestToSteem(parseFloat(this.me.received_vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+    },
+    delegatedSP () {
+      return steem.formatter.vestToSteem(-parseFloat(this.me.delegated_vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
     }
   },
   methods: {
-    getSteemGlobalProperties: function () {
-      let vm = this
-      this.$steem.api.getDynamicGlobalProperties(function (err, result) {
-        if (err) {}
-        vm.steemGlobalProperties = {
-          totalVestingShares: result.total_vesting_shares.replace(' VESTS', ''),
-          totalVestingFund: result.total_vesting_fund_steem.replace(' STEEM', '')
-        }
-        vm.$store.commit('setSteemGlobalProperties', vm.steemGlobalProperties)
-      })
-    },
     getMe: function () {
       let vm = this
-      this.$client.database
-        .call('get_accounts', [[this.$store.state.steemconnect.user.user]])
-        .then(function (result) {
-          vm.me = result[0]
-        })
-    },
-    getSteemPowers: function () {
-      const a = parseFloat(this.me.vesting_shares)
-      const b = parseFloat(this.me.received_vesting_shares)
-      const c = -parseFloat(this.me.delegated_vesting_shares)
-      this.steempowers.mine = this.$steem.formatter.vestToSteem(a, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
-      this.steempowers.received = this.$steem.formatter.vestToSteem(b, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
-      this.steempowers.delegated = this.$steem.formatter.vestToSteem(c, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
-    },
-    getVestingShares: function () {
-      return parseFloat(this.me.vesting_shares) +
-        parseFloat(this.me.received_vesting_shares) +
-        -parseFloat(this.me.delegated_vesting_shares)
-    },
-    getSteemPower: function () {
-      this.getSteemPowers()
-      const vestingShares = this.getVestingShares()
-      return this.$steem.formatter.vestToSteem(vestingShares, this.steemGlobalProperties.totalVestingShares, this.steemGlobalProperties.totalVestingFund)
+      steemconnect.me((err, res) => {
+        if (err) {}
+        vm.me = res.account
+      })
     },
     getVestingDelegations: function () {
       let vm = this
-      let user = this.$store.state.steemconnect.user.user
-      this.$steem.api.getVestingDelegations(user, '', 50, function (err, result) {
+      steem.api.getVestingDelegations(this.$store.state.username, '', 50, (err, res) => {
         if (err) {}
-        vm.delegations = result
+        vm.delegations = res
       })
     },
     transfer: function () {
-      let from = this.$store.state.steemconnect.user.user
-      this.$steem.api.broadcast.transferToVesting(this.data.wif, from, this.data.to, this.data.amount, function (err, result) {
-        if (err) {}
-        console.log(err, result)
+      let vm = this
+      steem.broadcast.delegateVestingShares(this.data.wif, this.$store.state.username, this.data.to, this.spToVests(this.data.amount) + ' VESTS', (err, res) => {
+        if (err) {
+        } else {
+          vm.getMe()
+          vm.getVestingDelegations()
+        }
+        console.log(err, res)
       })
     }
   }
