@@ -12,7 +12,7 @@
         <div class="thumbnail">
           <v-layout flex align-center justify-center>
             <v-flex id="thubnailCard" xs5 style="padding-left:0px;">
-              <!-- <div justify-center  v-for="item in contents" > -->
+              <!-- <div justify-center  v-for="item in contents"> -->
                 <v-card-title class="black--text">표지 </v-card-title>
                 <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
                   <v-img v-if="file.length>0"
@@ -141,8 +141,18 @@
                     <v-text-field v-model="tagtext"
                       label="태그단어"
                       single-line
+                      v-on:keyup.space="tagtext += '#'"
+                      v-on:change="hashtag"
                     ></v-text-field>
-                    <h3 v-if="this.tagtext.length > 0">#{{this.tagtext}}</h3>
+
+                    <v-layout row wrap align-center >
+                          <v-btn v-for="thing in tagarray"
+                          class="black--text"
+                          depressed small
+                          round
+                          style="width:35%;font-size:65%;"
+                          outline color="indigo">{{thing}}</v-btn>
+                  </v-layout>
                   </br>
                   </v-flex>
                </v-card>
@@ -169,7 +179,8 @@ import Card from '@/components/post/Card'
 export default {
   data () {
     return {
-      tagtext: '',
+      tagtext: '#', //tag inputed
+      tagarray: [],
       onchangetext: '',
       inputbox: false,
       contents : [], //array of each page content ex. [0] = title page [1]
@@ -207,12 +218,26 @@ export default {
     this.callObj()
   },
   methods: {
+    hashtag: function() {
+      this.tagarray = [];
+      console.log("tag", this.tagtext);
+      let split = this.tagtext.split(' ')
+      let arr = [] //array to send to db
+      for (let item in split)  {
+        if (split[item].length>1) {
+          this.tagarray.push(split[item])
+          //send to db
+        }
+      }
+      console.log("arr", arr);
+      //send info to db
+    },
     addCard: function () {
       console.log("cadd");
       //add card in thumbnailCard
       //increase contents array
       //increase contentlen length
-      e
+
     },
     callObj: function() {
       this.axios.get('http://localhost:4000/get/posts').then((response) => {
@@ -353,7 +378,14 @@ export default {
     border-width:0.5px;
     border-color: rgba(0,0,0,0.3);
   }
+  #hasbtn{
+    width:30px;
+    height:20px;
+  }
 
+  .v-btn {
+    min-width: 0;
+  }
 
 
 </style>
