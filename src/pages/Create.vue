@@ -1,38 +1,91 @@
 <template>
-  <v-container grid-list-xl>
-    <v-layout row justify-space-around>
+  <v-container grid-list-xl style="padding-top: 0px;">
+
+
+    <v-layout class="topToolbar" justify-end>
+        <v-btn class="submitBtn" v-on:click="submitBtn" style="background-color:blue; color:white;">Submit</v-btn>
+    </v-layout>
+
+    <v-layout row justify-space-between>
 
       <v-flex xs12 sm6 md4>
         <div class="thumbnail">
           <v-layout flex align-center justify-center>
-            <v-flex xs5 >
-              <div v-for="(item,i) in items":key="i" >
-                <v-card-title class="black--text">title </v-card-title>
-                <v-card color ="white" dark class="black--text">hi</br></br></br></br></br>hi </v-card></br>
-              </div>
+            <v-flex id="thubnailCard" xs5 style="padding-left:0px;">
+              <!-- <div justify-center  v-for="item in contents" > -->
+                <v-card-title class="black--text">표지 </v-card-title>
+                <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
+                  <v-img v-if="file.length>0"
+                    class="black--text"
+                    height="130px"
+                    v-bind:src="file">
+                    <v-container fill-height fluid>
+                      <v-layout fill-height>
+                        <v-flex xs12 align-end flexbox>
+                          <span class="white--text">Test</span>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-img>
+                  <div v-else>
+                    <v-img
+                    width="130px"
+                    src="https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png"
+                    height="130px"
+                    > </v-img>
+                  </div>
+                  <v-card-title>
+                    <div style="height:100px;">
+                      <span v-if="onchangetext.length==0" class="grey--text">Input text</span>
+                      <span>{{this.onchangetext}}</span><br>
+                    </div>
+                  </v-card-title>
+                </v-card>
+
+              <!-- </div> -->
             </v-flex>
           </v-layout>
+
+          <!-- add button -->
+          <v-layout justify-center>
+            <v-flex xs12 sm3>
+                <v-btn flat icon color="grey" @click="addCard">
+                  <v-icon>add</v-icon>
+                </v-btn>
+                <span style="color:grey;">카드추가</span>
+              </v-flex>
+          </v-layout>
+
         </div>
       </v-flex>
 
+      <!-- content card -->
       <v-layout flex align-center justify-center >
         <v-flex>
           <h3 style="margin-left:50px;">스티커</h3> </br>
-          <v-card class="contentCard" ></br>
-            <input type="file" class="form-control" v-on:change="upload"/>
+          <v-card class="contentCard" >
+            <input v-if="inputbox==false" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" v-on:change="upload"/>
+            <div v-else id="inputbox" style="box-shadow: none !important;"><v-img height="250px"v-bind:src="file" @click="inputbox=false"></v-img></div>
 
-            <!-- <vue-dropzone ref="myVueDropzone" id="dropzone" :options="dropzoneOptions"></vue-dropzone> -->
-            <!-- <vue-dropzone id="myVueDropzone" v-on:vdropzone-success="success" :options="dropzoneOptions"></vue-dropzone> -->
-            <v-textarea v-model="onchangetext" auto-grow box label="text" rows="1" v-on:change="objOnChange"></v-textarea>
-            <v-btn color="submit" v-on:click="submitBtn">Submit</v-btn>
-            <h1>{{this.onchangetext}}</h1>
+            <v-flex id ="textinput" style="height:250px;" >
+              <v-textarea
+                box
+                rows="11"
+                background-color="white"
+                v-model="onchangetext"
+                v-on:change="objOnChange"></v-textarea>
+            </v-flex>
           </v-card>
         </v-flex>
     </v-layout>
 
-      <!-- toolbar -->
-      <v-layout row wrap class="toolbar">
-         <v-flex class="py-2">
+    <!-- sidebar -->
+      <v-layout align-end class="toolbar" justify-space-between column fill-height
+        style="  margin-top: 0px; margin-bottom: 0px;">
+       <v-flex class="py-2">
+         </br></br></br>
+         <!-- toolbar -->
+         <div>
            <h3>도구</h3>
           <v-expansion-panel>
             <v-expansion-panel-content>
@@ -78,35 +131,28 @@
 
 
           </v-expansion-panel>
-        </br></br></br>
-
-      <!-- tag section -->
-      <h3>태그</h3>
-         <v-card>
-           <v-flex>
-              <v-text-field v-model="tagtext"
-                label="태그단어"
-                single-line
-              ></v-text-field>
-              <h3 v-if="this.tagtext.length > 0">#{{this.tagtext}}</h3>
-            </br>
-            </v-flex>
-         </v-card>
+           </br></br></br>
+         </div>
+        <!-- tag section -->
+          <div>
+            <h3>태그</h3>
+               <v-card>
+                 <v-flex>
+                    <v-text-field v-model="tagtext"
+                      label="태그단어"
+                      single-line
+                    ></v-text-field>
+                    <h3 v-if="this.tagtext.length > 0">#{{this.tagtext}}</h3>
+                  </br>
+                  </v-flex>
+               </v-card>
+         </div>
        </v-flex>
+      </v-layout>
 
-     </v-layout>
-
-
-    </break>
-
-
-
+    </br>
 
     </v-layout>
-
-
-
-
 
   </v-container>
 </template>
@@ -120,14 +166,14 @@ import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import Card from '@/components/post/Card'
 
-// import PostsService from '@/services/PostsService'
-
 export default {
   data () {
     return {
       tagtext: '',
       onchangetext: '',
+      inputbox: false,
       contents : [], //array of each page content ex. [0] = title page [1]
+      contentlen: '',
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
       submit: false,
@@ -156,15 +202,36 @@ export default {
   },
   components: {
     vueDropzone: vue2Dropzone,
-
+  },
+  mounted() {
+    this.callObj()
   },
   methods: {
+    addCard: function () {
+      console.log("cadd");
+      //add card in thumbnailCard
+      //increase contents array
+      //increase contentlen length
+      e
+    },
+    callObj: function() {
+      this.axios.get('http://localhost:4000/get/posts').then((response) => {
+        let contents = response.data[0].contents.content
+        for (let item in contents) {
+          this.contents.push(contents[item]);
+        }
+        this.contentlen = this.contents.length;
+      })
+
+    },
     objOnChange: function() {
-      const obj =  {
+      console.log("this.textchange", this.onchangetext);
+      let obj =  {
         url: this.file,
         text: this.onchangetext
       }
-      this.$store.commit('setCardContents', obj);
+      this.contents[this.contentlen] = obj; //update current card's content
+      this.$store.commit('setCardContents', this.contents);
       console.log('getter ',this.$store.getters.cardContents);
     },
     async upload(event) {
@@ -178,19 +245,18 @@ export default {
       this.axios.post(uri, formData).then((response) => {
         this.file = response.data.Location;
         console.log("file location", this.file);
+        this.objOnChange();
+        this.inputbox=true; //show img
       })
     },
-    submitBtn() { //create the card
-      let obj = {"file":this.file,
-                  "text": this.text}
-      let uri = 'http://localhost:4000/insert';
-      this.axios.post(uri, obj).then((response) =>{
-        console.log("done", response.data);
+    submitBtn: function() { //create the contents
+      this.axios.post('http://localhost:4000/insert', this.$store.getters.cardContents).then((response) =>{
+        console.log("res", response.data);
       })
-
-    }
+    },
 
   }
+
 }
 </script>
 
@@ -202,6 +268,17 @@ export default {
 .lightbox {
   box-shadow: 0 0 20px inset rgba(0, 0, 0, 0.2);
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+}
+#textinput {
+  padding: 11px 0px 0px 3px;
+  height:261px;
+  width:303px;
+}
+#inputbox {
+  height:250px;
+  width:300px;
+  box-shadow: none !important;
+  background-color:rgb(224, 224, 224,0.3);
 }
 
 <style lang="scss" scoped>
@@ -230,7 +307,7 @@ export default {
     cursor: pointer;
   }
 
-  .dropbox:hover {
+  .inputbox:hover {
     background: lightblue; /* when mouse over to the drop zone, change color */
   }
 
@@ -256,6 +333,27 @@ export default {
   }
   .toolbar {
     width: 145px;
+    margin-top: 0px;
   }
+  .submitBtn {
+    margin-bottom: 0px;
+    float: right;
+    border-radius:50px;
+    background-color: blue;
+    color: white;
+  }
+  .topToolbar {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    top: 0px;
+    height: 50px;
+  }
+  #thumbnailCard {
+    width: 150px;
+    border-width:0.5px;
+    border-color: rgba(0,0,0,0.3);
+  }
+
+
 
 </style>
