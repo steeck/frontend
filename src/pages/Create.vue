@@ -9,8 +9,9 @@
         <div class="thumbnail">
           <v-layout flex align-center justify-center>
             <v-flex id="thubnailCard" xs5 style="padding-left:0px;">
-              <div justify-center v-for="(item, i) in contents" :key="i">
-                <v-card-title class="black--text" @click="selectCard(i)">표지 </v-card-title>
+              <div justify-center v-for="(item, i) in contents" :key="i" @click="selectCard(i)">
+                <v-card-title v-if="i == 0" class="black--text" >표지</v-card-title>
+                <v-card-title v-if="i > 0" class="black--text" >{{i}}</v-card-title>
                 <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
                   <v-img v-if="item.url"
                     class="black--text"
@@ -59,26 +60,41 @@
       <v-layout flex align-center justify-center >
         <v-flex>
           <h3 style="margin-left:50px;">스티커</h3> <br>
-          <v-card class="contentCard">
-            <input v-if="!url" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" @change="upload">
-            <div v-else id="inputbox" style="box-shadow: none !important;">
-              <v-img v-if="url"
-                height="250px"
-                :src="url"
-                @click="inputbox=false"
-              ></v-img>
-            </div>
+           <!-- <v-carousel hide-delimiters>
+            <v-carousel-item v-for="(item,i) in contents" :key="i"> -->
+              <v-card class="contentCard">
+                <input v-if="!url" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" @change="upload">
+                <div v-else id="inputbox" style="box-shadow: none !important;">
+                  <v-img v-if="url"
+                    height="250px"
+                    :src="url"
+                  ></v-img>
+                  <v-btn fab
+                    icon
+                    top
+                    right
+                    absolute
+                    small
+                    color="white"
+                    style="width:10%; height:5%; margin-top:25px;"
+                    @click="removeImg(selected)">
+                    <v-icon>delete</v-icon>
+                  </v-btn>
+                </div>
 
-            <v-flex id ="textinput" style="height:250px;" >
-              <v-textarea
-                box
-                rows="11"
-                background-color="white"
-                v-model="text"
-                @keyup="bindText"
-              ></v-textarea>
-            </v-flex>
-          </v-card>
+                <v-flex id ="textinput" style="height:250px;" >
+                  <v-textarea
+                    box
+                    rows="11"
+                    label="Input Text"
+                    background-color="white"
+                    v-model="text"
+                    @keyup="bindText"
+                  ></v-textarea>
+                </v-flex>
+              </v-card>
+            <!-- </v-carousel-item>
+          </v-carousel> -->
         </v-flex>
       </v-layout>
 
@@ -178,7 +194,6 @@ export default {
       url: '',
       text: '',
       contents: [{url: null, text: ''}],  // array of each page content ex. [0] = title page [1]
-
       tagtext: '#',  // tag inputed
       tagarray: [],
 
@@ -187,15 +202,7 @@ export default {
       submit: false,
 
       width: 300,
-      items: [
-        { icon: 'inbox', title: 'Inbox' },
-        { icon: 'star', title: 'Starred' },
-        { icon: 'send', title: 'Sent mail' },
-        { divider: true },
-        { icon: 'mail', title: 'All mail' },
-        { icon: 'delete', title: 'Trash' },
-        { icon: 'error', title: 'Spam' }
-      ],
+
       dropzoneOptions: {
         // url: (file) => this.saveImages(file),
         url: 'https://httpbin.org/post',
@@ -214,6 +221,10 @@ export default {
     // this.callObj()
   },
   methods: {
+    removeImg: function(i) {
+      this.url = null;
+      this.contents[i].url = null;
+    },
     selectCard: function (index) {
       this.selected = index
       this.url = this.contents[this.selected].url
@@ -255,7 +266,7 @@ export default {
       let formData = new FormData()
       formData.append('file', file[0])
 
-      api(formData).then(res => {
+      api.upload(formData).then(res => {
         vm.contents[vm.selected].url = res.data.Location
         vm.url = res.data.Location
       })
@@ -291,9 +302,11 @@ export default {
   background-color:rgb(224, 224, 224,0.3);
 }
 
+
 <style lang="scss" scoped>
 @import 'main.scss'
-  .background: {
+
+  .background {
     color: grey;
   }
 
@@ -327,7 +340,7 @@ export default {
   }
 
   .thumbnail {
-    background-color: white;
+    /* background-color: white; */
     height: 600px;
     width: 100%;
     overflow: auto;
