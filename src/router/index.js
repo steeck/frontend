@@ -11,7 +11,7 @@ import Lease from '@/pages/center/Lease'
 import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
 import RequestVote from '@/pages/center/RequestVote'
-import UserProfile from '@/components/UserProfile'
+import UserProfile from '@/pages/UserProfile'
 
 import Create from '@/pages/Create'
 

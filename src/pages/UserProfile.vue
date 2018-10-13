@@ -441,7 +441,7 @@
 
 
 <style lang="scss" scoped>
-  @import "../colorset.scss";
+  @import "../colorset";
   .my-profile {
     border: 0.5px solid #c3c3c3;
     padding-top: 15px;
