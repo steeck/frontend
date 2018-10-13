@@ -138,6 +138,7 @@
   import CardMy from '../components/post/CardMy'
   import InfiniteLoading from 'vue-infinite-loading'
   import steem from '@/services/steem'
+  import steemutil from '@/mixins/steemutil'
 
   export default {
     name: 'My',
@@ -182,12 +183,13 @@
     },
     mounted () {
       this.$nextTick(function () {
-        console.log(this.$store.state.account.name)
-        this.me.json_metadata.profile.name = this.$store.state.account.name
+        console.log(this.$store.state.me.account.name)
+        this.me.json_metadata.profile.name = this.$store.state.me.account.name
         this.getMe()
         this.getFollow()
       })
     },
+    mixins: [steemutil],
     computed: {
       created: function () {
         return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
@@ -229,7 +231,7 @@
         let vm = this
         console.log(steem)
         steem.api
-          .callAsync('get_accounts', [[this.$store.state.account.name]])
+          .callAsync('get_accounts', [[this.$store.state.me.account.name]])
           // .call('get_accounts', [['ura-soul']])
           .then(function (result) {
             result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
@@ -379,7 +381,7 @@
         console.log('get author and curation reward')
         let vm = this
         let allowed = ['curation_reward', 'author_reward']
-        steem.api.getAccountHistory(this.$store.state.username, vm.page.reward.lastId, this.page.steemRewardLoadingCount, function (err, result) {
+        steem.api.getAccountHistory(this.me.name, vm.page.reward.lastId, this.page.steemRewardLoadingCount, function (err, result) {
           if (err) {
             vm.page.ableLoading = false
             return
@@ -400,26 +402,7 @@
         })
       },
       sp: function (vests) {
-        // eslint-disable-next-line
-        vests = vests.replace(/[^0-9|\.]/g, '')
-        if (!this.$store.state.steemGlobalProperties.totalVestingShares || !this.$store.state.steemGlobalProperties.totalVestingFund) {
-          this.getSteemGlobalProperties()
-        }
-        return steem.formatter.vestToSteem(vests, this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
-      },
-      getSteemGlobalProperties: async function () {
-        let vm = this
-        steem.api.getDynamicGlobalProperties(await function (err, result) {
-          if (err) {
-            console.log(err)
-            return
-          }
-          const steemGlobalProperties = {
-            totalVestingShares: result.total_vesting_shares.replace(' VESTS', ''),
-            totalVestingFund: result.total_vesting_fund_steem.replace(' STEEM', '')
-          }
-          vm.$store.commit('setSteemGlobalProperties', steemGlobalProperties)
-        })
+        return (this.getSP(vests)).toFixed(3)
       },
       infiniteHandler: async function ($state) {
         if (this.page.midSelect === 'sticker' && this.page.subSelect === 'my') {

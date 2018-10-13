@@ -10,6 +10,7 @@ const steemutil = {
   },
   methods: {
     getSP: function (vests) {
+      vests = parseFloat(vests)
       return steem.formatter.vestToSteem(vests, this.$store.state.global.properties.shares, this.$store.state.global.properties.fund)
     },
     vestsToSP: function (vests, decimals = 3) {
