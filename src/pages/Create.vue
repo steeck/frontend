@@ -130,24 +130,24 @@
           <!-- tag section -->
           <div>
             <h3>태그</h3>
-              <v-card>
-                <v-flex>
-                  <v-text-field v-model="tagtext"
-                    label="태그단어"
-                    single-line
-                    v-on:keyup.space="tagtext += '#'"
-                    v-on:change="hashtag"
-                  ></v-text-field>
-                  <v-layout row wrap align-center >
-                    <v-btn v-for="(thing, i) in tagarray" :key="i"
-                      class="black--text"
-                      depressed small
-                      round
-                      style="width:35%;font-size:65%;"
-                      outline color="indigo"
-                    >{{ thing }}</v-btn>
-                  </v-layout>
-                  <br>
+            <v-card>
+              <v-flex>
+                <v-text-field v-model="tagtext"
+                  label="태그단어"
+                  single-line
+                  v-on:keyup.space="tagtext += '#'"
+                  v-on:change="hashtag"
+                ></v-text-field>
+                <v-layout row wrap align-center >
+                  <v-btn v-for="(thing, i) in tagarray" :key="i"
+                    class="black--text"
+                    depressed small
+                    round
+                    style="width:35%;font-size:65%;"
+                    outline color="indigo"
+                  >{{ thing }}</v-btn>
+                </v-layout>
+                <br>
               </v-flex>
             </v-card>
           </div>

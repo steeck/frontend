@@ -29,6 +29,10 @@ export default {
   },
   created () {
   },
+  mounted () {
+    this.updateFollowInfo()
+    this.$store.dispatch('global/getProperties')
+  },
   computed: {
     layout () {
       return this.$store.state.layout
@@ -103,9 +107,6 @@ export default {
       })
       return result
     }
-  },
-  mounted () {
-    this.updateFollowInfo()
   }
 }
 </script>

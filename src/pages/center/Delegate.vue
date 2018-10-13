@@ -85,55 +85,35 @@
 
 <script>
 import steem from '@/services/steem'
-import steemconnect from '@/services/steemconnect'
 import steemutil from '@/mixins/steemutil'
 
 export default {
   data () {
     return {
       data: {},
-      me: {},
-      sp: {},
-      steemGlobalProperties: {},
       delegations: []
     }
   },
   mixins: [steemutil],
-  components: {
-  },
-  created () {
-  },
   mounted () {
-    steemconnect.setAccessToken(this.$store.state.accessToken)
-    this.getMe()
+    this.$store.dispatch('me/getAccount')
     this.getVestingDelegations()
   },
   computed: {
-    created: function () {
-      return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
+    me () {
+      return this.$store.state.me.account
     },
-    // sp: function () {
-    //   const sp = this.getSteemPower()
-    //   return isNaN(sp) ? '' : sp
-    // }
     mineSP () {
-      return steem.formatter.vestToSteem(parseFloat(this.me.vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+      return this.getSP(parseFloat(this.me.vesting_shares)).toFixed(3)
     },
     receivedSP () {
-      return steem.formatter.vestToSteem(parseFloat(this.me.received_vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+      return this.getSP(parseFloat(this.me.received_vesting_shares)).toFixed(3)
     },
     delegatedSP () {
-      return steem.formatter.vestToSteem(-parseFloat(this.me.delegated_vesting_shares), this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+      return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
     }
   },
   methods: {
-    getMe: function () {
-      let vm = this
-      steemconnect.me((err, res) => {
-        if (err) {}
-        vm.me = res.account
-      })
-    },
     getVestingDelegations: function () {
       let vm = this
       steem.api.getVestingDelegations(this.$store.state.username, '', 50, (err, res) => {

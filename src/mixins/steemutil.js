@@ -10,7 +10,7 @@ const steemutil = {
   },
   methods: {
     getSP: function (vests) {
-      return steem.formatter.vestToSteem(vests, this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund)
+      return steem.formatter.vestToSteem(vests, this.$store.state.global.properties.shares, this.$store.state.global.properties.fund)
     },
     vestsToSP: function (vests, decimals = 3) {
       return (vests * this.vestsFor1SP).toFixed(decimals)

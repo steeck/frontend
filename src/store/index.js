@@ -1,10 +1,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VuexPersistence from 'vuex-persist'
+import steemconnect from '@/services/steemconnect'
+import global from './modules/global'
+import me from './modules/me'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+  modules: {
+    global,
+    me
+  },
   state: {
     layout: 'default-layout',
     accessToken: null,
@@ -30,6 +37,23 @@ export default new Vuex.Store({
     },
     draft: {},
     contentObj: {}  // obj array with card contents
+  },
+  actions: {
+    getMe ({ commit }) {
+      // console.log(this.state.accessToken)
+      if (this.state.accessToken) {
+        steemconnect.setAccessToken(this.state.accessToken)
+        steemconnect.me((err, res) => {
+          if (err) {
+            console.log(err)
+            return
+          }
+          commit('SET_ACCOUNT', res.account)
+        })
+      } else {
+        console.error('No access token')
+      }
+    }
   },
   mutations: {
     LOGIN (state, {accessToken, tokenExpires, username}) {
@@ -80,8 +104,6 @@ export default new Vuex.Store({
     cardContents (state) {
       return state.contentObj
     }
-  },
-  modules: {
   },
   plugins: [(new VuexPersistence()).plugin]
 })
