@@ -7,12 +7,14 @@ import steemconnect from '@/services/steemconnect'
 export default {
   name: 'Logout',
   async mounted () {
-    if (this.$store.state.accessToken) {
+    if (this.$store.state.auth.accessToken) {
       console.log('Try to logout')
-      steemconnect.setAccessToken(this.$store.state.accessToken)
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
       await steemconnect.revokeToken((err, res) => {
         if (err) {}
-        this.$store.commit('LOGOUT')
+        // this.$store.commit('LOGOUT')
+        this.$store.commit('auth/logout')
+        this.$store.commit('me/clear')
       })
     } else {
       console.log('You are already logged out')

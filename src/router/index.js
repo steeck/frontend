@@ -7,8 +7,11 @@ import Main from '@/pages/Main'
 import Feeds from '@/pages/Feeds'
 import Activities from '@/pages/Activities'
 import My from '@/pages/My'
+import Lease from '@/pages/center/Lease'
 import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
+import RequestVote from '@/pages/center/RequestVote'
+
 import Create from '@/pages/Create'
 
 Vue.use(Router)
@@ -46,9 +49,19 @@ const router = new Router({
       component: My
     },
     {
+      path: '/center/lease',
+      name: 'Lease',
+      component: Lease
+    },
+    {
       path: '/center/delegate',
       name: 'Delegate',
       component: Delegate
+    },
+    {
+      path: '/center/request_vote',
+      name: 'RequestVote',
+      component: RequestVote
     },
     {
       path: '/center/transactions',
@@ -64,7 +77,7 @@ const router = new Router({
 })
 router.beforeResolve((to, from, next) => {
   const defaultLayout = ['Feeds', 'Activities', 'My']
-  const centerLayout = ['Lease', 'Delegate', 'Transactions']
+  const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {
     store.commit('SET_LAYOUT', 'main-layout')

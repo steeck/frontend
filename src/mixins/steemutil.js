@@ -4,7 +4,7 @@ const steemutil = {
   computed: {
     vestsFor1SP () {
       const vests = 100000
-      const sp = steem.formatter.vestToSteem(vests, this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund)
+      const sp = this.getSP(vests)
       return vests / sp
     }
   },

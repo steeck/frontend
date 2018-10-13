@@ -1,6 +1,6 @@
 <template>
   <v-card>
-    <v-img
+    <v-img v-if="thumbnail"
       height="130px"
       :src="thumbnail"
       :lazy-src="defaultSrc"

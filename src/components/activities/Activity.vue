@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import steem from '@/services/steem'
+import steemutil from '@/mixins/steemutil'
 
 export default {
   props: {
@@ -74,6 +74,7 @@ export default {
       required: true
     }
   },
+  mixins: [steemutil],
   data () {
     return {
       item: {},
@@ -132,7 +133,7 @@ export default {
   },
   methods: {
     sp: function (vests) {
-      return steem.formatter.vestToSteem(vests, this.$store.state.steemGlobalProperties.totalVestingShares, this.$store.state.steemGlobalProperties.totalVestingFund).toFixed(3)
+      return this.getSP(vests).toFixed(3)
     },
     permlink (author, permlink) {
       return 'https://steemit.com/@' + this.item.author + '/' + this.item.permlink

@@ -84,7 +84,7 @@
       // console.log('init menu')
       // console.log(this.isLogin)
       // console.log(this.author + ' / ' + this.permlink)
-      steemconnect.setAccessToken(this.$store.state.accessToken)
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
     }
   }
 </script>

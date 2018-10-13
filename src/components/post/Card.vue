@@ -15,7 +15,7 @@
          </v-card-text>
        </v-flex>
        <v-flex class="col-img">
-         <v-img
+         <v-img v-if="thumbnail"
            :src="thumbnail"
            width="110"
            height="80"

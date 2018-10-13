@@ -19,8 +19,8 @@ const getters = {}
 // actions
 const actions = {
   getAccount ({ rootState, commit }) {
-    if (rootState.accessToken) {
-      steemconnect.setAccessToken(rootState.accessToken)
+    if (rootState.auth.accessToken) {
+      steemconnect.setAccessToken(rootState.auth.accessToken)
       steemconnect.me((err, res) => {
         if (err) {
           console.log(err)
@@ -52,6 +52,10 @@ const mutations = {
     } = JSON.parse(account.json_metadata)
     let profile = Object.assign({created}, {about, coverImage, location, name, profileImage, website})
     state.profile = profile
+  },
+  clear (state) {
+    state.account = {}
+    state.profile = {}
   }
 }
 
