@@ -73,7 +73,7 @@
         <div class="menu-bottom">
           <ul>
             <li>스틱소개</li>
-            <li>고객센터</li>
+            <li><router-link to="/center/lease">펀딩센터</router-link></li>
             <li>공식채널</li>
           </ul>
           <ul class="mt-2">
