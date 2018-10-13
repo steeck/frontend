@@ -34,7 +34,7 @@
                   </div>
                   <v-card-title>
                     <div style="height:100px;">
-                      <span v-if="onchangetext.length==0" class="grey--text">Input text</span>
+                      <span v-if="!item.text" class="grey--text">Input text</span>
                       <span>{{ item.text }}</span><br>
                     </div>
                   </v-card-title>
@@ -179,7 +179,6 @@ export default {
       text: '',
       contents: [{url: null, text: ''}],  // array of each page content ex. [0] = title page [1]
 
-
       tagtext: '#',  // tag inputed
       tagarray: [],
 
@@ -217,11 +216,11 @@ export default {
   methods: {
     selectCard: function (index) {
       this.selected = index
-      this.url = this.contents[this.selected].url;
-      this.text = this.contents[this.selected].text;
+      this.url = this.contents[this.selected].url
+      this.text = this.contents[this.selected].text
     },
     bindText: function () {
-      this.contents[this.selected].text = this.text;
+      this.contents[this.selected].text = this.text
     },
     hashtag: function () {
       this.tagarray = []
@@ -250,9 +249,6 @@ export default {
     //     this.contentlen = this.contents.length
     //   })
     // },
-    objOnChange: function () {
-      this.contents[this.selected].text = this.onchangetext
-    },
     upload: async function (event) {
       let vm = this
       let file = event.target.files
@@ -268,7 +264,7 @@ export default {
       let formData // @TODO should be implemented
       api(formData).then(res => {
         console.log(res)
-      });
+      })
     }
   }
 }
