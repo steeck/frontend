@@ -28,7 +28,8 @@ export default new Vuex.Store({
         report: 'report@gmail.com'
       }
     },
-    draft: {}
+    draft: {},
+    contentObj: {}  // obj array with card contents
   },
   mutations: {
     LOGIN (state, {accessToken, tokenExpires, username}) {
@@ -64,6 +65,9 @@ export default new Vuex.Store({
     },
     setSteemPrice (state, payload) {
       state.steemPrice = payload
+    },
+    setCardContents (state, payload) {
+      state.contentObj = payload
     }
   },
   getters: {
@@ -72,6 +76,9 @@ export default new Vuex.Store({
     },
     steemPrice (state) {
       return state.steemPrice
+    },
+    cardContents (state) {
+      return state.contentObj
     }
   },
   modules: {

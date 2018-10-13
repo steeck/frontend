@@ -9,6 +9,7 @@ import Activities from '@/pages/Activities'
 import My from '@/pages/My'
 import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
+import Create from '@/pages/Create'
 
 Vue.use(Router)
 
@@ -53,6 +54,11 @@ const router = new Router({
       path: '/center/transactions',
       name: 'Transactions',
       component: Transactions
+    },
+    {
+      path: '/create',
+      name: 'Create',
+      component: Create
     }
   ]
 })
