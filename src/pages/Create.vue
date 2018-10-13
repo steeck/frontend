@@ -9,37 +9,37 @@
         <div class="thumbnail">
           <v-layout flex align-center justify-center>
             <v-flex id="thubnailCard" xs5 style="padding-left:0px;">
-              <!-- <div justify-center  v-for="item in contents"> -->
-              <v-card-title class="black--text">표지 </v-card-title>
-              <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
-                <v-img v-if="file.length>0"
-                  class="black--text"
-                  height="130px"
-                  v-bind:src="file"
-                >
-                  <v-container fill-height fluid>
-                    <v-layout fill-height>
-                      <v-flex xs12 align-end flexbox>
-                        <span class="white--text">Test</span>
-                      </v-flex>
-                    </v-layout>
-                  </v-container>
-                </v-img>
-                <div v-else>
-                  <v-img
-                    width="130px"
-                    src="https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png"
+              <div justify-center v-for="(item, i) in contents" :key="i">
+                <v-card-title class="black--text" @click="selectCard(i)">표지 </v-card-title>
+                <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
+                  <v-img v-if="item.url"
+                    class="black--text"
                     height="130px"
-                  ></v-img>
-                </div>
-                <v-card-title>
-                  <div style="height:100px;">
-                    <span v-if="onchangetext.length==0" class="grey--text">Input text</span>
-                    <span>{{this.onchangetext}}</span><br>
+                    :src="item.url"
+                  >
+                    <v-container fill-height fluid>
+                      <v-layout fill-height>
+                        <v-flex xs12 align-end flexbox>
+                          <span class="white--text">Test</span>
+                        </v-flex>
+                      </v-layout>
+                    </v-container>
+                  </v-img>
+                  <div v-else>
+                    <v-img
+                      width="130px"
+                      src="https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png"
+                      height="130px"
+                    ></v-img>
                   </div>
-                </v-card-title>
-              </v-card>
-              <!-- </div> -->
+                  <v-card-title>
+                    <div style="height:100px;">
+                      <span v-if="onchangetext.length==0" class="grey--text">Input text</span>
+                      <span>{{ item.text }}</span><br>
+                    </div>
+                  </v-card-title>
+                </v-card>
+              </div>
             </v-flex>
           </v-layout>
 
@@ -59,17 +59,23 @@
       <v-layout flex align-center justify-center >
         <v-flex>
           <h3 style="margin-left:50px;">스티커</h3> <br>
-          <v-card class="contentCard" >
-            <input v-if="inputbox==false" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" v-on:change="upload"/>
-            <div v-else id="inputbox" style="box-shadow: none !important;"><v-img height="250px"v-bind:src="file" @click="inputbox=false"></v-img></div>
+          <v-card class="contentCard">
+            <input v-if="!url" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" @change="upload">
+            <div v-else id="inputbox" style="box-shadow: none !important;">
+              <v-img v-if="url"
+                height="250px"
+                :src="url"
+                @click="inputbox=false"
+              ></v-img>
+            </div>
 
             <v-flex id ="textinput" style="height:250px;" >
               <v-textarea
                 box
                 rows="11"
                 background-color="white"
-                v-model="onchangetext"
-                v-on:change="objOnChange"
+                v-model="text"
+                @keyup="bindText"
               ></v-textarea>
             </v-flex>
           </v-card>
@@ -160,6 +166,7 @@
 
 <script>
 // import axios from 'axios'
+import api from '@/api/posts'
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 // import Card from '@/components/post/Card'
@@ -167,17 +174,19 @@ import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 export default {
   data () {
     return {
+      selected: 0,
+      url: '',
+      text: '',
+      contents: [{url: null, text: ''}],  // array of each page content ex. [0] = title page [1]
+
+
       tagtext: '#',  // tag inputed
       tagarray: [],
-      onchangetext: '',
-      inputbox: false,
-      contents: [],  // array of each page content ex. [0] = title page [1]
-      contentlen: '',
+
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
       submit: false,
-      file: '',
-      text: '',
+
       width: 300,
       items: [
         { icon: 'inbox', title: 'Inbox' },
@@ -203,9 +212,17 @@ export default {
     vueDropzone: vue2Dropzone
   },
   mounted () {
-    this.callObj()
+    // this.callObj()
   },
   methods: {
+    selectCard: function (index) {
+      this.selected = index
+      this.url = this.contents[this.selected].url;
+      this.text = this.contents[this.selected].text;
+    },
+    bindText: function () {
+      this.contents[this.selected].text = this.text;
+    },
     hashtag: function () {
       this.tagarray = []
       console.log('tag', this.tagtext)
@@ -221,49 +238,37 @@ export default {
       // send info to db
     },
     addCard: function () {
-      console.log('cadd')
-      // add card in thumbnailCard
-      // increase contents array
-      // increase contentlen length
+      this.contents.push({url: null, text: ''})
+      // this.selected = this.contents.length - 1
     },
-    callObj: function () {
-      this.axios.get('http://localhost:4000/get/posts').then((response) => {
-        let contents = response.data[0].contents.content
-        for (let item in contents) {
-          this.contents.push(contents[item])
-        }
-        this.contentlen = this.contents.length
-      })
-    },
+    // callObj: function () {
+    //   this.axios.get('http://localhost:4000/posts').then((response) => {
+    //     let contents = response.data[0].contents.content
+    //     for (let item in contents) {
+    //       this.contents.push(contents[item])
+    //     }
+    //     this.contentlen = this.contents.length
+    //   })
+    // },
     objOnChange: function () {
-      console.log('this.textchange', this.onchangetext)
-      let obj = {
-        url: this.file,
-        text: this.onchangetext
-      }
-      this.contents[this.contentlen] = obj  // update current card's content
-      this.$store.commit('setCardContents', this.contents)
-      console.log('getter ', this.$store.getters.cardContents)
+      this.contents[this.selected].text = this.onchangetext
     },
     upload: async function (event) {
+      let vm = this
       let file = event.target.files
       let formData = new FormData()
       formData.append('file', file[0])
-      for (var key of formData.entries()) {
-        console.log('hihi', key[1])
-      }
-      let uri = 'http://localhost:4000/create'
-      this.axios.post(uri, formData).then((response) => {
-        this.file = response.data.Location
-        console.log('file location', this.file)
-        this.objOnChange()
-        this.inputbox = true // show img
+
+      api(formData).then(res => {
+        vm.contents[vm.selected].url = res.data.Location
+        vm.url = res.data.Location
       })
     },
     submitBtn: function () { // create the contents
-      this.axios.post('http://localhost:4000/insert', this.$store.getters.cardContents).then((response) => {
-        console.log('res', response.data)
-      })
+      let formData // @TODO should be implemented
+      api(formData).then(res => {
+        console.log(res)
+      });
     }
   }
 }
