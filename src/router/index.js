@@ -11,12 +11,14 @@ import Lease from '@/pages/center/Lease'
 import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
 import RequestVote from '@/pages/center/RequestVote'
+import UserProfile from '@/pages/UserProfile'
 
 import Create from '@/pages/Create'
 
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/login',
@@ -49,6 +51,11 @@ const router = new Router({
       component: My
     },
     {
+      path: '/user/:username',
+      name: 'User',
+      component: UserProfile
+    },
+    {
       path: '/center/lease',
       name: 'Lease',
       component: Lease
@@ -76,7 +83,7 @@ const router = new Router({
   ]
 })
 router.beforeResolve((to, from, next) => {
-  const defaultLayout = ['Feeds', 'Activities', 'My']
+  const defaultLayout = ['Feeds', 'Activities', 'My', 'User']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {

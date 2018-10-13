@@ -8,7 +8,9 @@
             <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
           </v-avatar>
           <v-flex d-inline-block>
-            <div>{{ item.author }}</div>
+            <div>
+              <router-link :to="'/user/' + item.author">{{ item.author }}</router-link>
+            </div>
             <div>{{ this.createdTime | ago}}</div>
           </v-flex>
         </v-flex>
