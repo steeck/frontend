@@ -50,18 +50,18 @@
     },
     computed: {
       isLogin: function () {
-        return this.$store.state.username !== null
+        return this.$store.state.me.account.name !== null
       },
       isMyFollwer: function () {
-        return this.$store.state.follower.indexOf(this.author) > -1
+        return this.$store.state.me.follower.indexOf(this.author) > -1
       },
       isMyfollowing: function () {
-        return this.$store.state.following.indexOf(this.author) > -1
+        return this.$store.state.me.following.indexOf(this.author) > -1
       }
     },
     methods: {
       test: function () {
-        console.log(this.$store.state.account)
+        console.log(this.$store.state.me.account)
       },
       report: function () {
         let subject = '[신고] : (제목을 넣어주세요)'
@@ -70,13 +70,27 @@
         win.close()
       },
       followingAction: function () {
-        steemconnect.follow(this.$store.state.username, this.author, function (err, res) {
+        let vm = this
+        steemconnect.follow(this.$store.state.me.account.name, this.author, function (err, res) {
           console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/addFollowing', vm.author)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+          }
         })
       },
       unFollowingAction: function () {
-        steemconnect.unfollow(this.$store.state.username, this.author, function (err, res) {
+        let vm = this
+        steemconnect.unfollow(this.$store.state.me.account.name, this.author, function (err, res) {
           console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/removeFollowing', vm.author)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+          }
         })
       }
     },
