@@ -1,6 +1,6 @@
 <template>
   <div>
-    <user-profile :name="'smtion'"></user-profile>
+    <user-profile :name="$store.state.me.account.name"></user-profile>
   </div>
 </template>
 

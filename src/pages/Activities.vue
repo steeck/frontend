@@ -63,7 +63,12 @@ export default {
   methods: {
     fetchBlog: function () {
       let vm = this
-      steem.api.getAccountHistory('smtion', this.lastId, this.limit, function (err, result) {
+      let username = this.$store.state.me.account.name
+      // let username = 'smtion'
+      if (!username) {
+        return
+      }
+      steem.api.getAccountHistory(username, this.lastId, this.limit, function (err, result) {
         if (err) {
           vm.ableLoading = false
           return
