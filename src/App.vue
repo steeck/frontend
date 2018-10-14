@@ -54,23 +54,26 @@ export default {
   },
   methods: {
     updateFollowInfo: function () {
-      this.$store.state.follower = []
-      this.$store.state.following = []
-      if (this.$store.state.username === null) {
+      this.$store.state.me.follower = []
+      this.$store.state.me.following = []
+      if (this.$store.state.me.account.name === null) {
         return
       }
       this.loadFollower()
       this.loadFollowing()
+      this.$store.dispatch('me/getFollowInfo').catch(err => {
+        console.log(err)
+      })
     },
     loadFollower: function () {
-      steem.api.callAsync('get_followers', [this.$store.state.username, this.lastFollowerName, 'blog', this.onceForCall])
+      steem.api.callAsync('get_followers', [this.$store.state.me.account.name, this.lastFollowerName, 'blog', this.onceForCall])
         .then(result => {
           let arrResult = this.getArrByArrKey(result, 'follower')
-          if (this.$store.state.follower.length === 0) {
-            this.$store.state.follower = arrResult
+          if (this.$store.state.me.follower.length === 0) {
+            this.$store.state.me.follower = arrResult
           } else {
             arrResult.shift()
-            this.$store.state.follower = this.$store.state.follower.concat(arrResult)
+            this.$store.state.me.follower = this.$store.state.me.follower.concat(arrResult)
           }
           if (arrResult.length > 0) {
             this.lastFollowerName = result[(result.length - 1)].follower
@@ -81,14 +84,14 @@ export default {
         })
     },
     loadFollowing: function () {
-      steem.api.callAsync('get_following', [this.$store.state.username, this.lastFollowingName, 'blog', this.onceForCall])
+      steem.api.callAsync('get_following', [this.$store.state.me.account.name, this.lastFollowingName, 'blog', this.onceForCall])
         .then(result => {
           let arrResult = this.getArrByArrKey(result, 'following')
-          if (this.$store.state.following.length === 0) {
-            this.$store.state.following = arrResult
+          if (this.$store.state.me.following.length === 0) {
+            this.$store.state.me.following = arrResult
           } else {
             arrResult.shift()
-            this.$store.state.following = this.$store.state.following.concat(arrResult)
+            this.$store.state.me.following = this.$store.state.me.following.concat(arrResult)
           }
           if (arrResult.length > 0) {
             this.lastFollowingName = result[(result.length - 1)].following
