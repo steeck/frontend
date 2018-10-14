@@ -1,4 +1,5 @@
 import steemconnect from '@/services/steemconnect'
+import steem from '@/services/steem'
 
 // initial state
 const state = {
@@ -10,7 +11,10 @@ const state = {
     // name: '',
     // profileImage: 'https://via.placeholder.com/100x100',
     // website: ''
-  }
+  },
+  follow: {},
+  follower: [],
+  following: []
 }
 
 // getters
@@ -32,6 +36,16 @@ const actions = {
     } else {
       console.error('No access token')
     }
+  },
+  getFollowInfo: function ({ rootState, commit }) {
+    steem.api
+      .callAsync('get_follow_count', [rootState.me.account.name])
+      .then(function (result) {
+        commit('setFollow', result)
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 }
 
@@ -53,9 +67,24 @@ const mutations = {
     let profile = Object.assign({created}, {about, coverImage, location, name, profileImage, website})
     state.profile = profile
   },
+  setFollow (state, value) {
+    state.follow = value
+  },
+  addFollowing (state, name) {
+    console.log('call add following')
+    state.following.push(name)
+  },
+  removeFollowing (state, name) {
+    if (state.following.indexOf(name) > -1) {
+      state.following.splice(state.following.indexOf(name), 1)
+    }
+  },
   clear (state) {
     state.account = {}
     state.profile = {}
+    state.follow = {}
+    state.follower = []
+    state.following = []
   }
 }
 
