@@ -8,9 +8,10 @@
             <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
           </v-avatar>
           <v-flex d-inline-block>
-            <div>
-              <router-link :to="'/user/' + item.author">{{ item.author }}</router-link>
-            </div>
+            <router-link :to="'/user/' + item.author" :tag="'button'" v-if="item.author !== $store.state.me.account.name">
+              {{ item.author }}
+            </router-link>
+            <div v-else>{{ item.author }}</div>
             <div>{{ this.createdTime | ago}}</div>
           </v-flex>
         </v-flex>
