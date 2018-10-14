@@ -24,7 +24,8 @@
         <a :href="me.json_metadata.profile.website" target="website">{{ me.json_metadata.profile.website }}</a>
       </div>
       <div v-if="username !== $store.state.me.account.name">
-        <v-btn dark color="deep-purple">팔로우</v-btn>
+        <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
+        <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
         <v-btn dark color="light-blue lighten-1">송금</v-btn>
         <v-btn color="error">차단</v-btn>
       </div>
@@ -139,6 +140,7 @@
   import InfiniteLoading from 'vue-infinite-loading'
   import steem from '@/services/steem'
   import steemutil from '@/mixins/steemutil'
+  import steemconnect from '@/services/steemconnect'
 
   export default {
     name: 'UserView',
@@ -184,16 +186,10 @@
           isLoading: false, // 인피니티 로딩 구동 토글 변수
           reward: {
             lastId: -1
-          }
+          },
+          isFollowProcessing: false // 팔로잉 추가제거 (유저정보창, 자신이 다른유저를 볼떄 사용) 상태 값
         }
       }
-    },
-    mounted () {
-      this.username = this.name ? this.name : this.$route.params.username
-      this.$nextTick(function () {
-        this.getMe()
-        this.getFollow()
-      })
     },
     mixins: [steemutil],
     computed: {
@@ -259,6 +255,37 @@
           .then(function (result) {
             vm.follow = result
           })
+      },
+      addFollowing: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.follow(this.$store.state.me.account.name, this.username, function (err, res) {
+          if (!err) {
+            vm.$store.commit('me/addFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      removeFollowing: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.unfollow(this.$store.state.me.account.name, this.username, function (err, res) {
+          console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/removeFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
       },
       setMidMenu: function (value) {
         this.page.midSelect = value
@@ -435,6 +462,13 @@
         this.page.ableLoading = true
         this.page.steemRewardLoadingCount = 30
       }
+    },
+    mounted () {
+      this.username = this.name ? this.name : this.$route.params.username
+      this.$nextTick(function () {
+        this.getMe()
+        this.getFollow()
+      })
     }
   }
 </script>
