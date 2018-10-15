@@ -91,9 +91,8 @@ export default {
       })
     },
     getMyFeed: function () {
-      // let name = this.$store.state.username
-      let name = 'smtion'
-      // let name = 'clayop'
+      let name = this.$store.state.me.account.name
+      // let name = 'smtion'
       let query = {
         tag: name,
         start_author: this.page.lastAuthor,
