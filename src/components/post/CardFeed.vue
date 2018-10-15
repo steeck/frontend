@@ -8,7 +8,8 @@
         <div class="card-author">{{ item.author }}</div>
         <div class="card-created">{{ item.created | convdate | ago }}</div>
       </div>
-      <v-btn outline round color="deep-purple" class="ml-3">+팔로우</v-btn>
+      <v-btn outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
+      <v-btn dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
       <v-spacer></v-spacer>
       <card-menu :author="item.author" :permlink="item.permlink"></card-menu>
     </v-card-actions>
@@ -39,6 +40,7 @@
 <script>
 import CardMenu from '@/components/post/menu'
 import Vote from '@/components/post/Vote'
+import steemconnect from '@/services/steemconnect'
 
 export default {
   props: ['item'],
@@ -52,7 +54,8 @@ export default {
       isVoted: false,
       jsonMetadata: {
         image: []
-      }
+      },
+      isFollowProcessing: false
     }
   },
   mounted () {
@@ -64,6 +67,12 @@ export default {
   computed: {
     getPayoutValue: function () {
       return parseFloat(this.item.pending_payout_value.replace(' SBD', '')).toFixed(2)
+    },
+    isMyFollowing: function () {
+      if (!this.$store.state.me.account.name) {
+        return false
+      }
+      return this.$store.state.me.following.indexOf(this.item.author) > -1
     }
   },
   methods: {
@@ -87,6 +96,42 @@ export default {
     completeVote: function () {
       this.isVoted = true
       this.dialog = false
+    },
+    addFollowing: function () {
+      if (this.$store.state.me.account.name === null) {
+        return
+      }
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+      this.isFollowProcessing = true
+      let vm = this
+      steemconnect.follow(this.$store.state.me.account.name, this.item.author, function (err, res) {
+        if (!err) {
+          vm.$store.commit('me/addFollowing', vm.item.author)
+          vm.$store.dispatch('me/getFollowInfo').catch(err => {
+            console.log(err)
+          })
+          vm.getFollow()
+        }
+        vm.isFollowProcessing = false
+      })
+    },
+    removeFollowing: function () {
+      if (this.$store.state.me.account.name === null) {
+        return
+      }
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+      this.isFollowProcessing = true
+      let vm = this
+      steemconnect.unfollow(this.$store.state.me.account.name, this.item.author, function (err, res) {
+        console.log(err, res)
+        if (!err) {
+          vm.$store.commit('me/removeFollowing', vm.item.author)
+          vm.$store.dispatch('me/getFollowInfo').catch(err => {
+            console.log(err)
+          })
+        }
+        vm.isFollowProcessing = false
+      })
     }
   }
 }

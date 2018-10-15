@@ -7,6 +7,7 @@ Vue.filter('tag', function (tag) {
   else if (tag === 'steeck-travel') return '여행'
   else return tag
 })
+/** @property {Function} convdate */
 Vue.filter('convdate', function (date) {
   const utc = new Date(date)
   return new Date(utc.setHours(utc.getHours() + 9))
