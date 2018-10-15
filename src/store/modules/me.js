@@ -1,6 +1,12 @@
 import steemconnect from '@/services/steemconnect'
 import steem from '@/services/steem'
 
+/**
+ * @property follow.follower_count : 나를 팔로우한 유저 수
+ * @property follow.following_count : 내가 팔로잉한 유저 수
+ * @type {{account: {}, profile: {}, follow: {}, follower: Array, following: Array}}
+ */
+
 // initial state
 const state = {
   account: {},
