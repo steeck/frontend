@@ -126,6 +126,9 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
+        <v-list v-else key="reward-none">
+          <v-flex>조회된 정보가 없습니다.</v-flex>
+        </v-list>
 
       </v-slide-y-transition>
 
