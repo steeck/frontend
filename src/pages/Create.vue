@@ -57,46 +57,52 @@
       </v-flex>
 
       <!-- content card -->
+      <v-layout><v-flex>
+        <v-btn flat icon small color="black" theme--dark backgroud-color="black" ><v-icon>arrow_left</v-icon></v-btn>
+      </v-flex></v-layout>
       <v-layout flex align-center justify-center >
         <v-flex>
           <h3 style="margin-left:50px;">스티커</h3> <br>
-           <!-- <v-carousel hide-delimiters>
-            <v-carousel-item v-for="(item,i) in contents" :key="i"> -->
-              <v-card class="contentCard">
-                <input v-if="!url" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" @change="upload">
-                <div v-else id="inputbox" style="box-shadow: none !important;">
-                  <v-img v-if="url"
-                    height="250px"
-                    :src="url"
-                  ></v-img>
-                  <v-btn fab
-                    icon
-                    top
-                    right
-                    absolute
-                    small
-                    color="white"
-                    style="width:10%; height:5%; margin-top:25px;"
-                    @click="removeImg(selected)">
-                    <v-icon>delete</v-icon>
-                  </v-btn>
-                </div>
+          <v-card class="contentCard">
+            <input v-if="!url" style="box-shadow: none !important;"id ="inputbox" type="file" class="form-control" @change="upload">
+            <div v-else id="inputbox" style="box-shadow: none !important;">
+              <v-img v-if="url"
+                height="250px"
+                width="268px"
+                :src="url"
+              ></v-img>
+              <v-btn fab
+                icon
+                top
+                right
+                absolute
+                small
+                color="white"
+                style="width:10%; height:5%; margin-top:25px;"
+                @click="removeImg(selected)">
+                <v-icon>delete</v-icon>
+              </v-btn>
+            </div>
 
-                <v-flex id ="textinput" style="height:250px;" >
-                  <v-textarea
-                    box
-                    rows="11"
-                    label="Input Text"
-                    background-color="white"
-                    v-model="text"
-                    @keyup="bindText"
-                  ></v-textarea>
-                </v-flex>
-              </v-card>
-            <!-- </v-carousel-item>
-          </v-carousel> -->
+            <v-flex id ="textinput"  class="black-text" style="height:250px;" >
+              <v-textarea
+                box
+                rows="12"
+                label="Input Text"
+                background-color="white"
+                color="black"
+                theme--light
+                v-model="text"
+                @keyup="bindText"
+              ></v-textarea>
+            </v-flex>
+          </v-card>
         </v-flex>
       </v-layout>
+
+      <v-layout><v-flex>
+        <v-btn flat icon small color="black" theme--dark backgroud-color="black" ><v-icon>arrow_right</v-icon></v-btn>
+      </v-flex></v-layout>
 
       <!-- sidebar -->
       <v-layout align-end class="toolbar" justify-space-between column fill-height
@@ -291,13 +297,14 @@ export default {
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
 }
 #textinput {
-  padding: 11px 0px 0px 3px;
-  height:261px;
-  width:303px;
+  padding: 0px 0px 0px 1px;
+  height:250px;
+  width:268px;
+  color: black;
 }
 #inputbox {
   height:250px;
-  width:300px;
+  width:270px;
   box-shadow: none !important;
   background-color:rgb(224, 224, 224,0.3);
 }
@@ -346,9 +353,9 @@ export default {
     overflow: auto;
   }
   .contentCard {
-    height: 500px;
-    width: 300px;
-    margin-left: 50px;
+    height: 507.5px;
+    width: 270px;
+    /* margin-left: 50px; */
     border-style: solid;
     border-width: 0.5px;
     border-color: rgba(0,0,0,0.3);
