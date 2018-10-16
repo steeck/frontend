@@ -58,7 +58,9 @@
 
       <!-- content card -->
       <v-layout><v-flex>
-        <v-btn flat icon small color="black" theme--dark backgroud-color="black" ><v-icon>arrow_left</v-icon></v-btn>
+        <v-btn flat icon color="black" theme--dark backgroud-color="black" @click="navigation(selected, 'back')">
+          <v-icon>arrow_left</v-icon>
+        </v-btn>
       </v-flex></v-layout>
       <v-layout flex align-center justify-center >
         <v-flex>
@@ -101,7 +103,9 @@
       </v-layout>
 
       <v-layout><v-flex>
-        <v-btn flat icon small color="black" theme--dark backgroud-color="black" ><v-icon>arrow_right</v-icon></v-btn>
+        <v-btn flat icon color="black" theme--dark backgroud-color="black" @click="navigation(selected, 'next')">
+          <v-icon>arrow_right</v-icon>
+        </v-btn>
       </v-flex></v-layout>
 
       <!-- sidebar -->
@@ -227,6 +231,18 @@ export default {
     // this.callObj()
   },
   methods: {
+    navigation: function(i, arrow) {
+      if (arrow=='back'&& this.selected!=0) {
+        this.selected = i - 1;
+        this.url = this.contents[this.selected].url
+        this.text = this.contents[this.selected].text
+      }
+      if (arrow=='next' && this.selected < this.contents.length-1) {
+        this.selected = i + 1;
+        this.url = this.contents[this.selected].url
+        this.text = this.contents[this.selected].text
+      }
+    },
     removeImg: function(i) {
       this.url = null;
       this.contents[i].url = null;
