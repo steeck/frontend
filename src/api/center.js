@@ -2,7 +2,7 @@ import http from '@/services/http'
 
 export default {
   delegate (data) {
-    return http.post('/delagations', data)
+    return http.post('/delegations', data)
   }
 }
 
