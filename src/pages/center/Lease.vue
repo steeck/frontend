@@ -1,19 +1,35 @@
 <template>
   <v-container grid-list-xl>
     <div class="my-profile text-xs-center">
-      SP : 
+      SP : {{ mineSP }}
+      received : {{ receivedSP }}
+      delegated : {{ delegatedSP }}
     </div>
     <div>
-      Delegatee : <input type="text" v-model="data.to">
+      <v-text-field
+        label="Borrower"
+        v-model="data.to"
+        readonly
+      ></v-text-field>
     </div>
     <div>
-      보낼SP : <input type="text" v-model="data.amount">
+      <v-text-field
+        label="빌릴 SP"
+        v-model="data.sp"
+        suffix="SP"
+        type="number"
+      ></v-text-field>
+      <div v-if="data.sp">
+        {{ vests + ' VESTS' }}
+      </div>
     </div>
     <div>
-      Active Key : <input type="text" v-model="data.wif">
-    </div>
-    <div>
-      임대기간 : <input type="text" v-model="data.weeks">
+      <v-text-field
+        label="빌릴기간"
+        v-model="data.weeks"
+        mask="###"
+        suffix="주"
+      ></v-text-field>
     </div>
     <div>
       예상수익
@@ -23,6 +39,14 @@
     </div>
     <div>
       약관...<br>...
+    </div>
+    <div>
+      <v-btn @click="lease">빌리기 신청</v-btn>
+    </div>
+    <div>
+      <ul>
+        <li v-for="(item, i) in delegations">{{ item }}</li>
+      </ul>
     </div>
   </v-container>
 </template>
@@ -59,24 +83,68 @@
 </style>
 
 <script>
+import api from '@/api/center'
+import steem from '@/services/steem'
+import steemutil from '@/mixins/steemutil'
+
 export default {
   data () {
     return {
-      data: {}
+      data: {},
+      delegations: []
     }
   },
-  components: {
-  },
-  created () {
-  },
+  mixins: [steemutil],
   mounted () {
-    this.$nextTick(function () {
-
-    })
+    this.init()
+    this.$store.dispatch('me/getAccount')
+    this.getVestingDelegations()
   },
   computed: {
+    me () {
+      return this.$store.state.me.account
+    },
+    mineSP () {
+      return this.getSP(parseFloat(this.me.vesting_shares)).toFixed(3)
+    },
+    receivedSP () {
+      return this.getSP(parseFloat(this.me.received_vesting_shares)).toFixed(3)
+    },
+    delegatedSP () {
+      return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
+    },
+    vests () {
+      return this.spToVests(this.data.sp)
+    }
   },
   methods: {
+    init: function () {
+      this.data = {
+        type: 'lease',
+        from: 'steeck',
+        to: this.$store.state.auth.username
+      }
+    },
+    getVestingDelegations: function () {
+      let vm = this
+      steem.api.getVestingDelegations(this.$store.state.username, '', 50, (err, res) => {
+        if (err) {}
+        vm.delegations = res
+      })
+    },
+    lease: function () {
+      this.data.vests = this.vests
+      console.log(this.data)
+      api.lease(this.data).then(res => {
+        if (res.status === 200) {
+          alert('신청이 완료되었습니다.')
+          this.init()
+        }
+      }).catch(error => {
+        if (error) {}
+        alert('신청을 실패했습니다. 입력값들을 확인하세요.')
+      })
+    }
   }
 }
 </script>

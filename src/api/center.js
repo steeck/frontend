@@ -3,6 +3,12 @@ import http from '@/services/http'
 export default {
   delegate (data) {
     return http.post('/delegations', data)
+  },
+  lease (data) {
+    return http.post('/lease', data)
+  },
+  requestVote (data) {
+    return http.post('/voting_requests', data)
   }
 }
 

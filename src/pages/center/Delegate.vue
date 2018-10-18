@@ -1,10 +1,10 @@
 <template>
   <v-container grid-list-xl>
     <div class="my-profile text-xs-center">
-        SP : {{ mineSP }}
-        received : {{ receivedSP }}
-        delegated : {{ delegatedSP }}
-      </div>
+      SP : {{ mineSP }}
+      received : {{ receivedSP }}
+      delegated : {{ delegatedSP }}
+    </div>
     <div>
       <v-text-field
         label="Delegatee"
@@ -14,7 +14,7 @@
     </div>
     <div>
       <v-text-field
-        label="보낼SP"
+        label="보낼 SP"
         v-model="data.sp"
         suffix="SP"
         type="number"
