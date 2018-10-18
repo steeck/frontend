@@ -1,5 +1,5 @@
 <template>
-  <v-container grid-list-xl style="padding-top: 0px;">
+  <v-container grid-list-xl style="padding-top: 0px; margin-left:0px;">
     <v-layout class="topToolbar" justify-end>
       <v-btn class="submitBtn" v-on:click="submitBtn" style="background-color:blue; color:white;">Submit</v-btn>
     </v-layout>
@@ -206,6 +206,7 @@ export default {
       contents: [{url: null, text: ''}],  // array of each page content ex. [0] = title page [1]
       tagtext: '#',  // tag inputed
       tagarray: [],
+      username: '', //username of steem user
 
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
@@ -229,6 +230,7 @@ export default {
   },
   mounted () {
     // this.callObj()
+    this.username = this.$store.state.me.account.name
   },
   methods: {
     navigation: function(i, arrow) {
@@ -287,17 +289,38 @@ export default {
       let file = event.target.files
       let formData = new FormData()
       formData.append('file', file[0])
-
       api.upload(formData).then(res => {
         vm.contents[vm.selected].url = res.data.Location
         vm.url = res.data.Location
       })
     },
     submitBtn: function () { // create the contents
-      let formData // @TODO should be implemented
-      api(formData).then(res => {
-        console.log(res)
-      })
+      let jsonObj = {tags:this.tagarray}
+      let formData = {
+        author: this.username,
+        contents: this.contents,
+        json_metadata: jsonObj //to be included in jsonMetadata
+      }
+      let empty = false;
+
+      for (let item in formData.contents) {
+        if (formData.contents[item].text == "") {
+          empty = true
+          alert('Text content is empty')
+        }
+        if (formData.contents[item].url == null) {
+          empty = true
+          alert('Img/Video is empty')
+        }
+      }
+      console.log('form', formData);
+      if (empty == false) {
+        // this.$store.dispatch('setCardContents', formData)
+        // console.log('getter',this.$store.getters.contentObj)
+        api.create(formData).then(res => {
+          console.log(res)
+        })
+      }
     }
   }
 }
