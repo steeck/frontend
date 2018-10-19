@@ -1,7 +1,10 @@
 import steem from 'steem'
 // const steem = require('steem')
 
-steem.api.setOptions({ url: 'https://api.steemit.com' })
+// steem.api.setOptions({ url: 'https://api.steemit.com' })
+steem.api.setOptions({ url: 'https://testnet.steem.vc' })
+// steem.api.config.set('https://testnet.steem.vc', 'helloworld1')
+
 // let opts = {}
 // opts.addressPrefix = 'STX'
 // opts.chainId = '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673'

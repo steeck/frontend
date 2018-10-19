@@ -191,11 +191,10 @@
 </template>
 
 <script>
-// import axios from 'axios'
 import api from '@/api/posts'
-import vue2Dropzone from 'vue2-dropzone'
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
-// import Card from '@/components/post/Card'
+import steem from '@/services/steem'
+// import vue2Dropzone from 'vue2-dropzone'
+// import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 
 export default {
   data () {
@@ -207,6 +206,7 @@ export default {
       tagtext: '#',  // tag inputed
       tagarray: [],
       username: '', //username of steem user
+      permlink: '',
 
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
@@ -214,23 +214,29 @@ export default {
 
       width: 300,
 
-      dropzoneOptions: {
-        // url: (file) => this.saveImages(file),
-        url: 'https://httpbin.org/post',
-        // thumbnailWidth: 150,
-        // headers: { "My-Awesome-Header": "header value" },
-        params: () => {
-          return ({id: 'testingid'})
-        }
-      }
+      // dropzoneOptions: {
+      //   // url: (file) => this.saveImages(file),
+      //   url: 'https://httpbin.org/post',
+      //   // thumbnailWidth: 150,
+      //   // headers: { "My-Awesome-Header": "header value" },
+      //   params: () => {
+      //     return ({id: 'testingid'})
+u      // }
     }
   },
   components: {
-    vueDropzone: vue2Dropzone
+    // vueDropzone: vue2Dropzone
   },
   mounted () {
     // this.callObj()
     this.username = this.$store.state.me.account.name
+    // steem.api.getAccounts(['dhdmstjs', 'smtion'], function(err, response){
+    //   console.log(err, response);
+    //
+    // })
+    steem.config.set('testing', 'hellod')
+    steem.config.get('testing')
+    console.log('sttem', steem.config.get('testing'));
   },
   methods: {
     navigation: function(i, arrow) {
@@ -317,9 +323,17 @@ export default {
       if (empty == false) {
         // this.$store.dispatch('setCardContents', formData)
         // console.log('getter',this.$store.getters.contentObj)
+
         api.create(formData).then(res => {
           console.log(res)
+          this.permlink = res.data.permlink
+          console.log('perm', this.permlink)
         })
+        //steem.config.set('cardupload', 'formData+this.username')
+        //steem.config.set('cardupload')
+        // steem.broadcast.comment(this.username, this.permlink, title, body, formData.json_metadata, function(err, result) {
+        //   console.log(err, result);
+        // });
       }
     }
   }
