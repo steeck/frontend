@@ -221,7 +221,7 @@ export default {
       //   // headers: { "My-Awesome-Header": "header value" },
       //   params: () => {
       //     return ({id: 'testingid'})
-u      // }
+      // }
     }
   },
   components: {
@@ -331,7 +331,7 @@ u      // }
         })
         //steem.config.set('cardupload', 'formData+this.username')
         //steem.config.set('cardupload')
-        // steem.broadcast.comment(this.username, this.permlink, title, body, formData.json_metadata, function(err, result) {
+        // steem.broadcast.comment(wif,''this.username, this.permlink, title, body, formData.json_metadata, function(err, result) {
         //   console.log(err, result);
         // });
       }
