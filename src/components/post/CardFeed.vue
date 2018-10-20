@@ -11,7 +11,7 @@
       <v-btn outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
       <v-btn dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
       <v-spacer></v-spacer>
-      <card-menu :author="item.author" :permlink="item.permlink"></card-menu>
+      <card-menu :item="item"></card-menu>
     </v-card-actions>
     <v-card-title primary-title class="card-title">
       {{ item.title }}
@@ -38,7 +38,7 @@
 
 
 <script>
-import CardMenu from '@/components/post/menu'
+import CardMenu from '@/components/post/Menu'
 import Vote from '@/components/post/Vote'
 import steemconnect from '@/services/steemconnect'
 
@@ -58,12 +58,6 @@ export default {
       isFollowProcessing: false
     }
   },
-  mounted () {
-    this.isVoted = this.getVoted()
-    if (this.item.json_metadata) {
-      this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
-    }
-  },
   computed: {
     getPayoutValue: function () {
       return parseFloat(this.item.pending_payout_value.replace(' SBD', '')).toFixed(2)
@@ -75,13 +69,23 @@ export default {
       return this.$store.state.me.following.indexOf(this.item.author) > -1
     }
   },
+  watch: {
+    'item.active_votes': {
+      handler: function (val, oldVal) {
+        this.isVoted = this.getVoted()
+      },
+      deep: true
+    }
+  },
   methods: {
     getVoted: function () {
       let vm = this
       let voted = false
       this.item.active_votes.forEach(function (obj) {
         if (obj.voter === vm.$store.state.me.account.name) {
-          voted = true
+          if (obj.percent > 0) {
+            voted = true
+          }
           return false
         }
       })
@@ -94,6 +98,7 @@ export default {
       this.dialog = false
     },
     completeVote: function () {
+      // this.item.active_votes.push({voter: this.$store.state.me.account.name, percent: percent})
       this.isVoted = true
       this.dialog = false
     },
@@ -132,6 +137,12 @@ export default {
         }
         vm.isFollowProcessing = false
       })
+    }
+  },
+  mounted () {
+    this.isVoted = this.getVoted()
+    if (this.item.json_metadata) {
+      this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
     }
   }
 }

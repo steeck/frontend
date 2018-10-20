@@ -5,7 +5,7 @@
         <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item>
       </v-carousel>
     </v-container>
-    <div class="grey lighten-3">
+    <div class="grey lighten-3 hidden-sm-and-down">
       <v-container class="py-0">
         <v-layout class="darken-3">
           <table class="table-tag text-xs-center font-weight-bold">
