@@ -104,8 +104,8 @@
         // old steemconnect
         steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
           if (!err) {
-            // console.log('ok')
-            vm.item.active_votes.push({voter: vote.voter, percent: vote.weight})
+            console.log('ok')
+            vm.item.active_votes.push({voter: vote.voter, percent: vote.weight, time: new Date().toISOString()})
             vm.complete()
           }
           vm.isVoting = false

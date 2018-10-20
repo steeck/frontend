@@ -20,7 +20,8 @@ const state = {
   },
   follow: {},
   follower: [],
-  following: []
+  following: [],
+  followDoing: false
 }
 
 // getters

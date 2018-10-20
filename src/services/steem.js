@@ -1,4 +1,9 @@
 import steem from 'steem'
+
+/**
+ * @property {Function} getContentAsync : 글의 상세정보를 로딩
+ */
+
 // const steem = require('steem')
 
 steem.api.setOptions({ url: 'https://api.steemit.com' })

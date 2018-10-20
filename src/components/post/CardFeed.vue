@@ -13,7 +13,7 @@
       <v-spacer></v-spacer>
       <card-menu :item="item"></card-menu>
     </v-card-actions>
-    <v-card-title primary-title class="card-title">
+    <v-card-title primary-title class="card-title" @click="jumpToPost">
       {{ item.title }}
     </v-card-title>
     <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
@@ -137,6 +137,10 @@ export default {
         }
         vm.isFollowProcessing = false
       })
+    },
+    jumpToPost: function () {
+      let url = '/' + this.item.category + '/' + this.item.author + '/' + this.item.permlink
+      this.$router.push(url)
     }
   },
   mounted () {
@@ -184,6 +188,7 @@ export default {
     font-size: 1.2rem;
     font-weight: 600;
     color: #425363;
+    cursor: pointer;
   }
   .vote-dialog {
     background-color: white;

@@ -93,6 +93,7 @@
       },
       followingAction: function () {
         let vm = this
+        this.$store.state.me.followDoing = true
         steemconnect.follow(this.$store.state.me.account.name, this.author, function (err, res) {
           console.log(err, res)
           if (!err) {
@@ -101,10 +102,12 @@
               console.log(err)
             })
           }
+          vm.$store.state.me.followDoing = false
         })
       },
       unFollowingAction: function () {
         let vm = this
+        this.$store.state.me.followDoing = true
         steemconnect.unfollow(this.$store.state.me.account.name, this.author, function (err, res) {
           console.log(err, res)
           if (!err) {
@@ -113,6 +116,7 @@
               console.log(err)
             })
           }
+          vm.$store.state.me.followDoing = false
         })
       },
       getVoted: function () {

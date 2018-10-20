@@ -12,6 +12,7 @@ import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
 import RequestVote from '@/pages/center/RequestVote'
 import UserProfile from '@/pages/UserProfile'
+import Post from '@/pages/Post'
 
 import Create from '@/pages/Create'
 
@@ -79,11 +80,16 @@ const router = new Router({
       path: '/create',
       name: 'Create',
       component: Create
+    },
+    {
+      path: '/:category/:author/:permlink',
+      name: 'PostView',
+      component: Post
     }
   ]
 })
 router.beforeResolve((to, from, next) => {
-  const defaultLayout = ['Feeds', 'Activities', 'My', 'User']
+  const defaultLayout = ['Feeds', 'Activities', 'My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {
