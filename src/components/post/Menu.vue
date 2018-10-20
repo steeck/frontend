@@ -44,6 +44,7 @@
   /**
    * @property {Array} active_votes
    */
+
   import steemconnect from '@/services/steemconnect'
 
   export default {

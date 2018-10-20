@@ -1,8 +1,8 @@
 import steem from 'steem'
 // const steem = require('steem')
 
-// steem.api.setOptions({ url: 'https://api.steemit.com' })
-steem.api.setOptions({ url: 'https://testnet.steem.vc' })
+steem.api.setOptions({ url: 'https://api.steemit.com' })
+// steem.api.setOptions({ url: 'https://testnet.steem.vc' })
 
 // steem.api.config.set('https://testnet.steem.vc', 'helloworld1')
 
