@@ -207,6 +207,7 @@ export default {
       tagarray: [],
       username: '', //username of steem user
       permlink: '',
+      wif: '', //steem posting permission
 
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
@@ -228,9 +229,15 @@ export default {
     // vueDropzone: vue2Dropzone
   },
   mounted () {
+    steem.config.set('websocket','wss://testnet.steem.vc')
+    steem.config.set('address_prefix', 'STX')
+    steem.config.set('chain_id', '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673')
     // this.callObj()
     this.username = this.$store.state.me.account.name
+    this.wif = this.$store.state.me.account.posting.key_auths[0][0]
+
     // steem.api.getAccounts(['dhdmstjs', 'smtion'], function(err, response){
+    //   console.log('testaa', response[0].posting.key_auths[0][0]);
     //   console.log(err, response);
     //
     // })
@@ -308,7 +315,7 @@ export default {
         json_metadata: jsonObj //to be included in jsonMetadata
       }
       let empty = false;
-
+      let steembody = '';
       for (let item in formData.contents) {
         if (formData.contents[item].text == "") {
           empty = true
@@ -318,22 +325,34 @@ export default {
           empty = true
           alert('Img/Video is empty')
         }
+        steembody += formData.contents[item].url + formData.contents[item].text + ','
       }
+      console.log('sb', steembody);
       console.log('form', formData);
       if (empty == false) {
-        // this.$store.dispatch('setCardContents', formData)
-        // console.log('getter',this.$store.getters.contentObj)
-
         api.create(formData).then(res => {
-          console.log(res)
+          console.log('createRES', res)
           this.permlink = res.data.permlink
           console.log('perm', this.permlink)
+          steem.broadcast.comment(this.wif,'', '', this.username, res.data.permlink, 'test-title', formData.contents, formData.json_metadata, function(err, result) {
+            console.log('comment',err, result);
+            if (err) {
+              console.log('iferr',err);
+              api.delete(res.data.permlink).then(res2=>{
+                console.log(this.permlink, 'deleted');
+                console.log('del res',res2);
+              }).catch(function(error) {
+                console.log('api del error', error);
+              })
+            }
+          });
+        }).catch(function(error) {
+          console.log('err',error);
         })
-        //steem.config.set('cardupload', 'formData+this.username')
-        //steem.config.set('cardupload')
-        // steem.broadcast.comment(wif,''this.username, this.permlink, title, body, formData.json_metadata, function(err, result) {
-        //   console.log(err, result);
-        // });
+        // steem.config.set('cardupload', 'formData+this.username')
+        // steem.config.get('cardupload')
+        // console.log('get', steem.config.get('cardupload'));
+        // console.log('testerr', this.permlink);
       }
     }
   }

@@ -3,6 +3,7 @@ import steem from 'steem'
 
 // steem.api.setOptions({ url: 'https://api.steemit.com' })
 steem.api.setOptions({ url: 'https://testnet.steem.vc' })
+
 // steem.api.config.set('https://testnet.steem.vc', 'helloworld1')
 
 // let opts = {}

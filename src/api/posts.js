@@ -6,5 +6,8 @@ export default {
   },
   create (data) {
     return http.post('/posts', data)
+  },
+  delete (data) {
+    return http.post('/delete', data)
   }
 }
