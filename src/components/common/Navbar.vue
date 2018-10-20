@@ -1,13 +1,6 @@
 <template>
   <div>
-    <v-navigation-drawer
-      :clipped="$vuetify.breakpoint.lgAndUp"
-      fixed
-      v-model="drawer"
-      left
-      app
-      width="230"
-    >
+    <v-navigation-drawer :clipped="$vuetify.breakpoint.lgAndUp" fixed v-model="drawer" left app width="230">
       <v-list dense class="pa-4">
         <v-list-tile>
           <v-list-tile-content>
@@ -96,16 +89,9 @@
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title><router-link to="/">Steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
-      <v-text-field
-        flat
-        solo-inverted
-        hide-details
-        prepend-inner-icon="search"
-        label="Search"
-        class="ml-5 hidden-sm-and-down"
-      ></v-text-field>
+      <v-text-field flat solo-inverted hide-details prepend-inner-icon="search" label="Search" class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn v-if="this.$store.state.auth.accessToken" href="/#/logout">로그아웃</v-btn>
+      <v-btn v-if="this.$store.state.auth.accessToken" href="/logout">로그아웃</v-btn>
       <v-btn v-else :href="loginUrl">로그인</v-btn>
     </v-toolbar>
   </div>
