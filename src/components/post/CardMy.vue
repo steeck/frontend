@@ -15,7 +15,7 @@
             <div>{{ this.createdTime | ago}}</div>
           </v-flex>
         </v-flex>
-        <card-menu :author="item.author" :permlink="item.permlink"></card-menu>
+        <card-menu :item="item"></card-menu>
       </v-layout>
     </v-card-text>
     <v-card-title>
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-  import CardMenu from '@/components/post/menu'
+  import CardMenu from '@/components/post/Menu'
 
   export default {
     name: 'CardMy',

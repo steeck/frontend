@@ -172,7 +172,7 @@
 <script>
 // import Vote from '@/components/Vote'
 import steem from '@/services/steem'
-import CardMenu from '@/components/post/menu'
+import CardMenu from '@/components/post/Menu'
 
 // export const calculateVoteValue = (
 //   vests,
