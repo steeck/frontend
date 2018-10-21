@@ -52,7 +52,8 @@
             <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
           </div>
           <div class="mr-3">${{ parseFloat(content.pending_payout_value.replace(' SBD', '')).toFixed(2) }}</div>
-          <v-flex tag="a" d-inline-block @click="viewVotes = !viewVotes">{{ content.active_votes.length }}보팅</v-flex>
+          <a @click="viewVotes = !viewVotes">{{ content.active_votes.length }}보팅</a>
+          <a class="d-inline-block px-2" @click="editComment.openEdit = true">댓글달기</a>
           <v-dialog v-model="viewVotes" max-width="290">
             <v-toolbar color="light-blue" dark class="text-xs-center">
               <v-flex xs6 d-inline-block>이름</v-flex>
@@ -68,15 +69,20 @@
             </v-list>
           </v-dialog>
         </v-layout>
-        <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
-          <vote :item="content" :close="closeVote" :complete="completeVote"></vote>
+        <!--코멘트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex">
+          <edit-comment v-if="editComment.openEdit" :item="content" :condition="editComment" :complete="completeComment"></edit-comment>
+        </v-slide-y-transition>
+        <!--보트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex">
+          <vote v-if="dialog" :item="content" :close="closeVote" :complete="completeVote"></vote>
         </v-slide-y-transition>
       </v-flex>
     </v-flex>
 
     <!--코멘트 영역-->
     <v-flex xs10 offset-xs1 class="mt-2">
-        <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index"></card-comment>
+        <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
     </v-flex>
 
   </v-layout>
@@ -95,6 +101,7 @@
   import steemconnect from '@/services/steemconnect'
   import Vote from '@/components/post/Vote'
   import CardMenu from '@/components/post/Menu'
+  import EditComment from '@/components/post/EditComment'
   import CardComment from '@/components/post/CardComment'
   import Remarkable from 'remarkable'
   let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
@@ -104,7 +111,8 @@
     components: {
       Vote,
       CardMenu,
-      CardComment
+      CardComment,
+      EditComment
     },
     data: function () {
       return {
@@ -120,6 +128,9 @@
         dialog: false,
         comment: {
           list: []
+        },
+        editComment: {
+          openEdit: false
         }
       }
     },
@@ -218,6 +229,9 @@
             this.comment.list = res
             console.log(res)
           })
+      },
+      completeComment: function () {
+        this.loadComment()
       }
     },
     created: function () {
