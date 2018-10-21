@@ -14,7 +14,8 @@
         <v-flex class="my-3 text-xs-center headline">{{ content.title }}</v-flex>
         <v-flex class="mb-1">
           <v-avatar color="">
-            <img :src="'https://steemitimages.com/u/' + content.author + '/avatar'" alt="avatar">
+            <!--<img :src="'https://steemitimages.com/u/' + content.author + '/avatar'" alt="avatar">-->
+            <v-img :src="'https://steemitimages.com/u/' + content.author + '/avatar'"></v-img>
           </v-avatar>
           <v-flex d-inline-block class="subheading" @click="jumpToUserPage" :tag="'a'">{{ content.author }}</v-flex>
           <v-flex d-inline-block :tag="'small'"><span title='평판'>({{ reputationCount }})</span></v-flex>
@@ -66,14 +67,16 @@
               </v-layout>
             </v-list>
           </v-dialog>
-
         </v-layout>
         <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
           <vote :item="content" :close="closeVote" :complete="completeVote"></vote>
         </v-slide-y-transition>
       </v-flex>
+    </v-flex>
 
-
+    <!--코멘트 영역-->
+    <v-flex xs10 offset-xs1 class="mt-2">
+        <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index"></card-comment>
     </v-flex>
 
   </v-layout>
@@ -85,21 +88,23 @@
   /**
    * @property {String} pending_payout_value : 글의 보상
    * @property {String} author_reputation : 글작성자의 명성
+   * @property {Function} getContentRepliesAsync : 해당 포스트 및 댓글의 리플을 로딩
    */
 
   import steem from '@/services/steem'
   import steemconnect from '@/services/steemconnect'
   import Vote from '@/components/post/Vote'
   import CardMenu from '@/components/post/Menu'
-
-  let Remarkable = require('remarkable')
+  import CardComment from '@/components/post/CardComment'
+  import Remarkable from 'remarkable'
   let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
 
   export default {
     name: 'Post',
     components: {
       Vote,
-      CardMenu
+      CardMenu,
+      CardComment
     },
     data: function () {
       return {
@@ -112,7 +117,10 @@
         },
         isVoted: false,
         viewVotes: false,
-        dialog: false
+        dialog: false,
+        comment: {
+          list: []
+        }
       }
     },
     computed: {
@@ -189,7 +197,7 @@
         })
       },
       jumpToUserPage: function () {
-        this.$router.push(/user/ + this.content.author)
+        this.$router.push('/user/' + this.content.author)
       },
       openToUserPage: function (user) {
         window.open('/user/' + user)
@@ -203,6 +211,13 @@
       completeVote: function () {
         this.isVoted = true
         this.dialog = false
+      },
+      loadComment: function () {
+        steem.api.getContentRepliesAsync(this.content.author, this.content.permlink)
+          .then((res) => {
+            this.comment.list = res
+            console.log(res)
+          })
       }
     },
     created: function () {
@@ -221,6 +236,7 @@
           console.log(res)
           this.content = res
           this.jsonMetadata = JSON.parse(res.json_metadata)
+          this.loadComment()
           console.log(this.jsonMetadata)
         })
     }
@@ -336,7 +352,7 @@
   .Markdown p, .ReplyEditor__body.rte p {
     font-size: 100%;
     line-height: 150%;
-    margin: 0 0 1.5rem 0;
+    margin: 0 0 0.5rem 0;
   }
 
   .Markdown img, .ReplyEditor__body.rte img {
