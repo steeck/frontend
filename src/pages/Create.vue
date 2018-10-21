@@ -1,7 +1,12 @@
 <template>
   <v-container grid-list-xl style="padding-top: 0px; margin-left:0px;">
-    <v-layout class="topToolbar" justify-end>
-      <v-btn class="submitBtn" v-on:click="submitBtn" style="background-color:blue; color:white;">Submit</v-btn>
+    <v-layout class="topToolbar">
+      <v-flex xs12 sm6 md4 justify-left>
+        <v-text-field placeholder="Title" v-model="content_title"></v-text-field>
+      </v-flex>
+      <v-flex justify-end>
+        <v-btn class="submitBtn" v-on:click="submitBtn" style="background-color:blue; color:white;">Submit</v-btn>
+      </v-flex>
     </v-layout>
 
     <v-layout row justify-space-between>
@@ -193,7 +198,9 @@
 <script>
   /* eslint-disable */
   import api from '@/api/posts'
-import steem from '@/services/steem'
+  import steem from '@/services/steem'
+  import steemconnect from '@/services/steemconnect'
+
 // import vue2Dropzone from 'vue2-dropzone'
 // import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 
@@ -209,7 +216,7 @@ export default {
       username: '', //username of steem user
       permlink: '',
       wif: '', //steem posting permission
-
+      content_title: '',
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
       submit: false,
@@ -279,11 +286,12 @@ export default {
       for (let item in split) {
         if (split[item].length > 1) {
           this.tagarray.push(split[item])
-          // send to db
         }
       }
-      console.log('arr', arr)
-      // send info to db
+      if (this.tagarray.length > 5) {
+        alert('Max number of tags is 5')
+        this.tagarray = []
+      }
     },
     addCard: function () {
       this.contents.push({url: null, text: ''})
@@ -309,7 +317,15 @@ export default {
       })
     },
     submitBtn: function () { // create the contents
-      let jsonObj = {tags:this.tagarray}
+      let tags = []
+      var privateKeys = steem.auth.getPrivateKeys(this.username, this.wif);
+      console.log('keys', privateKeys);
+      console.log('private', privateKeys.posting, ' wif', this.wif);
+      for (let tag in this.tagarray) {
+        tags.push(this.tagarray[tag].substring(1))
+        console.log('tagss', tags);
+      }
+      let jsonObj = {tags:tags}
       let formData = {
         author: this.username,
         contents: this.contents,
@@ -328,28 +344,43 @@ export default {
         }
         steembody += formData.contents[item].url + formData.contents[item].text + ','
       }
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+      console.log('steemconnect', steemconnect.setAccessToken(this.$store.state));
+
       console.log('sb', steembody);
       console.log('form', formData);
       if (empty == false) {
-        api.create(formData).then(res => {
-          console.log('createRES', res)
-          this.permlink = res.data.permlink
-          console.log('perm', this.permlink)
-          steem.broadcast.comment(this.wif,'', '', this.username, res.data.permlink, 'test-title', formData.contents, formData.json_metadata, function(err, result) {
-            console.log('comment',err, result);
-            if (err) {
-              console.log('iferr',err);
-              api.delete(res.data.permlink).then(res2=>{
-                console.log(this.permlink, 'deleted');
-                console.log('del res',res2);
-              }).catch(function(error) {
-                console.log('api del error', error);
-              })
-            }
-          });
-        }).catch(function(error) {
-          console.log('err',error);
-        })
+        //res.data.permlink
+        // steem.broadcast.comment(privateKeys.posting,'', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata), function(err, result) {
+        //   console.log('comment',err, result);
+        //   if (err) {
+        //     console.log('iferr',err);
+        //     api.delete(res.data.permlink).then(res2=>{
+        //       console.log(this.permlink, 'deleted');
+        //       console.log('del res',res2);
+        //     }).catch(function(error) {
+        //       console.log('api del error', error);
+        //     })
+        //   }
+        // });
+
+        // steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        // console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
+        // steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
+        //  .then((res) => {
+        //    console.log(res)
+        //  })
+        //  .catch(err => {
+        //    console.log(err)
+        //  })
+        // api.create(formData).then(res => {
+        //   console.log('createRES', res)
+        //   this.permlink = res.data.permlink
+        //   console.log('perm', this.permlink)
+        //
+        // }).catch(function(error) {
+        //   console.log('err?',error);
+        // })
         // steem.config.set('cardupload', 'formData+this.username')
         // steem.config.get('cardupload')
         // console.log('get', steem.config.get('cardupload'));
