@@ -337,37 +337,29 @@ export default {
         }
         steembody += formData.contents[item].url + formData.contents[item].text + ','
       }
-      console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
 
       if (empty === false) {
-        //res.data.permlink
-        console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
-
         //post data to db then to steem
         api.create(formData).then(res => {
           console.log('createRES', res)
           this.permlink = res.data.permlink
           console.log('perm', this.permlink)
-          // steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
-          //  .then((res) => {
-          //    console.log(res)
-          //  })
-          //  .catch(err => {
-          //    console.log(err)
-          //    api.delete(res.data.permlink).then(res2=>{
-          //      console.log(this.permlink, 'deleted');
-          //      console.log('del res',res2);
-          //    }).catch(function(error) {
-          //      console.log('api del error', error);
-          //    })
-          //  })
+          steemconnect.comment('', '', this.username, this.permlink, this.content_title, steembody, JSON.stringify(formData.json_metadata))
+           .then((res) => {
+             console.log(res)
+           })
+           .catch(err => {
+             console.log(err)
+             api.delete(res.data.permlink).then(res2=>{
+               console.log(this.permlink, 'deleted');
+               console.log('del res',res2);
+             }).catch(function(error) {
+               console.log('api del error', error);
+             })
+           })
         }).catch(function(error) {
-          console.log('err?',error);
+          console.log('err',error);
         })
-        // steem.config.set('cardupload', 'formData+this.username')
-        // steem.config.get('cardupload')
-        // console.log('get', steem.config.get('cardupload'));
-        // console.log('testerr', this.permlink);
       }
     }
   }
