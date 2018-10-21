@@ -314,8 +314,6 @@ export default {
     submitBtn: function () { // create the contents
       let tags = []
       var privateKeys = steem.auth.getPrivateKeys(this.username, this.wif);
-      console.log('keys', privateKeys);
-      console.log('private', privateKeys.posting, ' wif', this.wif);
       for (let tag in this.tagarray) {
         tags.push(this.tagarray[tag].substring(1))
         console.log('tagss', tags);
@@ -339,33 +337,11 @@ export default {
         }
         steembody += formData.contents[item].url + formData.contents[item].text + ','
       }
+      console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
 
-      console.log('sb', steembody);
-      console.log('form', formData);
       if (empty === false) {
-        steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
-          .then((res) => {
-            console.log(res)
-          })
-          .catch(err => {
-            console.log(err)
-          })
         //res.data.permlink
-        // steem.broadcast.comment(privateKeys.posting,'', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata), function(err, result) {
-        //   console.log('comment',err, result);
-        //   if (err) {
-        //     console.log('iferr',err);
-        //     api.delete(res.data.permlink).then(res2=>{
-        //       console.log(this.permlink, 'deleted');
-        //       console.log('del res',res2);
-        //     }).catch(function(error) {
-        //       console.log('api del error', error);
-        //     })
-        //   }
-        // });
-
-        // steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-        // console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
+        console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
         // steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
         //  .then((res) => {
         //    console.log(res)
@@ -373,14 +349,28 @@ export default {
         //  .catch(err => {
         //    console.log(err)
         //  })
-        // api.create(formData).then(res => {
-        //   console.log('createRES', res)
-        //   this.permlink = res.data.permlink
-        //   console.log('perm', this.permlink)
-        //
-        // }).catch(function(error) {
-        //   console.log('err?',error);
-        // })
+
+        //post data to db then to steem
+        api.create(formData).then(res => {
+          console.log('createRES', res)
+          this.permlink = res.data.permlink
+          console.log('perm', this.permlink)
+          // steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
+          //  .then((res) => {
+          //    console.log(res)
+          //  })
+          //  .catch(err => {
+          //    console.log(err)
+          //    api.delete(res.data.permlink).then(res2=>{
+          //      console.log(this.permlink, 'deleted');
+          //      console.log('del res',res2);
+          //    }).catch(function(error) {
+          //      console.log('api del error', error);
+          //    })
+          //  })
+        }).catch(function(error) {
+          console.log('err?',error);
+        })
         // steem.config.set('cardupload', 'formData+this.username')
         // steem.config.get('cardupload')
         // console.log('get', steem.config.get('cardupload'));
