@@ -248,6 +248,7 @@
           .then(function (result) {
             result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
             vm.me = result[0]
+            console.log(vm.me)
             vm.getMyPost()
           })
       },
