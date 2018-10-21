@@ -237,10 +237,8 @@ export default {
     // vueDropzone: vue2Dropzone
   },
   mounted () {
-    steem.config.set('websocket','wss://testnet.steem.vc')
-    steem.config.set('address_prefix', 'STX')
-    steem.config.set('chain_id', '79276aea5d4877d9a25892eaa01b0adf019d3e5cb12a97478df3298ccdd01673')
-    // this.callObj()
+    steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+
     this.username = this.$store.state.me.account.name
     this.wif = this.$store.state.me.account.posting.key_auths[0][0]
 
@@ -249,9 +247,6 @@ export default {
     //   console.log(err, response);
     //
     // })
-    steem.config.set('testing', 'hellod')
-    steem.config.get('testing')
-    console.log('sttem', steem.config.get('testing'));
   },
   methods: {
     navigation: function(i, arrow) {
@@ -344,12 +339,17 @@ export default {
         }
         steembody += formData.contents[item].url + formData.contents[item].text + ','
       }
-      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-      console.log('steemconnect', steemconnect.setAccessToken(this.$store.state));
 
       console.log('sb', steembody);
       console.log('form', formData);
-      if (empty == false) {
+      if (empty === false) {
+        steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
+          .then((res) => {
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err)
+          })
         //res.data.permlink
         // steem.broadcast.comment(privateKeys.posting,'', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata), function(err, result) {
         //   console.log('comment',err, result);
