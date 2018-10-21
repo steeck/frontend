@@ -342,13 +342,6 @@ export default {
       if (empty === false) {
         //res.data.permlink
         console.log('steemconnect', steemconnect.setAccessToken(this.$store.state.auth.accessToken));
-        // steemconnect.comment('', '', this.username, 'test-123-steeck', this.content_title, steembody, JSON.stringify(formData.json_metadata))
-        //  .then((res) => {
-        //    console.log(res)
-        //  })
-        //  .catch(err => {
-        //    console.log(err)
-        //  })
 
         //post data to db then to steem
         api.create(formData).then(res => {
