@@ -191,7 +191,8 @@
 </template>
 
 <script>
-import api from '@/api/posts'
+  /* eslint-disable */
+  import api from '@/api/posts'
 import steem from '@/services/steem'
 // import vue2Dropzone from 'vue2-dropzone'
 // import 'vue2-dropzone/dist/vue2Dropzone.min.css'
