@@ -8,9 +8,11 @@ import './filters'
 import 'vuetify/dist/vuetify.min.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueHead from 'vue-head'
 
 Vue.use(Vuetify)
 Vue.use(VueAxios, axios)
+Vue.use(VueHead)
 
 window.vm = store
 

@@ -27,6 +27,11 @@ export default {
       onceForCall: 100
     }
   },
+  head: {
+    title: {
+      inner: 'Steeck'
+    }
+  },
   created () {
   },
   mounted () {
