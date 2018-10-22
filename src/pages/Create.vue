@@ -346,6 +346,7 @@ export default {
           console.log('perm', this.permlink)
           steemconnect.comment('', '', this.username, this.permlink, this.content_title, steembody, JSON.stringify(formData.json_metadata))
            .then((res) => {
+             console.log('works');
              console.log(res)
            })
            .catch(err => {
