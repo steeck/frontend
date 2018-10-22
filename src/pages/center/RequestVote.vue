@@ -1,32 +1,36 @@
 <template>
   <v-container grid-list-xl>
-    <div class="my-profile text-xs-center">
-      SP : {{ mineSP }}
-      received : {{ receivedSP }}
-      delegated : {{ delegatedSP }}
+    <div class="my-profile text-xs-center mb-5">
+      <h3>Steem Power : {{ mineSP }} SP (+{{ receivedSP - delegatedSP }} SP)</h3>
+      <h4>Steem : {{ me.vesting_balance }}</h4>
+      <h4>Steem Dollor : {{ me.sbd_balance }}</h4>
+      <h4>Saving Steem : {{ me.savings_balance }}</h4>
+      <h4>Saving SBD : {{ me.savings_sbd_balance }}</h4>
     </div>
-    <div>
-      <v-text-field
-        label="Username"
-        v-model="data.username"
-        readonly
-      ></v-text-field>
-    </div>
-    <div>
+    <v-text-field
+      label="Username"
+      v-model="data.username"
+      readonly
+    ></v-text-field>
+    <v-form ref="form" v-model="valid" lazy-validation>
       <v-text-field
         label="보팅할 포스트 URL"
         v-model="data.url"
+        :rules="rules.url"
+        required
       ></v-text-field>
-    </div>
-    <div>
       <v-text-field
         label="송금액"
         v-model="data.amount"
         type="number"
+        :rules="rules.amount"
+        required
       ></v-text-field>
-    </div>
-    <div>
-      <v-radio-group v-model="data.payment_type">
+      <v-radio-group
+        v-model="data.payment_type"
+        :rules="rules.payment_type"
+        required
+      >
         <v-radio
           label="STEEM"
           value="STEEM"
@@ -36,19 +40,18 @@
           value="SBD"
         ></v-radio>
       </v-radio-group>
-    </div>
-    <div>
-      예상수익
-    </div>
-    <div>
-      사용자 동의 <input type="checkbox">
-    </div>
-    <div>
-      약관...<br>...
-    </div>
-    <div>
-      <v-btn @click="requestVote">보팅 요청</v-btn>
-    </div>
+      <v-checkbox
+        label="사용자 동의"
+        :rules="rules.agree"
+        required
+      ></v-checkbox>
+      <v-btn
+        color="info"
+        @click="requestVote"
+      >
+        보팅 신청
+      </v-btn>
+    </v-form>
     <div>
       <ul>
         <li v-for="(item, i) in delegations">{{ item }}</li>
@@ -97,6 +100,13 @@ export default {
   data () {
     return {
       data: {},
+      valid: true,
+      rules: {
+        url: [v => !!v || '보팅할 포스트 URL'],
+        amount: [v => !!v || '송금액을 입력하세요'],
+        payment_type: [v => !!v || '송금액 종류를 선택하세요'],
+        agree: [v => !!v || '사용자 동의가 필요합니다']
+      },
       delegations: []
     }
   },
@@ -125,6 +135,7 @@ export default {
   },
   methods: {
     init: function () {
+      this.$refs.form.reset()
       this.data = {
         username: this.$store.state.auth.username
       }
@@ -137,7 +148,10 @@ export default {
       })
     },
     requestVote: function () {
-      console.log(this.data)
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
       api.requestVote(this.data).then(res => {
         if (res.status === 200) {
           alert('신청이 완료되었습니다.')

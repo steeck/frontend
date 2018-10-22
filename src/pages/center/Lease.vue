@@ -1,48 +1,49 @@
 <template>
   <v-container grid-list-xl>
-    <div class="my-profile text-xs-center">
-      SP : {{ mineSP }}
-      received : {{ receivedSP }}
-      delegated : {{ delegatedSP }}
+    <div class="my-profile text-xs-center mb-5">
+      <h3>Steem Power : {{ mineSP }} SP (+{{ receivedSP - delegatedSP }} SP)</h3>
+      <h4>Steem : {{ me.vesting_balance }}</h4>
+      <h4>Steem Dollor : {{ me.sbd_balance }}</h4>
+      <h4>Saving Steem : {{ me.savings_balance }}</h4>
+      <h4>Saving SBD : {{ me.savings_sbd_balance }}</h4>
     </div>
-    <div>
-      <v-text-field
-        label="Borrower"
-        v-model="data.to"
-        readonly
-      ></v-text-field>
-    </div>
-    <div>
+    <v-text-field
+      label="Borrower"
+      v-model="data.to"
+      readonly
+    ></v-text-field>
+    <v-form ref="form" v-model="valid" lazy-validation>
       <v-text-field
         label="빌릴 SP"
         v-model="data.sp"
         suffix="SP"
         type="number"
+        :rules="rules.sp"
+        required
       ></v-text-field>
       <div v-if="data.sp">
         {{ vests + ' VESTS' }}
       </div>
-    </div>
-    <div>
       <v-text-field
         label="빌릴기간"
         v-model="data.weeks"
         mask="###"
         suffix="주"
+        :rules="rules.weeks"
+        required
       ></v-text-field>
-    </div>
-    <div>
-      예상수익
-    </div>
-    <div>
-      사용자 동의 <input type="checkbox">
-    </div>
-    <div>
-      약관...<br>...
-    </div>
-    <div>
-      <v-btn @click="lease">빌리기 신청</v-btn>
-    </div>
+      <v-checkbox
+        label="사용자 동의"
+        :rules="rules.agree"
+        required
+      ></v-checkbox>
+      <v-btn
+        color="info"
+        @click="lease"
+      >
+        SP 빌리기 신청
+      </v-btn>
+    </v-form>
     <div>
       <ul>
         <li v-for="(item, i) in delegations">{{ item }}</li>
@@ -91,6 +92,12 @@ export default {
   data () {
     return {
       data: {},
+      valid: true,
+      rules: {
+        sp: [v => !!v || 'SP를 입력하세요'],
+        weeks: [v => !!v || '빌릴기간을 입력하세요'],
+        agree: [v => !!v || '사용자 동의가 필요합니다']
+      },
       delegations: []
     }
   },
@@ -119,6 +126,7 @@ export default {
   },
   methods: {
     init: function () {
+      this.$refs.form.reset()
       this.data = {
         type: 'lease',
         from: 'steeck',
@@ -133,8 +141,11 @@ export default {
       })
     },
     lease: function () {
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
       this.data.vests = this.vests
-      console.log(this.data)
       api.lease(this.data).then(res => {
         if (res.status === 200) {
           alert('신청이 완료되었습니다.')
