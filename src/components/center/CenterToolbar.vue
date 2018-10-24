@@ -8,7 +8,7 @@
       <li v-bind:class="{ active: menu == 'Lease'}"><router-link to="/center/lease">스팀파워 빌리기</router-link></li>
       <li v-bind:class="{ active: menu == 'Delegate'}"><router-link to="/center/delegate">내 스팀파워 빌려주기</router-link></li>
       <li v-bind:class="{ active: menu == 'RequestVote'}"><router-link to="/center/request_vote">보팅 의뢰하기</router-link></li>
-      <li v-bind:class="{ active: menu == 'Transactions'}"><router-link to="/center/transactions">내 거래현황보기</router-link></li>
+      <!-- <li v-bind:class="{ active: menu == 'Transactions'}"><router-link to="/center/transactions">내 거래현황보기</router-link></li> -->
     </ul>
   </v-toolbar>
 </template>

@@ -4,8 +4,17 @@ export default {
   delegate (data) {
     return http.post('/delegations', data)
   },
+  getDelegations (username) {
+    return http.get('/delegations/' + username)
+  },
+  getLeases (username) {
+    return http.get('/lease/' + username)
+  },
   lease (data) {
     return http.post('/lease', data)
+  },
+  getRequestVotes (username) {
+    return http.get('/voting_requests/' + username)
   },
   requestVote (data) {
     return http.post('/voting_requests', data)

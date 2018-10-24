@@ -1,62 +1,72 @@
 <template>
   <v-container grid-list-xl>
-    <div class="my-profile text-xs-center mb-5">
-      <h3>Steem Power : {{ mineSP }} SP (+{{ receivedSP - delegatedSP }} SP)</h3>
-      <h4>Steem : {{ me.vesting_balance }}</h4>
-      <h4>Steem Dollor : {{ me.sbd_balance }}</h4>
-      <h4>Saving Steem : {{ me.savings_balance }}</h4>
-      <h4>Saving SBD : {{ me.savings_sbd_balance }}</h4>
-    </div>
-    <v-text-field
-      label="Username"
-      v-model="data.username"
-      readonly
-    ></v-text-field>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-text-field
-        label="보팅할 포스트 URL"
-        v-model="data.url"
-        :rules="rules.url"
-        required
-      ></v-text-field>
-      <v-text-field
-        label="송금액"
-        v-model="data.amount"
-        type="number"
-        :rules="rules.amount"
-        required
-      ></v-text-field>
-      <v-radio-group
-        v-model="data.payment_type"
-        :rules="rules.payment_type"
-        required
-      >
-        <v-radio
-          label="STEEM"
-          value="STEEM"
-        ></v-radio>
-        <v-radio
-          label="SBD"
-          value="SBD"
-        ></v-radio>
-      </v-radio-group>
-      <v-checkbox
-        label="사용자 동의"
-        :rules="rules.agree"
-        required
-      ></v-checkbox>
-      <v-btn
-        color="info"
-        @click="requestVote"
-      >
-        보팅 신청
-      </v-btn>
-    </v-form>
-    <div>
-      <ul>
-        <li v-for="(item, i) in delegations">{{ item }}</li>
-      </ul>
-    </div>
+    <v-layout row wrap>
+      <v-flex xs12 md5>
+        <my-status class="mb-5"></my-status>
+        <v-text-field
+          label="Username"
+          v-model="data.username"
+          readonly
+        ></v-text-field>
+        <v-form ref="form" v-model="valid" lazy-validation class="mb-5">
+          <v-text-field
+            label="보팅할 포스트 URL"
+            v-model="data.url"
+            :rules="rules.url"
+            required
+          ></v-text-field>
+          <v-text-field
+            label="송금액"
+            v-model="data.amount"
+            type="number"
+            :rules="rules.amount"
+            required
+          ></v-text-field>
+          <v-radio-group
+            v-model="data.payment_type"
+            :rules="rules.payment_type"
+            required
+          >
+            <v-radio
+              label="STEEM"
+              value="STEEM"
+            ></v-radio>
+            <v-radio
+              label="SBD"
+              value="SBD"
+            ></v-radio>
+          </v-radio-group>
+          <v-checkbox
+            label="사용자 동의"
+            :rules="rules.agree"
+            required
+          ></v-checkbox>
+          <div class="text-xs-center">
+            <v-btn
+              color="info"
+              @click="requestVote"
+            >
+              보팅 신청
+            </v-btn>
+          </div>
+        </v-form>
+      </v-flex>
+      <v-flex xs12 md7>
+        <v-data-table
+          :headers="headers"
+          :items="requests"
+          hide-actions
+          class="elevation-1"
+        >
+          <template slot="items" slot-scope="props">
+            <td class="text-xs-left">{{ props.item.url }}</td>
+            <td class="text-xs-center">{{ props.item.amount }}</td>
+            <td class="text-xs-center">{{ props.item.payment_type }}</td>
+            <td class="text-xs-center">{{ props.item.created_at | moment('YYYY-MM-DD HH:mm:ss') }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -95,8 +105,13 @@
 import api from '@/api/center'
 import steem from '@/services/steem'
 import steemutil from '@/mixins/steemutil'
+import MyStatus from '@/components/center/MyStatus'
 
 export default {
+  components: {
+    MyStatus
+  },
+  mixins: [steemutil],
   data () {
     return {
       data: {},
@@ -107,28 +122,21 @@ export default {
         payment_type: [v => !!v || '송금액 종류를 선택하세요'],
         agree: [v => !!v || '사용자 동의가 필요합니다']
       },
-      delegations: []
+      headers: [
+        {text: 'URL', align: 'center', sortable: false, value: 'url'},
+        {text: 'Amount', align: 'center', sortable: false, value: 'amount'},
+        {text: 'Payment Type', align: 'center', sortable: false, value: 'payment_type'},
+        {text: 'Date', align: 'center', sortable: false, value: 'created_at'}
+      ],
+      requests: []
     }
   },
-  mixins: [steemutil],
   mounted () {
     this.init()
     this.$store.dispatch('me/getAccount')
-    this.getVestingDelegations()
+    this.getRequestVotes()
   },
   computed: {
-    me () {
-      return this.$store.state.me.account
-    },
-    mineSP () {
-      return this.getSP(parseFloat(this.me.vesting_shares)).toFixed(3)
-    },
-    receivedSP () {
-      return this.getSP(parseFloat(this.me.received_vesting_shares)).toFixed(3)
-    },
-    delegatedSP () {
-      return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
-    },
     vests () {
       return this.spToVests(this.data.sp)
     }
@@ -160,6 +168,13 @@ export default {
       }).catch(error => {
         if (error) {}
         alert('신청을 실패했습니다. 입력값들을 확인하세요.')
+      })
+    },
+    getRequestVotes: function () {
+      let vm = this
+
+      api.getRequestVotes(this.$store.state.auth.username).then(res => {
+        vm.requests = res.data
       })
     }
   }

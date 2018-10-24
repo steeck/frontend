@@ -1,54 +1,65 @@
 <template>
   <v-container grid-list-xl>
-    <div class="my-profile text-xs-center mb-5">
-      <h3>Steem Power : {{ mineSP }} SP (+{{ receivedSP - delegatedSP }} SP)</h3>
-      <h4>Steem : {{ me.vesting_balance }}</h4>
-      <h4>Steem Dollor : {{ me.sbd_balance }}</h4>
-      <h4>Saving Steem : {{ me.savings_balance }}</h4>
-      <h4>Saving SBD : {{ me.savings_sbd_balance }}</h4>
-    </div>
-    <v-text-field
-      label="Borrower"
-      v-model="data.to"
-      readonly
-    ></v-text-field>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-text-field
-        label="빌릴 SP"
-        v-model="data.sp"
-        suffix="SP"
-        type="number"
-        :rules="rules.sp"
-        required
-      ></v-text-field>
-      <div v-if="data.sp">
-        {{ vests + ' VESTS' }}
-      </div>
-      <v-text-field
-        label="빌릴기간"
-        v-model="data.weeks"
-        mask="###"
-        suffix="주"
-        :rules="rules.weeks"
-        required
-      ></v-text-field>
-      <v-checkbox
-        label="사용자 동의"
-        :rules="rules.agree"
-        required
-      ></v-checkbox>
-      <v-btn
-        color="info"
-        @click="lease"
-      >
-        SP 빌리기 신청
-      </v-btn>
-    </v-form>
-    <div>
-      <ul>
-        <li v-for="(item, i) in delegations">{{ item }}</li>
-      </ul>
-    </div>
+    <v-layout row wrap>
+      <v-flex xs12 md5>
+        <my-status class="mb-5"></my-status>
+        <v-text-field
+          label="Borrower"
+          v-model="data.to"
+          readonly
+        ></v-text-field>
+        <v-form ref="form" v-model="valid" lazy-validation class="mb-5">
+          <v-text-field
+            label="빌릴 SP"
+            v-model="data.sp"
+            suffix="SP"
+            type="number"
+            :rules="rules.sp"
+            required
+          ></v-text-field>
+          <div v-if="data.sp">
+            {{ vests + ' VESTS' }}
+          </div>
+          <v-text-field
+            label="빌릴기간"
+            v-model="data.weeks"
+            mask="###"
+            suffix="주"
+            :rules="rules.weeks"
+            required
+          ></v-text-field>
+          <v-checkbox
+            label="사용자 동의"
+            :rules="rules.agree"
+            required
+          ></v-checkbox>
+          <div class="text-xs-center">
+            <v-btn
+              color="info"
+              @click="lease"
+            >
+              SP 빌리기 신청
+            </v-btn>
+          </div>
+        </v-form>
+      </v-flex>
+      <v-flex xs12 md7>
+        <v-data-table
+          :headers="headers"
+          :items="leases"
+          hide-actions
+          class="elevation-1"
+        >
+          <template slot="items" slot-scope="props">
+            <td class="text-xs-center">{{ props.item.from }}</td>
+            <td class="text-xs-center">{{ props.item.to }}</td>
+            <td class="text-xs-center">{{ props.item.sp }}</td>
+            <td class="text-xs-center">{{ props.item.weeks }}</td>
+            <td class="text-xs-center">{{ props.item.created_at | moment('YYYY-MM-DD HH:mm:ss') }}</td>
+          </template>
+        </v-data-table>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
@@ -87,8 +98,13 @@
 import api from '@/api/center'
 import steem from '@/services/steem'
 import steemutil from '@/mixins/steemutil'
+import MyStatus from '@/components/center/MyStatus'
 
 export default {
+  components: {
+    MyStatus
+  },
+  mixins: [steemutil],
   data () {
     return {
       data: {},
@@ -98,28 +114,23 @@ export default {
         weeks: [v => !!v || '빌릴기간을 입력하세요'],
         agree: [v => !!v || '사용자 동의가 필요합니다']
       },
-      delegations: []
+      headers: [
+        {text: 'Delegator', align: 'center', sortable: false, value: 'to'},
+        {text: 'Delegatee', align: 'center', sortable: false, value: 'from'},
+        {text: 'Steem Power', align: 'center', sortable: false, value: 'sp'},
+        {text: 'Weeks', align: 'center', sortable: false, value: 'weeks'},
+        {text: 'Date', align: 'center', sortable: false, value: 'created_at'}
+      ],
+      leases: []
     }
   },
-  mixins: [steemutil],
   mounted () {
     this.init()
     this.$store.dispatch('me/getAccount')
-    this.getVestingDelegations()
+    this.getLeases()
+    // this.getVestingDelegations()
   },
   computed: {
-    me () {
-      return this.$store.state.me.account
-    },
-    mineSP () {
-      return this.getSP(parseFloat(this.me.vesting_shares)).toFixed(3)
-    },
-    receivedSP () {
-      return this.getSP(parseFloat(this.me.received_vesting_shares)).toFixed(3)
-    },
-    delegatedSP () {
-      return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
-    },
     vests () {
       return this.spToVests(this.data.sp)
     }
@@ -154,6 +165,13 @@ export default {
       }).catch(error => {
         if (error) {}
         alert('신청을 실패했습니다. 입력값들을 확인하세요.')
+      })
+    },
+    getLeases: function () {
+      let vm = this
+
+      api.getLeases(this.$store.state.auth.username).then(res => {
+        vm.leases = res.data
       })
     }
   }
