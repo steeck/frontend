@@ -1,10 +1,17 @@
 <template>
-  <v-container grid-list-xl style="padding-top: 0px; margin-left:0px;">
-    <v-layout class="topToolbar">
-      <v-flex xs12 sm6 md4 justify-left>
-        <v-text-field placeholder="Title" v-model="content_title"></v-text-field>
+  <v-container grid-list-xl>
+    <v-layout>
+      <v-flex xs12 sm4 md4>
+        <v-select
+          :items="categories"
+          v-model="category"
+          label="카테고리"
+        ></v-select>
       </v-flex>
-      <v-flex justify-end>
+      <v-flex xs12 sm4 md6>
+        <v-text-field placeholder="제목" v-model="title"></v-text-field>
+      </v-flex>
+      <v-flex xs12 sm4 md2 justify-end>
         <v-btn class="submitBtn" v-on:click="submitBtn" style="background-color:blue; color:white;">Submit</v-btn>
       </v-flex>
     </v-layout>
@@ -15,8 +22,8 @@
           <v-layout flex align-center justify-center>
             <v-flex id="thubnailCard" xs5 style="padding-left:0px;">
               <div justify-center v-for="(item, i) in contents" :key="i" @click="selectCard(i)">
-                <v-card-title v-if="i == 0" class="black--text" >표지</v-card-title>
-                <v-card-title v-if="i > 0" class="black--text" >{{i}}</v-card-title>
+                <v-card-title v-if="i === 0" class="black--text" >표지</v-card-title>
+                <v-card-title v-else-if="i > 0" class="black--text" >{{ i }}</v-card-title>
                 <v-card style="width:140px; border-style:solid; border-width:0.5px; border-color: rgba(0,0,0,0.3);">
                   <v-img v-if="item.url"
                     class="black--text"
@@ -119,47 +126,28 @@
       >
         <v-flex class="py-2">
           <br><br><br>
-           <!-- toolbar -->
-           <div>
-             <h3>도구</h3>
-             <v-expansion-panel>
-               <v-expansion-panel-content>
-                 <div slot="header">레이아웃</div>
-                 <v-card>
-                   <v-btn-toggle v-model="toggle_exclusive">
-                     <v-btn flat>
-                       <v-icon>format_align_left</v-icon>
-                     </v-btn>
-                     <v-btn flat>
-                       <v-icon>format_align_center</v-icon>
-                     </v-btn>
-                     <v-btn flat>
-                       <v-icon>format_align_right</v-icon>
-                     </v-btn>
-                     <v-btn flat>
-                       <v-icon>format_align_justify</v-icon>
-                     </v-btn>
-                   </v-btn-toggle>
-                </v-card>
-              </v-expansion-panel-content>
+          <!-- toolbar -->
+          <div>
+            <h3>도구</h3>
+            <v-expansion-panel>
               <v-expansion-panel-content>
-                <div slot="header">글쓰기 도구</div>
-                <v-card>
-                  <v-btn-toggle v-model="toggle_multiple" multiple>
-                    <v-btn flat>
-                      <v-icon>format_bold</v-icon>
-                    </v-btn>
-                    <v-btn flat>
-                      <v-icon>format_italic</v-icon>
-                    </v-btn>
-                    <v-btn flat>
-                      <v-icon>format_underlined</v-icon>
-                    </v-btn>
-                    <v-btn flat>
-                      <v-icon>format_color_fill</v-icon>
-                    </v-btn>
-                  </v-btn-toggle>
-                </v-card>
+               <div slot="header">레이아웃</div>
+               <v-card>
+                 <v-btn-toggle v-model="toggle_exclusive">
+                   <v-btn flat>
+                     <v-icon>format_align_left</v-icon>
+                   </v-btn>
+                   <v-btn flat>
+                     <v-icon>format_align_center</v-icon>
+                   </v-btn>
+                   <v-btn flat>
+                     <v-icon>format_align_right</v-icon>
+                   </v-btn>
+                   <v-btn flat>
+                     <v-icon>format_align_justify</v-icon>
+                   </v-btn>
+                 </v-btn-toggle>
+              </v-card>
               </v-expansion-panel-content>
             </v-expansion-panel>
             <br><br><br>
@@ -169,25 +157,32 @@
             <h3>태그</h3>
             <v-card>
               <v-flex>
-                <v-text-field v-model="tagtext"
+                <v-text-field v-model="tag"
                   label="태그단어"
                   single-line
-                  v-on:keyup.space="tagtext += '#'"
-                  v-on:change="hashtag"
+                  v-on:keyup.enter="addTag"
                 ></v-text-field>
                 <v-layout row wrap align-center >
-                  <v-btn v-for="(thing, i) in tagarray" :key="i"
-                    class="black--text"
+                  <v-btn v-for="(tag, i) in tags" :key="i"
+                    class="black--text caption"
                     depressed small
                     round
-                    style="width:35%;font-size:65%;"
                     outline color="indigo"
-                  >{{ thing }}</v-btn>
+                    @click="removeTag(i)"
+                  >{{ tag }}</v-btn>
                 </v-layout>
-                <br>
               </v-flex>
             </v-card>
           </div>
+          <br><br><br>
+
+          <h3>보상 설정</h3>
+          <v-select
+            :items="rewards"
+            v-model="reward"
+            label="보상"
+            solo
+          ></v-select>
         </v-flex>
       </v-layout>
       <br>
@@ -210,19 +205,35 @@ export default {
       selected: 0,
       url: '',
       text: '',
-      contents: [{url: null, text: ''}],  // array of each page content ex. [0] = title page [1]
-      tagtext: '#',  // tag inputed
-      tagarray: [],
-      username: '', //username of steem user
-      permlink: '',
-      wif: '', //steem posting permission
-      content_title: '',
+      tag: '',
+      categories: [
+        { value: 'hot', text: '핫이슈' },
+        { value: 'crypto', text: '암호화폐' },
+        { value: 'fashion', text: '패션·뷰티' },
+        { value: 'life', text: '라이프' },
+        { value: 'travel', text: '여행' },
+        { value: 'culture', text: '문화·예술' },
+        { value: 'lesson', text: '어학·강좌' },
+        { value: 'car', text: '차·테크' },
+        { value: 'game', text: '게임' },
+        { value: 'food', text: '푸드' },
+        { value: 'essey', text: '공감·에세이' },
+        { value: 'sponsor', text: '스폰서' }
+      ],
+      rewards: [
+        { value: 'all', text: '100% 스팀파워' },
+        { value: 'half', text: '50% 스팀달러와 50% 스팀파워' },
+        { value: 'none', text: '보상거절' }
+      ],
+      reward: 'half',
+      category: '',
+      title: '',
+      contents: [{url: null, text: ''}],
+      tags: ['steeck'],
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
       submit: false,
-
       width: 300,
-
       // dropzoneOptions: {
       //   // url: (file) => this.saveImages(file),
       //   url: 'https://httpbin.org/post',
@@ -238,17 +249,25 @@ export default {
   },
   mounted () {
     steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-
-    this.username = this.$store.state.me.account.name
-    this.wif = this.$store.state.me.account.posting.key_auths[0][0]
-
-    // steem.api.getAccounts(['dhdmstjs', 'smtion'], function(err, response){
-    //   console.log('testaa', response[0].posting.key_auths[0][0]);
-    //   console.log(err, response);
-    //
-    // })
   },
   methods: {
+    addTag: function (e) {
+      if (!this.tag || this.tags.indexOf(this.tag) >= 0) {
+        return
+      }
+      if (this.tags.length >= 5) {
+        alert('태그는 5개까지 가능합니다.')
+        return
+      }
+      this.tags.push(this.tag)
+      this.tag = ''
+    },
+    removeTag: function (index) {
+      if (index === 0 || this.tags[index] === 'steeck') {
+        return
+      }
+      this.tags.splice(index, 1)
+    },
     navigation: function(i, arrow) {
       if (arrow=='back'&& this.selected!=0) {
         this.selected = i - 1;
@@ -272,21 +291,6 @@ export default {
     },
     bindText: function () {
       this.contents[this.selected].text = this.text
-    },
-    hashtag: function () {
-      this.tagarray = []
-      console.log('tag', this.tagtext)
-      let split = this.tagtext.split(' ')
-      let arr = [] // array to send to db
-      for (let item in split) {
-        if (split[item].length > 1) {
-          this.tagarray.push(split[item])
-        }
-      }
-      if (this.tagarray.length > 5) {
-        alert('Max number of tags is 5')
-        this.tagarray = []
-      }
     },
     addCard: function () {
       this.contents.push({url: null, text: ''})
@@ -312,56 +316,81 @@ export default {
       })
     },
     submitBtn: function () { // create the contents
-      let tags = []
-      var privateKeys = steem.auth.getPrivateKeys(this.username, this.wif);
-      for (let tag in this.tagarray) {
-        tags.push(this.tagarray[tag].substring(1))
-        console.log('tagss', tags);
-      }
-      let jsonObj = {tags:tags}
-      let formData = {
-        author: this.username,
-        contents: this.contents,
-        json_metadata: jsonObj //to be included in jsonMetadata
-      }
-      let empty = false;
-      let steembody = '';
-      for (let item in formData.contents) {
-        if (formData.contents[item].text == "") {
-          empty = true
-          alert('Text content is empty')
+      this.contents.forEach((item, i) => {
+        if (!item.url && !item.text) {  // remove empty card
+          this.contents.splice(i, 1)
         }
-        if (formData.contents[item].url == null) {
-          empty = true
-          alert('Img/Video is empty')
-        }
-        steembody += formData.contents[item].url + formData.contents[item].text + ','
+      })
+      if (!this.contents.length) {
+        alert('내용을 작성해주세요')
+        return
       }
 
-      if (empty === false) {
-        //post data to db then to steem
-        api.create(formData).then(res => {
-          console.log('createRES', res)
-          this.permlink = res.data.permlink
-          console.log('perm', this.permlink)
-          steemconnect.comment('', '', this.username, this.permlink, this.content_title, steembody, JSON.stringify(formData.json_metadata))
-           .then((res) => {
-             console.log('works');
-             console.log(res)
-           })
-           .catch(err => {
-             console.log(err)
-             api.delete(res.data.permlink).then(res2=>{
-               console.log(this.permlink, 'deleted');
-               console.log('del res',res2);
-             }).catch(function(error) {
-               console.log('api del error', error);
-             })
-           })
-        }).catch(function(error) {
-          console.log('err',error);
-        })
+      let vm = this
+      let data = {
+        category: this.category,
+        author: this.$store.state.me.account.name,
+        title: this.title,
+        contents: this.contents,
+        json_metadata: {
+          tags: this.tags,
+          format: 'html'
+        }
       }
+      let steemContentsBody = '<html>'
+      for (let i in this.contents) {
+        let img = this.contents[i].url ? '<p><img src="' + this.contents[i].url + '"></p>' : ''
+        let text = this.contents[i].text ? '<p>' + this.contents[i].text + '</p>' : ''
+        steemContentsBody += img + text + '<br>'
+      }
+      steemContentsBody += '</html>'
+
+      api.create(data)
+        .then(res => {
+          data.permlink = res.data.permlink
+
+          steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)
+            .then(res => {
+              console.log('works')
+              console.log(res)
+
+              let commentOptionsConfig = {
+                author: data.author,
+                permlink: data.permlink,
+                allow_votes: true,
+                allow_curation_rewards: true,
+                max_accepted_payout: '1000000.000 SBD',
+                percent_steem_dollars: 10000,
+                extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1500 }] }]]
+              };
+
+              if (vm.reward === 'all') {
+                commentOptionsConfig.percent_steem_dollars = 0;
+              } else if (vm.reward === 'none') {
+                commentOptionsConfig.max_accepted_payout = '0.000 SBD';
+              }
+              steemconnect.broadcast([['comment_options', commentOptionsConfig]])
+                .then(res => {
+                  console.log(res)
+                })
+                .catch(error => {
+                  console.log('err', error)
+                })
+            })
+            .catch(err => {
+              api.delete(permlink)
+                .then(res2 => {
+                  console.log(permlink, 'deleted')
+                  console.log('del res',res2)
+                })
+                .catch(error => {
+                  console.log('api del error', error)
+                })
+            })
+        })
+        .catch(error => {
+          console.log('err', error)
+        })
     }
   }
 }

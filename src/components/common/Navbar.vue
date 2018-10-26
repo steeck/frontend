@@ -2,64 +2,9 @@
   <div>
     <v-navigation-drawer :clipped="$vuetify.breakpoint.lgAndUp" fixed v-model="drawer" left app width="230">
       <v-list dense class="pa-4">
-        <v-list-tile>
+        <v-list-tile v-for="(cate, i) in categories" :key="i">
           <v-list-tile-content>
-            <v-list-tile-title>핫이슈</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>암호화폐</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>패션·뷰티</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>라이프</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>여행</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>문화·예술</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>어학·강좌</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>차·테크</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>게임</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>푸드</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>공감·에세이</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-list-tile-title>스폰서</v-list-tile-title>
+            <v-list-tile-title><router-link :to="{ name: 'C', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-divider class="my-4"></v-divider>
@@ -119,6 +64,13 @@
 >>>.v-navigation-drawer > .v-list .v-list__tile {
   font-weight: 600;
 }
+.link {
+  text-decoration: none;
+  color: inherit;
+}
+.link:hover {
+  color: #111;
+}
 ul {
   list-style-type: none;
   padding: 0;
@@ -144,7 +96,21 @@ import steemconnect from '@/services/steemconnect'
 export default {
   data () {
     return {
-      drawer: false
+      drawer: false,
+      categories: [
+        { value: 'hot', text: '핫이슈' },
+        { value: 'crypto', text: '암호화폐' },
+        { value: 'fashion', text: '패션·뷰티' },
+        { value: 'life', text: '라이프' },
+        { value: 'travel', text: '여행' },
+        { value: 'culture', text: '문화·예술' },
+        { value: 'lesson', text: '어학·강좌' },
+        { value: 'car', text: '차·테크' },
+        { value: 'game', text: '게임' },
+        { value: 'food', text: '푸드' },
+        { value: 'essey', text: '공감·에세이' },
+        { value: 'sponsor', text: '스폰서' }
+      ]
     }
   },
   mounted () {
