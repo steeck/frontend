@@ -27,7 +27,8 @@
         <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
         <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
         <v-btn dark color="light-blue lighten-1">송금</v-btn>
-        <v-btn color="error">차단</v-btn>
+        <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
+        <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
       </div>
     </div>
 
@@ -267,6 +268,7 @@
         steemconnect.follow(this.$store.state.me.account.name, this.username, function (err, res) {
           if (!err) {
             vm.$store.commit('me/addFollowing', vm.username)
+            vm.$store.commit('me/removeIgnore', vm.username)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -283,6 +285,38 @@
           console.log(err, res)
           if (!err) {
             vm.$store.commit('me/removeFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      addIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.ignore(this.$store.state.me.account.name, this.username, function (err, res) {
+          if (!err) {
+            vm.$store.commit('me/addIgnore', vm.username)
+            vm.$store.commit('me/removeFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      removeIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.unfollow(this.$store.state.me.account.name, this.username, function (err, res) {
+          console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/removeIgnore', vm.username)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })

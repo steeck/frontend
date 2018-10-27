@@ -24,6 +24,7 @@ export default {
     return {
       lastFollowerName: '',
       lastFollowingName: '',
+      lastIgnoreName: '',
       onceForCall: 100
     }
   },
@@ -55,17 +56,22 @@ export default {
     },
     lastFollowingName () {
       this.loadFollowing()
+    },
+    lastIgnoreName () {
+      this.loadFollowingIgnore()
     }
   },
   methods: {
     updateFollowInfo: function () {
       this.$store.state.me.follower = []
       this.$store.state.me.following = []
+      this.$store.state.me.ignore = []
       if (this.$store.state.me.account.name === null) {
         return
       }
       this.loadFollower()
       this.loadFollowing()
+      this.loadFollowingIgnore()
       this.$store.dispatch('me/getFollowInfo').catch(err => {
         console.log(err)
       })
@@ -100,6 +106,24 @@ export default {
           }
           if (arrResult.length > 0) {
             this.lastFollowingName = result[(result.length - 1)].following
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+    loadFollowingIgnore: function () {
+      steem.api.callAsync('get_following', [this.$store.state.me.account.name, this.lastIgnoreName, 'ignore', this.onceForCall])
+        .then(result => {
+          let arrResult = this.getArrByArrKey(result, 'following')
+          if (this.$store.state.me.ignore.length === 0) {
+            this.$store.state.me.ignore = arrResult
+          } else {
+            arrResult.shift()
+            this.$store.state.me.ignore = this.$store.state.me.ignore.concat(arrResult)
+          }
+          if (arrResult.length > 0) {
+            this.lastIgnoreName = result[(result.length - 1)].following
           }
         })
         .catch(error => {
