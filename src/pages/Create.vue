@@ -284,7 +284,6 @@ export default {
         return
       }
 
-      let vm = this
       let data = {
         category: this.category,
         author: this.$store.state.me.account.name,
@@ -295,56 +294,57 @@ export default {
           format: 'html'
         }
       }
-      let steemContentsBody = '<html>'
-      for (let i in this.contents) {
-        let img = this.contents[i].url ? '<p><img src="' + this.contents[i].url + '"></p>' : ''
-        let text = this.contents[i].text ? '<p>' + this.contents[i].text + '</p>' : ''
-        steemContentsBody += img + text + '<br>'
-      }
-      steemContentsBody += '</html>'
 
       api.create(data)
         .then(res => {
           data.permlink = res.data.permlink
 
-          steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)
-            .then(res => {
-              console.log('works')
-              console.log(res)
-
-              let commentOptionsConfig = {
-                author: data.author,
-                permlink: data.permlink,
-                allow_votes: true,
-                allow_curation_rewards: true,
-                max_accepted_payout: '1000000.000 SBD',
-                percent_steem_dollars: 10000,
-                extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1500 }] }]]
-              }
-
-              if (vm.reward === 'all') {
-                commentOptionsConfig.percent_steem_dollars = 0
-              } else if (vm.reward === 'none') {
-                commentOptionsConfig.max_accepted_payout = '0.000 SBD'
-              }
-              steemconnect.broadcast([['comment_options', commentOptionsConfig]])
-                .then(res => {
-                  console.log(res)
-                })
-                .catch(error => {
-                  console.log('err', error)
-                })
-            })
-            .catch(err => {
-              if (err) {}
-              api.delete(data.permlink)
-                .then(res2 => {
-                  console.log(data.permlink, 'deleted')
-                })
-                .catch(error => {
-                  console.log('api del error', error)
-                })
-            })
+          // @TODO 스팀에 브로드캐스팅은 나중에...
+          // let steemContentsBody = '<html>'
+          // for (let i in data.contents) {
+          //   let img = data.contents[i].url ? '<p><img src="' + data.contents[i].url + '"></p>' : ''
+          //   let text = data.contents[i].text ? '<p>' + data.contents[i].text + '</p>' : ''
+          //   steemContentsBody += img + text + '<br>'
+          // }
+          // steemContentsBody += '</html>'
+          // steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)
+          //   .then(res => {
+          //     console.log('works')
+          //     console.log(res)
+          //
+          //     let commentOptionsConfig = {
+          //       author: data.author,
+          //       permlink: data.permlink,
+          //       allow_votes: true,
+          //       allow_curation_rewards: true,
+          //       max_accepted_payout: '1000000.000 SBD',
+          //       percent_steem_dollars: 10000,
+          //       extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1500 }] }]]
+          //     }
+          //
+          //     if (vm.reward === 'all') {
+          //       commentOptionsConfig.percent_steem_dollars = 0
+          //     } else if (vm.reward === 'none') {
+          //       commentOptionsConfig.max_accepted_payout = '0.000 SBD'
+          //     }
+          //     steemconnect.broadcast([['comment_options', commentOptionsConfig]])
+          //       .then(res => {
+          //         console.log(res)
+          //       })
+          //       .catch(error => {
+          //         console.log('err', error)
+          //       })
+          //   })
+          //   .catch(err => {
+          //     if (err) {}
+          //     api.delete(data.permlink)
+          //       .then(res2 => {
+          //         console.log(data.permlink, 'deleted')
+          //       })
+          //       .catch(error => {
+          //         console.log('api del error', error)
+          //       })
+          //   })
         })
         .catch(error => {
           console.log('err', error)
