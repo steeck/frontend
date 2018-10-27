@@ -6,7 +6,7 @@
         <v-carousel-item
           v-for="(card, i) in item.contents"
           :key="i"
-          :src="card.url"
+          :src="card.url ? card.url : ''"
         >
           <pre>{{ card.text }}</pre>
         </v-carousel-item>

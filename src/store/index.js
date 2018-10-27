@@ -4,6 +4,7 @@ import VuexPersistence from 'vuex-persist'
 import auth from './modules/auth'
 import global from './modules/global'
 import me from './modules/me'
+import terms from './modules/terms'
 
 Vue.use(Vuex)
 
@@ -11,7 +12,8 @@ export default new Vuex.Store({
   modules: {
     auth,
     global,
-    me
+    me,
+    terms
   },
   state: {
     layout: 'default-layout',

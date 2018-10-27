@@ -4,7 +4,7 @@
       <v-list dense class="pa-4">
         <v-list-tile v-for="(cate, i) in categories" :key="i">
           <v-list-tile-content>
-            <v-list-tile-title><router-link :to="{ name: 'C', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link></v-list-tile-title>
+            <v-list-tile-title><router-link :to="{ name: 'Categories', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link></v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
         <v-divider class="my-4"></v-divider>

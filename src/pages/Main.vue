@@ -9,7 +9,7 @@
       <v-container class="py-0">
         <v-layout row wrap class="darken-3">
           <v-flex class="categories" md2 v-for="(cate, i) in categories" :key="i">
-            <router-link :to="{ name: 'C', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link>
+            <router-link :to="{ name: 'Categories', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link>
           </v-flex>
         </v-layout>
       </v-container>
@@ -18,16 +18,16 @@
       <v-tabs hide-slider>
         <v-tab ripple>스틱30</v-tab>
         <v-tab-item>
-          <div class="text-xs-center ma-5" v-if="!trending.length">
+          <div class="text-xs-center ma-5" v-if="!best.length">
             <v-progress-circular indeterminate color="deep-purple"></v-progress-circular>
           </div>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in trending.slice(0, 3)" :key="card.permlink">
+            <v-flex sm12 md4 v-for="(card, i) in best.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in trending.slice(3)" :key="card.permlink">
+            <v-flex md6 v-for="(card, i) in best.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>
@@ -35,12 +35,12 @@
         <v-tab ripple>뉴비30</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in created.slice(0, 3)" :key="card.permlink">
+            <v-flex sm12 md4 v-for="(card, i) in news.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in created.slice(3)" :key="card.permlink">
+            <v-flex md6 v-for="(card, i) in news.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>
@@ -49,12 +49,12 @@
         <v-tab ripple>주간</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in hot.slice(0, 3)" :key="card.permlink">
+            <v-flex sm12 md4 v-for="(card, i) in weekly.slice(0, 3)" :key="card.permlink">
               <card-best :item="card" :rating="i + 1"></card-best>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in hot.slice(3)" :key="card.permlink">
+            <v-flex md6 v-for="(card, i) in weekly.slice(3)" :key="card.permlink">
               <card :item="card" :rating="i + 4"></card>
             </v-flex>
           </v-layout>
@@ -128,16 +128,17 @@ table.table-tag {
 </style>
 
 <script>
-import steem from '@/services/steem'
+import api from '@/api/posts'
+// import steem from '@/services/steem'
 import CardBest from '@/components/post/CardBest'
 import Card from '@/components/post/Card'
 
 export default {
   data () {
     return {
-      trending: [],
-      created: [],
-      hot: [],
+      best: [],
+      news: [],
+      weekly: [],
       payout: [],
       categories: [
         { value: 'hot', text: '핫이슈' },
@@ -165,25 +166,27 @@ export default {
   methods: {
     getPosts: function () {
       let vm = this
-      const query = {
-        tag: 'tasteem',
-        limit: 30
-      }
-      steem.api.getDiscussionsByTrending(query, function (err, res) {
-        if (err) {}
-        vm.trending = res
-      })
-      steem.api.getDiscussionsByHot(query, function (err, res) {
-        if (err) {}
-        vm.hot = res
-      })
-      steem.api.getDiscussionsByCreated(query, function (err, res) {
-        if (err) {}
-        vm.created = res
-      })
-      // steem.api.getDiscussionsByPayout(query, function (err, res) {
-      //   vm.payout = res
-      // })
+      api.getBest({})
+        .then(res => {
+          vm.best = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      api.getNew({})
+        .then(res => {
+          vm.news = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      api.getWeekly({})
+        .then(res => {
+          vm.weekly = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   }
 }

@@ -6,7 +6,7 @@
   >
     <ul>
       <li v-bind:class="{ active: menu == 'Main'}"><router-link to="/">추천</router-link></li>
-      <li v-bind:class="{ active: menu == 'C'}"><router-link to="/c">카테고리</router-link></li>
+      <li v-bind:class="{ active: menu == 'Categories'}"><router-link to="/categories/hot">카테고리</router-link></li>
       <li v-bind:class="{ active: menu == 'Feeds'}"><router-link to="/feeds">피드</router-link></li>
       <li v-bind:class="{ active: menu == 'Activities'}"><router-link to="/activities">활동</router-link></li>
       <li v-bind:class="{ active: menu == 'My'}"><router-link to="/my">MY</router-link></li>

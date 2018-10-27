@@ -5,7 +5,7 @@ import Login from '@/pages/auth/Login'
 import Logout from '@/pages/auth/Logout'
 import Main from '@/pages/Main'
 import Feeds from '@/pages/Feeds'
-import C from '@/pages/C'
+import Categories from '@/pages/Categories'
 import Activities from '@/pages/Activities'
 import My from '@/pages/My'
 import Lease from '@/pages/center/Lease'
@@ -43,9 +43,9 @@ const router = new Router({
       component: Feeds
     },
     {
-      path: '/c/:category',
-      name: 'C',
-      component: C,
+      path: '/categories/:category',
+      name: 'Categories',
+      component: Categories,
       props: true
     },
     {
@@ -96,7 +96,7 @@ const router = new Router({
   ]
 })
 router.beforeResolve((to, from, next) => {
-  const defaultLayout = ['C', 'Feeds', 'Activities', 'My', 'User', 'PostView']
+  const defaultLayout = ['Categories', 'Feeds', 'Activities', 'My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {
