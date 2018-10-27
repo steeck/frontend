@@ -345,6 +345,8 @@ export default {
           //         console.log('api del error', error)
           //       })
           //   })
+          alert('새로운 글이 등록되었습니다.')
+          this.$router.push('/posts/' + res.data.id)
         })
         .catch(error => {
           console.log('err', error)

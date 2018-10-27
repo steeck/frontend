@@ -36,7 +36,7 @@
       <v-toolbar-title><router-link to="/">Steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
       <v-text-field flat solo-inverted hide-details prepend-inner-icon="search" label="Search" class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn v-if="this.$store.state.auth.accessToken" href="/logout">로그아웃</v-btn>
+      <logged-on v-if="this.$store.state.auth.accessToken"></logged-on>
       <v-btn v-else :href="loginUrl">로그인</v-btn>
     </v-toolbar>
   </div>
@@ -92,8 +92,12 @@ li a {
 
 <script>
 import steemconnect from '@/services/steemconnect'
+import LoggedOn from '@/components/common/LoggedOn'
 
 export default {
+  components: {
+    LoggedOn
+  },
   data () {
     return {
       drawer: false,

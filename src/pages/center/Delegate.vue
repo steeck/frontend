@@ -2,7 +2,10 @@
   <v-container grid-list-xl>
     <v-layout row wrap>
       <v-flex xs12 md5>
-        <my-status class="mb-5"></my-status>
+        <my-status
+          :username="this.$store.state.auth.username"
+          class="mb-5"
+        ></my-status>
         <v-text-field
           label="Delegatee"
           v-model="data.to"
@@ -135,7 +138,7 @@ export default {
   mounted () {
     this.init()
     // this.getVestingDelegations()
-    this.$store.dispatch('me/getAccount')
+    // this.$store.dispatch('me/getAccount')
     this.getDelegations()
   },
   computed: {
