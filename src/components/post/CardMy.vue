@@ -3,32 +3,34 @@
   <v-card  class="pl-3 pr-3 card-my-page mt-2 mb-2">
     <v-card-text>
       <v-layout justify-space-between align-center xs12 row>
-        <v-flex d-inline-block>
-          <v-avatar size="80" color="grey lighten-4">
-            <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
-          </v-avatar>
-          <v-flex d-inline-block>
-            <router-link :to="'/user/' + item.author" :tag="'button'" v-if="item.author !== $store.state.me.account.name">
-              {{ item.author }}
-            </router-link>
-            <div v-else>{{ item.author }}</div>
-            <div>{{ this.createdTime | ago}}</div>
-          </v-flex>
+        <v-flex d-inline-block >
+          <v-layout align-center>
+            <v-avatar color="grey lighten-4" size="48">
+              <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
+            </v-avatar>
+            <v-flex d-inline-block>
+              <router-link :to="'/user/' + item.author" :tag="'a'" v-if="item.author !== $store.state.me.account.name" class="card-author">
+                {{ item.author }}
+              </router-link>
+              <div v-else class="card-author">{{ item.author }}</div>
+              <div class="card-post_time">{{ this.createdTime | ago}}</div>
+            </v-flex>
+          </v-layout>
         </v-flex>
         <card-menu :item="item"></card-menu>
       </v-layout>
     </v-card-text>
     <v-card-title>
-      <v-layout column v-if="postType === 'post'">
+      <v-layout column v-if="postType === 'post'" @click="jumpToPost" class="area-click">
         <div class="headline">{{ item.title }}</div>
-        <div class="grey--text">{{ this.bodyChip}}</div>
+        <div class="grey--text text-truncate">{{ this.bodyChip }}</div>
       </v-layout>
       <v-layout column v-else-if="postType === 'comment'">
         <div class="headline">RE : {{ this.bodyChip}}</div>
       </v-layout>
     </v-card-title>
     <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
-      <v-carousel  hide-delimiters>
+      <v-carousel hide-delimiters class="area-carousel">
         <v-carousel-item
           v-for="(image, i) in jsonMetadata.image"
           :key="i"
@@ -117,8 +119,8 @@
       // 글 본문내용 중 일부를 반환 코멘트인경우 전체를 리턴
       bodyChip: function () {
         // eslint-disable-next-line
-        let tmp = this.item.body.split('\n').join(' ').replace(/(\[|)\!\[(.*)\)/gi, '')
-        return this.postType === 'post' ? (tmp.substring(0, tmp.length < 30 ? tmp.length : 30) + (tmp.length < 30 ? '' : '...')) : tmp
+        let tmp = this.item.body.split('\n').join(' ').replace(/(!\[.*?\))/gi, '').replace(/(<.*?>)/gi, '')
+        return this.postType === 'post' ? (tmp.substring(0, tmp.length < 100 ? tmp.length : 100)) : tmp
       },
       getPayoutValue: function () {
         // console.log(this.item.content.pending_payout_value)
@@ -126,6 +128,10 @@
       }
     },
     methods: {
+      jumpToPost: function () {
+        let url = '/' + this.item.category + '/' + this.item.author + '/' + this.item.permlink
+        this.$router.push(url)
+      }
     },
     mounted () {
       // console.log(this.postType)
@@ -146,6 +152,26 @@
    .card-footer {
      border-top: 0.5px solid $defaultRightBorderColor;
    }
+ }
+
+ .card-author {
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: #425363;
+   text-decoration: none;
+ }
+
+  .card-post_time {
+    color: gray;
+  }
+
+
+ .area-carousel{
+   max-height: 80vw;
+ }
+  
+ .area-click {
+   cursor: pointer;
  }
 
 </style>

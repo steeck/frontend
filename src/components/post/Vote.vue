@@ -2,11 +2,11 @@
     <div>
       <div>
         <div>
-          <span class="vote-text1">당신의 투표는 US {{ getVoteValue() }} 만큼의 가치가 있을 것입니다.</span>
-          <span style="float: right">
+          <v-flex sm12 class="vote-text1">당신의 투표는 US {{ getVoteValue() }} 만큼의 가치가 있을 것입니다.</v-flex>
+          <v-flex sm12 class="text-xs-right">
             <v-btn outline color="light-blue" flat="flat" @click="vote" :loading="isVoting">승인</v-btn>
             <v-btn outline color="red darken-1" flat="flat" @click="close">취소</v-btn>
-          </span>
+          </v-flex>
         </div>
         <div style="padding-top: 1rem; padding-bottom: 1rem;">
           <v-slider v-model="weight" color="deep-purple"></v-slider>
