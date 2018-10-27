@@ -30,32 +30,39 @@
   position: absolute;
 }
 </style>
-<script>
+<script sc>
 export default {
   props: ['height', 'percent', 'text', 'color'],
+  data () {
+    return {
+      per: 0
+    }
+  },
   mounted () {
+    // console.log(this.percent)
     let color = '#1976D2'
-    if (!this.percent) {
-      this.percent = 100
+    if (!isNaN(this.percent)) {
+      this.per = this.percent
     }
     if (this.color === 'dark') {
       color = '#283593'
     }
-    var elA = document.getElementsByClassName('progress-bar__a')
-    var elB = document.getElementsByClassName('progress-bar__background')
-    elA[0].style.width = this.percent + '%'
+    var elA = this.$el.getElementsByClassName('progress-bar__a')
+    var elB = this.$el.getElementsByClassName('progress-bar__background')
+    elA[0].style.width = this.per + '%'
     elA[0].style.backgroundColor = color
     elB[0].style.backgroundColor = color
   },
   watch: {
     percent () {
+      this.per = this.percent
       this.setWidth()
     }
   },
   methods: {
     setWidth: function () {
-      var elA = document.getElementsByClassName('progress-bar__a')
-      elA[0].style.width = this.percent + '%'
+      var elA = this.$el.getElementsByClassName('progress-bar__a')
+      elA[0].style.width = this.per + '%'
     }
   }
 }

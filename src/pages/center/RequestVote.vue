@@ -2,7 +2,10 @@
   <v-container grid-list-xl>
     <v-layout row wrap>
       <v-flex xs12 md5>
-        <my-status class="mb-5"></my-status>
+        <my-status
+          :username="'steeck'"
+          class="mb-5"
+        ></my-status>
         <v-text-field
           label="Username"
           v-model="data.username"

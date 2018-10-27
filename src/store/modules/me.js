@@ -1,4 +1,4 @@
-import steemconnect from '@/services/steemconnect'
+// import steemconnect from '@/services/steemconnect'
 import steem from '@/services/steem'
 
 /**
@@ -10,6 +10,7 @@ import steem from '@/services/steem'
 // initial state
 const state = {
   account: {},
+  rc: {},
   profile: {
     // about: '',
     // coverImage: '',
@@ -31,22 +32,44 @@ const getters = {}
 const actions = {
   getAccount ({ rootState, commit }) {
     if (rootState.auth.accessToken) {
-      steemconnect.setAccessToken(rootState.auth.accessToken)
-      steemconnect.me((err, res) => {
+      steem.api.getAccounts([rootState.auth.username], function (err, res) {
         if (err) {
           console.log(err)
           return
         }
-        commit('setAccount', res.account)
-        commit('setProfile', res.account)
+        commit('setAccount', res[0])
+        commit('setProfile', res[0])
       })
+
+      // steemconnect.setAccessToken(rootState.auth.accessToken)
+      // steemconnect.me((err, res) => {
+      //   if (err) {
+      //     console.log(err)
+      //     return
+      //   }
+      //   commit('setAccount', res.account)
+      //   commit('setProfile', res.account)
+      // })
     } else {
       console.error('No access token')
     }
   },
+  getRC ({ rootState, commit }) {
+    steem.api.send('rc_api', {
+      method: 'find_rc_accounts',
+      params: { 'accounts': [rootState.auth.username] }
+    }, function (err, res) {
+      if (err) {
+        console.log(err)
+        return
+      }
+      // console.log(res)
+      commit('setRC', res.rc_accounts[0])
+    })
+  },
   getFollowInfo: function ({ rootState, commit }) {
     steem.api
-      .callAsync('get_follow_count', [rootState.me.account.name])
+      .callAsync('get_follow_count', [rootState.auth.username])
       .then(function (result) {
         commit('setFollow', result)
       })
@@ -60,6 +83,9 @@ const actions = {
 const mutations = {
   setAccount (state, account) {
     state.account = account
+  },
+  setRC (state, rc) {
+    state.rc = rc
   },
   setProfile (state, account) {
     let {created} = account
