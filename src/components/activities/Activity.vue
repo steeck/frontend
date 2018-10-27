@@ -15,7 +15,12 @@
           <span class="font-weight-bold">{{ item.comment_author }}</span>님의 <a :href="permlink(item.comment_author, item.comment_permlink)">게시글</a>의 큐레이션 보상은 <span class="font-weight-bold">{{ sp(item.reward) }} SP</span> 입니다.
         </v-flex>
         <v-flex xs12 v-if="type === 'vote'" class="pb-1">
-          <span class="font-weight-bold">{{ item.author }}</span>님의 <a :href="permlink(item.author, item.permlink)">게시글</a>에 {{ item.weight | vp }}% 보팅하셨습니다.
+          <div v-if="item.weight > 0">
+            <span class="font-weight-bold">{{ item.author }}</span>님의 <a :href="permlink(item.author, item.permlink)">게시글</a>에 {{ item.weight | vp }}% 보팅하셨습니다.
+          </div>
+          <div v-else>
+            <span class="font-weight-bold">{{ item.author }}</span>님의 <a :href="permlink(item.author, item.permlink)">게시글</a>에 다운보팅하셨습니다.
+          </div>
         </v-flex>
         <v-flex xs12 v-if="type === 'claim_reward_balance'" class="pb-1">
           <span class="font-weight-bold">{{ item.reward_sbd }} SBD, {{ item.reward_steem }} STEEM, {{ sp(item.reward_vests) }} SP</span>를 내 지갑으로 옮겼습니다.
@@ -43,8 +48,13 @@
           <span class="font-weight-bold">{{ item.amount }}</span>만큼 스팀파워업 하였습니다.
         </v-flex>
         <v-flex xs12 v-if="type === 'custom_json'" class="pb-1">
-          <div v-if="json.op === 'follow' && json.data.what[0]">
-            <span class="font-weight-bold">{{ json.data.following }}</span>님의 {{ json.data.what[0] }}을/를 팔로우합니다.
+          <div v-if="json.op === 'follow' && json.data && json.data.what && json.data.what.length > 0">
+            <div v-if="json.data.what[0] === 'blog'">
+              <span class="font-weight-bold">{{ json.data.following }}</span>님을 팔로우합니다.
+            </div>
+            <div v-if="json.data.what[0] === 'ignore'">
+              <span class="font-weight-bold">{{ json.data.following }}</span>님을 차단합니다.
+            </div>
           </div>
           <div v-else>
             <span class="font-weight-bold">{{ json.data.following }}</span>님을 언팔로우합니다.
@@ -80,7 +90,8 @@ export default {
       item: {},
       json: {
         op: '',
-        data: {}
+        data: {
+        }
       }
     }
   },
