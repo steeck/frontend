@@ -2,32 +2,15 @@
   <div>
     <v-container py-0>
       <v-carousel fullscreen>
-        <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item>
+        <!-- <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item> -->
       </v-carousel>
     </v-container>
     <div class="grey lighten-3 hidden-sm-and-down">
       <v-container class="py-0">
-        <v-layout class="darken-3">
-          <table class="table-tag text-xs-center font-weight-bold">
-            <tbody>
-            <tr>
-              <td>핫이슈</td>
-              <td>암호화폐</td>
-              <td>패션뷰티</td>
-              <td>라이프</td>
-              <td>여행</td>
-              <td>문화예술</td>
-            </tr>
-            <tr>
-              <td>어학강좌</td>
-              <td>차테크</td>
-              <td>게임</td>
-              <td>푸드</td>
-              <td>공감에세이</td>
-              <td>스폰서</td>
-            </tr>
-            </tbody>
-          </table>
+        <v-layout row wrap class="darken-3">
+          <v-flex class="categories" md2 v-for="(cate, i) in categories" :key="i">
+            <router-link :to="{ name: 'C', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link>
+          </v-flex>
         </v-layout>
       </v-container>
     </div>
@@ -82,7 +65,7 @@
 </template>
 
 <style lang="scss" scoped>
-  @import "../colorset.scss";
+@import "../colorset.scss";
 >>>.v-carousel {
   height: 320px;
 }
@@ -110,6 +93,15 @@
 >>>.v-tabs__item--active {
   color: #4321a9;
   font-weight: 500;
+}
+.categories {
+  text-align: center;
+  padding: 1rem;
+  border: 0.5px solid #dedede;
+}
+.categories a {
+  text-decoration: none;
+  color: #37474F;
 }
 .asd {
   margin: auto -24px !important;
@@ -147,19 +139,19 @@ export default {
       created: [],
       hot: [],
       payout: [],
-      items: [
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/squirrel.jpg'
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/sky.jpg'
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/bird.jpg'
-        },
-        {
-          src: 'https://cdn.vuetifyjs.com/images/carousel/planet.jpg'
-        }
+      categories: [
+        { value: 'hot', text: '핫이슈' },
+        { value: 'crypto', text: '암호화폐' },
+        { value: 'fashion', text: '패션·뷰티' },
+        { value: 'life', text: '라이프' },
+        { value: 'travel', text: '여행' },
+        { value: 'culture', text: '문화·예술' },
+        { value: 'lesson', text: '어학·강좌' },
+        { value: 'car', text: '차·테크' },
+        { value: 'game', text: '게임' },
+        { value: 'food', text: '푸드' },
+        { value: 'essey', text: '공감·에세이' },
+        { value: 'sponsor', text: '스폰서' }
       ]
     }
   },

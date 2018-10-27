@@ -118,3 +118,11 @@ export default {
   }
 }
 </script>
+
+<style>
+@media only screen and (min-width: 1904px) {
+  .container {
+    max-width: 1185px;
+  }
+}
+</style>
