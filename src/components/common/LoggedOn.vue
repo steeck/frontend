@@ -70,10 +70,14 @@ export default {
   },
   computed: {
     vp () {
-      return (this.$store.state.me.account.voting_power / 100).toFixed(0)
+      if (this.$store.state.me.account) {
+        return (this.$store.state.me.account.voting_power / 100).toFixed(0)
+      }
     },
     rc () {
-      return (this.$store.state.me.rc.rc_manabar.current_mana / this.$store.state.me.rc.max_rc * 100).toFixed(0)
+      if (this.$store.state.me.rc.rc_manabar) {
+        return (this.$store.state.me.rc.rc_manabar.current_mana / this.$store.state.me.rc.max_rc * 100).toFixed(0)
+      }
     }
   }
 }
