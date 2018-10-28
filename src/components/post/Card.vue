@@ -1,28 +1,30 @@
 <template>
-  <v-card>
-    <v-layout flat row>
-      <v-flex class="col-rating">
-        <div class="rating">
-          {{ rating }}
-        </div>
-      </v-flex>
-       <v-flex class="col-body">
-         <v-card-title>
-           {{ item.title }}
-         </v-card-title>
-         <v-card-text>
-           <span class="category">{{ category }}</span><span class="author">{{ item.author }}</span>
-         </v-card-text>
-       </v-flex>
-       <v-flex class="col-img">
-         <v-img
-           :src="thumbnail"
-           width="110"
-           height="80"
-         ></v-img>
-      </v-flex>
-    </v-layout>
-  </v-card>
+  <router-link :to="{ name: 'View', params: {id: item.id} }" class="link">
+    <v-card>
+      <v-layout flat row>
+        <v-flex class="col-rating" :class="{'hidden': !rating}">
+          <div class="rating">
+            {{ rating }}
+          </div>
+        </v-flex>
+         <v-flex class="col-body">
+           <v-card-title>
+             {{ item.title }}
+           </v-card-title>
+           <v-card-text>
+             <span class="category">{{ category }}</span><span class="author">{{ item.author }}</span>
+           </v-card-text>
+         </v-flex>
+         <v-flex class="col-img">
+           <v-img
+             :src="thumbnail"
+             width="110"
+             height="80"
+           ></v-img>
+        </v-flex>
+      </v-layout>
+    </v-card>
+  </router-link>
 </template>
 
 <style scoped>
@@ -49,6 +51,12 @@
 >>>.v-card__text {
   padding: 0;
   padding-top: 12px;
+}
+.link {
+  text-decoration: none;
+}
+.hidden {
+  display: none;
 }
 .col-rating {
   min-width: 60px;

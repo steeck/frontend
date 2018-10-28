@@ -1,16 +1,18 @@
 <template>
   <v-container grid-list-xl>
     <v-flex v-for="(item, i) in list" :key="i">
-      {{ item.title}}
-      <v-carousel>
-        <v-carousel-item
-          v-for="(card, i) in item.contents"
-          :key="i"
-          :src="card.url ? card.url : ''"
-        >
-          <pre>{{ card.text }}</pre>
-        </v-carousel-item>
-      </v-carousel>
+      <router-link :to="{ name: 'View', params: {id: item.id} }" class="link">
+        {{ item.title}}
+        <v-carousel>
+          <v-carousel-item
+            v-for="(card, i) in item.contents"
+            :key="i"
+            :src="card.url ? card.url : ''"
+          >
+            <pre>{{ card.text }}</pre>
+          </v-carousel-item>
+        </v-carousel>
+      </router-link>
     </v-flex>
   </v-container>
 </template>
@@ -74,6 +76,9 @@ export default {
         .catch(error => {
           console.log(error)
         })
+    },
+    view: function () {
+      // $this.router('')
     }
   }
 }

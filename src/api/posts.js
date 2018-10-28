@@ -10,6 +10,9 @@ export default {
   delete (data) {
     return http.post('/delete', data)
   },
+  get (id) {
+    return http.get('/posts/' + id)
+  },
   getByCategory (data) {
     return http.get('/posts/c/' + data.category)
   },
