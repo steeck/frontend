@@ -66,7 +66,14 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+        <v-flex key="'empty'" v-else>
+          <v-flex v-if="page.ableLoading && page.list.length === 0" justify-center text-xs-center>
+            글이 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
       <!--댓글 관련 내용-->
@@ -93,7 +100,14 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+        <v-flex key="'empty'" v-else>
+          <v-flex v-if="page.ableLoading && page.commentList.length === 0" justify-center text-xs-center>
+            글이 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
       <!--보상 관련 내용-->
