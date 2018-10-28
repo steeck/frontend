@@ -22,7 +22,7 @@
 .v-card {
   box-shadow: none;
   margin-bottom: 16px;
-  border: 1px solid #e6e6e6;
+  border: 1px solid #e6e6e6 !important;
 }
 .v-card >>>.v-responsive {
   overflow: inherit;

@@ -165,7 +165,7 @@ export default {
   }
   .card {
     padding: 20px 30px;
-    border: 1px solid #d1d1d1;
+    border: 1px solid #d1d1d1 !important;
     margin-bottom: 20px;
   }
   .card-author {

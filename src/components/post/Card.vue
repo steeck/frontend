@@ -31,7 +31,7 @@
 .v-card {
   box-shadow: none;
   padding-bottom: 16px;
-  border-bottom: 1px solid #ededed;
+  border-bottom: 1px solid #ededed !important;
 }
 >>>.v-card__title {
   display: -webkit-box;

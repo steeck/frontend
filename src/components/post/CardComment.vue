@@ -170,7 +170,7 @@
 <style lang="scss" scoped>
   .comment {
     padding: 10px 0 15px;
-    border-bottom: 1px solid #ededed;
+    border-bottom: 1px solid #ededed !important;
   }
   .author {
     font-size: 1.1rem;
