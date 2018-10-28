@@ -17,6 +17,7 @@ export default new Vuex.Store({
   },
   state: {
     currency: 1150,
+    version: '',
     layout: 'default-layout',
     follower: [],
     following: [],
@@ -50,6 +51,9 @@ export default new Vuex.Store({
     },
     setCardContents (state, payload) {
       state.contentObj = payload
+    },
+    setAppVersion (state, payload) {
+      state.version = payload
     }
   },
   getters: {

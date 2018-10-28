@@ -125,5 +125,36 @@ router.beforeResolve((to, from, next) => {
   // console.log(this.$store.getters.layout)
   next()
 })
+router.afterEach((to, from) => {
+  fetch(process.env.APP_HOST)
+    .then(response => {
+      if (response.status !== 200) {
+        throw new Error('offline')
+      }
+      return response.text()
+    })
+    .then(html => {
+      if (!store.state.version) {
+        store.commit('setAppVersion', html)
+      } else {
+        if (store.state.version !== html) {
+          store.commit('setAppVersion', html)
+          console.info('Reload application')
+          location.reload()
+        }
+      }
+    })
+})
+// function hash(str) {
+//   const len = str.length
+//   let hash = 0
+//   if (len === 0) return hash
+//   let i
+//   for (i = 0; i < len; i++) {
+//     hash = ((hash << 5) - hash) + str.charCodeAt(i)
+//     hash |= 0 // Convert to 32bit integer
+//   }
+//   return hash
+// }
 
 export default router
