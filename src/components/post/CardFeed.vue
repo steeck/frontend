@@ -2,10 +2,10 @@
   <v-card flat class="card">
     <v-card-actions>
       <v-avatar color="grey lighten-4">
-        <img :src="'https://steemitimages.com/u/' + item.author + '/avatar'" alt="avatar">
+        <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'" alt="avatar"></v-img>
       </v-avatar>
       <div class="ml-3">
-        <div class="card-author">{{ item.author }}</div>
+        <div class="card-author"><router-link :tag="'a'" :to="{name: 'User', params: {username: item.author}}" target="_blank" class="link">{{ item.author }}</router-link> </div>
         <div class="card-created">{{ item.created | convdate | ago }}</div>
       </div>
       <v-btn outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
@@ -17,7 +17,7 @@
       {{ item.title }}
     </v-card-title>
     <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
-      <v-carousel hide-delimiters>
+      <v-carousel hide-delimiters class="area-carousel">
         <v-carousel-item v-for="(image, i) in jsonMetadata.image" :key="i" :src="image">
         </v-carousel-item>
       </v-carousel>
@@ -214,5 +214,13 @@ export default {
     position: absolute;
     left: 0;
     top: 0;
+  }
+
+  .area-carousel{
+    max-height: 80vw;
+  }
+
+  .link {
+    text-decoration: none;
   }
 </style>

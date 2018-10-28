@@ -22,6 +22,7 @@ const state = {
   follow: {},
   follower: [],
   following: [],
+  ignore: [],
   followDoing: false
 }
 
@@ -110,6 +111,15 @@ const mutations = {
   removeFollowing (state, name) {
     if (state.following.indexOf(name) > -1) {
       state.following.splice(state.following.indexOf(name), 1)
+    }
+  },
+  addIgnore (state, name) {
+    console.log('call add ignore')
+    state.ignore.push(name)
+  },
+  removeIgnore (state, name) {
+    if (state.ignore.indexOf(name) > -1) {
+      state.ignore.splice(state.ignore.indexOf(name), 1)
     }
   },
   clear (state) {

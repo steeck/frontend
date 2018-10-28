@@ -27,12 +27,13 @@
         <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
         <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
         <v-btn dark color="light-blue lighten-1">송금</v-btn>
-        <v-btn color="error">차단</v-btn>
+        <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
+        <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
       </div>
     </div>
 
     <!--my 페이지 중앙 메뉴 -->
-    <div class="area-my-mid-menu">
+    <v-flex xs12 class="area-my-mid-menu">
       <v-flex sm12 justify-center text-xs-center class="my-mid-menu">
         <v-flex  d-inline-block class="item" :class="{'active' : page.midSelect === 'sticker'}" @click="setMidMenu('sticker')">스티커</v-flex>
         <v-flex  d-inline-block class="item" :class="{'active' : page.midSelect === 'comment'}" @click="setMidMenu('comment')">댓글</v-flex>
@@ -65,7 +66,14 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+        <v-flex key="'empty'" v-else>
+          <v-flex v-if="page.ableLoading && page.list.length === 0" justify-center text-xs-center>
+            글이 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
       <!--댓글 관련 내용-->
@@ -78,7 +86,7 @@
         <!--내가 쓴 댓글 or 받은 댓글 선택 -->
         <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'menu'">
           <v-flex text-xs-left>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'myComment'}" @click="setSubMenu('myComment')">내가 쓴 댓글</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'myComment'}" @click="setSubMenu('myComment')">작성한 댓글</v-flex>
             <v-flex d-inline-block class="item-separator">|</v-flex>
             <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'receivedComment'}" @click="setSubMenu('receivedComment')">받은 댓글</v-flex>
           </v-flex>
@@ -92,7 +100,14 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-flex key="'empty'" v-else>글이 없습니다.</v-flex>
+        <v-flex key="'empty'" v-else>
+          <v-flex v-if="page.ableLoading && page.commentList.length === 0" justify-center text-xs-center>
+            글이 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
       <!--보상 관련 내용-->
@@ -126,13 +141,17 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-list v-else key="reward-none">
-          <v-flex>조회된 정보가 없습니다.</v-flex>
-        </v-list>
-
+        <v-flex key="'reward-none'" v-else>
+          <v-flex v-if="page.ableLoading && page.steemRewardList.length === 0" justify-center text-xs-center>
+            조회된 정보가 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
-    </div>
+    </v-flex>
     <!--My 페이지 종료-->
 
   </v-container>
@@ -267,6 +286,7 @@
         steemconnect.follow(this.$store.state.me.account.name, this.username, function (err, res) {
           if (!err) {
             vm.$store.commit('me/addFollowing', vm.username)
+            vm.$store.commit('me/removeIgnore', vm.username)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -283,6 +303,38 @@
           console.log(err, res)
           if (!err) {
             vm.$store.commit('me/removeFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      addIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.ignore(this.$store.state.me.account.name, this.username, function (err, res) {
+          if (!err) {
+            vm.$store.commit('me/addIgnore', vm.username)
+            vm.$store.commit('me/removeFollowing', vm.username)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      removeIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.unfollow(this.$store.state.me.account.name, this.username, function (err, res) {
+          console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/removeIgnore', vm.username)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
