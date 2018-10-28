@@ -1,58 +1,79 @@
 <template>
-  <v-layout column>
-    <!--컨텐츠를 불러오기 전 로딩 상태 -->
-    <v-flex v-if="!content.id">
-      <v-layout column>
-        <v-progress-circular :size="70" :width="7" color="primary" indeterminate class="mt-5 mx-auto"></v-progress-circular>
-        <v-flex class="mt-3 mx-auto" :tag="'h2'">컨텐츠를 불러오고 있습니다.</v-flex>
-      </v-layout>
-    </v-flex>
-    <!--컨텐츠 로딩 후 -->
-    <v-flex v-else>
-      <!--제목 및 글쓴이 정보-->
-      <v-flex xs10 offset-xs1 class="area-post-top">
-        <v-flex class="my-3 text-xs-center headline">{{ content.title }}</v-flex>
-        <v-flex class="mb-1">
-          <v-avatar color="">
-            <!--<img :src="'https://steemitimages.com/u/' + content.author + '/avatar'" alt="avatar">-->
-            <v-img :src="'https://steemitimages.com/u/' + content.author + '/avatar'"></v-img>
-          </v-avatar>
-          <v-flex d-inline-block class="subheading" @click="jumpToUserPage" :tag="'a'">{{ content.author }}</v-flex>
-          <v-flex d-inline-block :tag="'small'"><span title='평판'>({{ reputationCount }})</span></v-flex>
-          <v-flex d-inline-block :tag="'small'">{{ content.created | convdate | ago }}</v-flex>
-          <v-btn outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing"
-                 @click="addFollowing">+팔로우
-          </v-btn>
-          <v-btn dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing"
-                 @click="removeFollowing">팔로잉중
-          </v-btn>
-          <card-menu :item="content" class="post-menu"></card-menu>
-        </v-flex>
-      </v-flex>
-      <!--컨텐츠 본문-->
-      <v-flex xs10 offset-xs1 v-html="markedBody" class="area-post MarkdownViewer Markdown"></v-flex>
-      <!--태그 표시-->
-      <v-flex xs10 offset-xs1>
-        <v-chip label v-for="(tag, index) in jsonMetadata.tags" :key="'tag-' + index"> {{ tag }} </v-chip>
-      </v-flex>
-      <!--하단 포스팅 사간 및 작성자 안내-->
-      <v-flex xs10 offset-xs1 class="mt-2">
-        <v-layout row justify-start>
-          <div><v-icon size="20">access_time</v-icon></div>
-          <div class="mr-1">{{ content.created | convdate | ago }}</div>
-          <div class="mr-1"> by </div>
-          <div> {{ content.author }} </div>
+  <v-container grid-list-xl>
+    <v-layout row wrap>
+      <!--컨텐츠를 불러오기 전 로딩 상태 -->
+      <v-flex xs-12 v-if="!content.data.id">
+        <v-layout column>
+          <v-progress-circular :size="70" :width="7" color="primary" indeterminate class="mt-5 mx-auto"></v-progress-circular>
+          <v-flex class="mt-3 mx-auto" :tag="'h2'">컨텐츠를 불러오고 있습니다.</v-flex>
         </v-layout>
       </v-flex>
-      <!--보팅 관련-->
-      <v-flex xs10 offset-xs1 class="mt-2">
+
+      <v-flex xs12 lg8 v-else>
+        <v-card
+          width="720"
+          dark
+          color="black"
+          d-flex
+        >
+          <v-carousel
+            interval="99999"
+          >
+            <v-carousel-item
+              v-for="(card, i) in content.data.contents"
+              :key="i"
+              :src="card.url"
+            >
+            <card-menu :item="content.steem" class="post-menu"></card-menu>
+            {{ card.text }}
+            </v-carousel-item>
+          </v-carousel>
+          <v-card-actions>
+            <v-layout row wrap>
+              <v-flex xs10>
+                {{ content.data.title }}
+              </v-flex>
+              <v-flex xs2>
+                <v-btn icon>
+                  <v-icon>bookmark</v-icon>
+                </v-btn>
+              </v-flex>
+              <v-flex xs12 class="mt-3">
+                <v-avatar>
+                  <v-img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'"></v-img>
+                </v-avatar>
+                <v-flex d-inline-block class="subheading" @click="jumpToUserPage" :tag="'a'">
+                  <div>
+                    {{ content.data.author }} <span title='평판'>({{ reputationCount }})</span>
+                  </div>
+                  <div>
+                    {{ content.data.created_at | convdate | ago }}
+                  </div>
+                </v-flex>
+                <v-btn
+                  v-if="!isMyFollowing"
+                  :loading="isFollowProcessing"
+                  outline round color="white" class="ml-3"
+                  @click="addFollowing"
+                >+팔로우</v-btn>
+                <v-btn
+                  v-else
+                  :loading="isFollowProcessing"
+                  dark round color="white" class="ml-3"
+                  @click="removeFollowing"
+                >팔로잉중</v-btn>
+              </v-flex>
+            </v-layout>
+          </v-card-actions>
+        </v-card>
+
         <v-layout row justify-start>
           <div class="block-cus_icon" @click="openVote">
             <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
             <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
           </div>
-          <div class="mr-3">${{ parseFloat(content.pending_payout_value.replace(' SBD', '')).toFixed(2) }}</div>
-          <a @click="viewVotes = !viewVotes">{{ content.active_votes.length }}보팅</a>
+          <div class="mr-3">${{ parseFloat(content.steem.pending_payout_value).toFixed(2) }}</div>
+          <a @click="viewVotes = !viewVotes">{{ content.steem.active_votes.length }}보팅</a>
           <a class="d-inline-block px-2" @click="editComment.openEdit = true">댓글달기</a>
           <v-dialog v-model="viewVotes" max-width="290">
             <v-toolbar color="light-blue" dark class="text-xs-center">
@@ -60,7 +81,7 @@
               <v-flex xs3 d-inline-block>파워</v-flex>
               <v-flex xs3 d-inline-block>시간</v-flex>
             </v-toolbar>
-            <v-list v-for="vote in content.active_votes" :key="vote.voter" class="px-1">
+            <v-list v-for="vote in content.steem.active_votes" :key="vote.voter" class="px-1">
               <v-layout row class="text-xs-center">
                 <v-flex xs6 d-inline-block tag="a" v-text="vote.voter" @click="openToUserPage(vote.voter)"></v-flex>
                 <v-flex xs3 d-inline-block v-text="(vote.percent / 100) + '%'"></v-flex>
@@ -69,6 +90,11 @@
             </v-list>
           </v-dialog>
         </v-layout>
+
+        <v-flex xs10 offset-xs1>
+          <v-chip label v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"> {{ tag }} </v-chip>
+        </v-flex>
+
         <!--코멘트 컴포넌트-->
         <v-slide-y-transition class="py-0" tag="v-flex">
           <edit-comment v-if="editComment.openEdit" :item="content" :condition="editComment" :complete="completeComment"></edit-comment>
@@ -77,23 +103,26 @@
         <v-slide-y-transition class="py-0" tag="v-flex">
           <vote v-if="dialog" :item="content" :close="closeVote" :complete="completeVote"></vote>
         </v-slide-y-transition>
-      </v-flex>
-    </v-flex>
 
-    <!--코멘트 영역-->
-    <v-flex xs10 offset-xs1 class="mt-2">
         <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
-    </v-flex>
-
-  </v-layout>
-
-
+      </v-flex>
+      <v-flex xs12 lg4>
+        <h3>연관 게시물</h3>
+        <v-layout row wrap class="asd">
+          <v-flex xs12 v-for="(card, i) in list" :key="list.id">
+            <card v-if="id != card.id" :item="card"></card>
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
-  // import api from '@/api/posts'
+  import api from '@/api/posts'
   import steem from '@/services/steem'
   import steemconnect from '@/services/steemconnect'
+  import Card from '@/components/post/Card'
   import Vote from '@/components/post/Vote'
   import CardMenu from '@/components/post/Menu'
   import EditComment from '@/components/post/EditComment'
@@ -102,19 +131,28 @@
   let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
 
   export default {
-    name: 'Post',
+    props: ['id'],
     components: {
       Vote,
       CardMenu,
       CardComment,
-      EditComment
+      EditComment,
+      Card
     },
     data: function () {
       return {
         category: '',
         author: '',
         permlink: '',
-        content: {},
+        content: {
+          data: {
+            contents: []
+          },
+          steem: {
+            author_reputation: 0,
+            active_votes: []
+          }
+        },
         jsonMetadata: {
           tags: []
         },
@@ -126,28 +164,52 @@
         },
         editComment: {
           openEdit: false
-        }
+        },
+        list: []
       }
     },
     computed: {
       markedBody: function () {
-        return this.content.body ? md.render(this.content.body) : ''
+        return this.content.steem.body ? md.render(this.content.steem.body) : ''
       },
       reputationCount: function () {
-        return steem.formatter.reputation(this.content.author_reputation)
+        return steem.formatter.reputation(this.content.steem.author_reputation)
       },
       isMyFollowing: function () {
         if (!this.$store.state.me.account.name) {
           return false
         }
-        return this.$store.state.me.following.indexOf(this.content.author) > -1
+        return this.$store.state.me.following.indexOf(this.content.steem.author) > -1
       },
       isFollowProcessing: function () {
         return this.$store.state.me.followDoing
       }
     },
+    created: function () {
+      // this.category = this.$route.params.category
+      // this.author = this.$route.params.author
+      // this.permlink = this.$route.params.permlink
+      // console.log(this.category)
+      // console.log(this.author)
+      // console.log(this.permlink)
+      //
+      // steem.api.getContentAsync(this.author, this.permlink)
+      //   .then(res => {
+      //     if (res.id === 0) {
+      //       console.log('not find content')
+      //     }
+      //     console.log(res)
+      //     this.content = res
+      //     this.jsonMetadata = JSON.parse(res.json_metadata)
+      //     this.loadComment()
+      //     console.log(this.jsonMetadata)
+      //   })
+    },
+    mounted () {
+      this.getContent()
+    },
     watch: {
-      'content.active_votes': {
+      'content.steem.active_votes': {
         handler: function (val, oldVal) {
           this.getVoted()
         },
@@ -155,6 +217,29 @@
       }
     },
     methods: {
+      getContent: function () {
+        let vm = this
+        api.get(this.id)
+          .then(res => {
+            vm.content = res.data
+            this.loadComment()
+            this.getContents()
+          })
+      },
+      getContents: function () {
+        let data = {
+          category: this.content.data.category
+        }
+        let vm = this
+        api.getByCategory(data)
+          .then(res => {
+            vm.list = res.data
+            this.page.isLoading = false
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      },
       addFollowing: function () {
         if (this.$store.state.me.account.name === null) {
           return
@@ -162,9 +247,9 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.$store.state.me.followDoing = true
         let vm = this
-        steemconnect.follow(this.$store.state.me.account.name, this.content.author, function (err, res) {
+        steemconnect.follow(this.$store.state.me.account.name, this.content.steem.author, function (err, res) {
           if (!err) {
-            vm.$store.commit('me/addFollowing', vm.content.author)
+            vm.$store.commit('me/addFollowing', vm.content.steem.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -179,10 +264,10 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.$store.state.me.followDoing = true
         let vm = this
-        steemconnect.unfollow(this.$store.state.me.account.name, this.content.author, function (err, res) {
+        steemconnect.unfollow(this.$store.state.me.account.name, this.content.steem.author, function (err, res) {
           console.log(err, res)
           if (!err) {
-            vm.$store.commit('me/removeFollowing', vm.content.author)
+            vm.$store.commit('me/removeFollowing', vm.content.steem.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -193,17 +278,19 @@
       getVoted: function () {
         let vm = this
         this.isVoted = false
-        this.content.active_votes.forEach(function (obj) {
-          if (obj.voter === vm.$store.state.me.account.name) {
-            if (obj.percent > 0) {
-              vm.isVoted = true
+        if (this.content.steem) {
+          this.content.steem.active_votes.forEach(function (obj) {
+            if (obj.voter === vm.$store.state.me.account.name) {
+              if (obj.percent > 0) {
+                vm.isVoted = true
+              }
+              return true
             }
-            return true
-          }
-        })
+          })
+        }
       },
       jumpToUserPage: function () {
-        this.$router.push('/user/' + this.content.author)
+        this.$router.push('/user/' + this.content.steem.author)
       },
       openToUserPage: function (user) {
         window.open('/user/' + user)
@@ -219,35 +306,15 @@
         this.dialog = false
       },
       loadComment: function () {
-        steem.api.getContentRepliesAsync(this.content.author, this.content.permlink)
+        steem.api.getContentRepliesAsync(this.content.data.author, this.content.data.permlink)
           .then((res) => {
             this.comment.list = res
-            console.log(res)
+            // console.log(res)
           })
       },
       completeComment: function () {
         this.loadComment()
       }
-    },
-    created: function () {
-      this.category = this.$route.params.category
-      this.author = this.$route.params.author
-      this.permlink = this.$route.params.permlink
-      console.log(this.category)
-      console.log(this.author)
-      console.log(this.permlink)
-
-      steem.api.getContentAsync(this.author, this.permlink)
-        .then(res => {
-          if (res.id === 0) {
-            console.log('not find content')
-          }
-          console.log(res)
-          this.content = res
-          this.jsonMetadata = JSON.parse(res.json_metadata)
-          this.loadComment()
-          console.log(this.jsonMetadata)
-        })
     }
   }
 </script>

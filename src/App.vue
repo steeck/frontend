@@ -10,12 +10,14 @@ import MainLayout from './layouts/MainLayout'
 import CenterLayout from './layouts/CenterLayout'
 import AppLayout from './layouts/AppLayout'
 import SimpleLayout from './layouts/SimpleLayout'
+import ViewLayout from './layouts/ViewLayout'
 import steem from '@/services/steem'
 
 export default {
   components: {
     'default-layout': DefaultLayout,
     'main-layout': MainLayout,
+    'view-layout': ViewLayout,
     'center-layout': CenterLayout,
     'app-layout': AppLayout,
     'simple-layout': SimpleLayout
