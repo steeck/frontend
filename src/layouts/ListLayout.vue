@@ -14,7 +14,7 @@
 </template>
 
 <style scoped>
-/* @media only screen and (min-width: 1904px) {
+@media only screen and (min-width: 1904px) {
   .container {
     max-width: 900px !important;
   }
@@ -23,7 +23,7 @@
   .container {
     max-width: 900px;
   }
-} */
+}
 </style>
 
 <script>

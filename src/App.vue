@@ -11,6 +11,7 @@ import CenterLayout from './layouts/CenterLayout'
 import AppLayout from './layouts/AppLayout'
 import SimpleLayout from './layouts/SimpleLayout'
 import ViewLayout from './layouts/ViewLayout'
+import ListLayout from './layouts/ListLayout'
 import steem from '@/services/steem'
 
 export default {
@@ -20,7 +21,8 @@ export default {
     'view-layout': ViewLayout,
     'center-layout': CenterLayout,
     'app-layout': AppLayout,
-    'simple-layout': SimpleLayout
+    'simple-layout': SimpleLayout,
+    'list-layout': ListLayout
   },
   data () {
     return {
