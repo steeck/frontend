@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from './store'
 
 Vue.filter('tag', function (tag) {
   if (tag === 'steeck-life') return '라이프'
@@ -17,4 +18,13 @@ Vue.filter('ago', function (date) {
   if (diff < 60) return Math.floor(diff) + '분 전'
   else if (diff < 60 * 24) return Math.floor(diff / 60) + '시간 전'
   else return Math.floor(diff / 60 / 24) + '일 전'
+})
+Vue.filter('kwn', function (value) {
+  return Math.round(value * store.state.currency)
+})
+Vue.filter('number', function (value) {
+  if (!isNaN(value) && isFinite(value)) {
+    return value.toLocaleString()
+  }
+  return value
 })

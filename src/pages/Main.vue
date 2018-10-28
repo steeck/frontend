@@ -9,7 +9,7 @@
       <v-container class="py-0">
         <v-layout row wrap class="darken-3">
           <v-flex class="categories" md2 v-for="(cate, i) in categories" :key="i">
-            <router-link :to="{ name: 'Categories', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link>
+            <router-link :to="{ name: 'Categories', params: { category: cate.value } }" class="link">{{ cate.text }}</router-link>
           </v-flex>
         </v-layout>
       </v-container>
@@ -22,26 +22,34 @@
             <v-progress-circular indeterminate color="deep-purple"></v-progress-circular>
           </div>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in best.slice(0, 3)" :key="card.permlink">
-              <card-best :item="card" :rating="i + 1"></card-best>
+            <v-flex xs12 sm4 v-for="(card, i) in best.slice(0, 3)" :key="card.id">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card-best :item="card" :rating="i + 1"></card-best>
+              </router-link>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in best.slice(3)" :key="card.permlink">
-              <card :item="card" :rating="i + 4"></card>
+            <v-flex xs12 sm6 v-for="(card, i) in best.slice(3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card :item="card" :rating="i + 4"></card>
+              </router-link>
             </v-flex>
           </v-layout>
         </v-tab-item>
         <v-tab ripple>뉴비30</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in news.slice(0, 3)" :key="card.permlink">
-              <card-best :item="card" :rating="i + 1"></card-best>
+            <v-flex xs12 sm4 v-for="(card, i) in news.slice(0, 3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card-best :item="card" :rating="i + 1"></card-best>
+              </router-link>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in news.slice(3)" :key="card.permlink">
-              <card :item="card" :rating="i + 4"></card>
+            <v-flex xs12 sm6 v-for="(card, i) in news.slice(3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card :item="card" :rating="i + 4"></card>
+              </router-link>
             </v-flex>
           </v-layout>
         </v-tab-item>
@@ -49,13 +57,17 @@
         <v-tab ripple>주간</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex sm12 md4 v-for="(card, i) in weekly.slice(0, 3)" :key="card.permlink">
-              <card-best :item="card" :rating="i + 1"></card-best>
+            <v-flex xs12 sm4 v-for="(card, i) in weekly.slice(0, 3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card-best :item="card" :rating="i + 1"></card-best>
+              </router-link>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex md6 v-for="(card, i) in weekly.slice(3)" :key="card.permlink">
-              <card :item="card" :rating="i + 4"></card>
+            <v-flex xs12 sm6 v-for="(card, i) in weekly.slice(3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card :item="card" :rating="i + 4"></card>
+              </router-link>
             </v-flex>
           </v-layout>
         </v-tab-item>
@@ -102,6 +114,9 @@
 .categories a {
   text-decoration: none;
   color: #37474F;
+}
+.link {
+  text-decoration: none;
 }
 .asd {
   margin: auto -24px !important;

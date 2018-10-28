@@ -1,23 +1,15 @@
 <template>
   <v-container grid-list-xl>
     <v-flex v-for="(item, i) in list" :key="i">
-      <router-link :to="{ name: 'View', params: {id: item.id} }" class="link">
-        {{ item.title}}
-        <v-carousel>
-          <v-carousel-item
-            v-for="(card, i) in item.contents"
-            :key="i"
-            :src="card.url ? card.url : ''"
-          >
-            <pre>{{ card.text }}</pre>
-          </v-carousel-item>
-        </v-carousel>
-      </router-link>
+      <list-card :item="item"></list-card>
     </v-flex>
   </v-container>
 </template>
 
 <style scoped>
+.link {
+  text-decoration: none;
+}
 </style>
 
 <script>
@@ -25,6 +17,7 @@ import api from '@/api/posts'
 import TagList from '@/components/TagList'
 import Vote from '@/components/Vote'
 import FeedCard from '@/components/post/FeedCard'
+import ListCard from '@/components/post/ListCard'
 import CardFeed from '@/components/post/CardFeed'
 import InfiniteLoading from 'vue-infinite-loading'
 
@@ -34,6 +27,7 @@ export default {
     FeedCard,
     CardFeed,
     Vote,
+    ListCard,
     InfiniteLoading
   },
   props: ['category'],
@@ -50,7 +44,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.category)
     if (!this.category) {
       this.category = 'hot'
     }

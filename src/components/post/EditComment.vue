@@ -6,19 +6,22 @@
       </v-alert>
       <!--작성 영역-->
       <v-flex d-block ma0>
-        <v-textarea :label="'Comment to \'' + item.author + '\''" solo v-model="inputBody" :disabled="processComment"></v-textarea>
+        <v-textarea
+          :label="'Comment to \'' + item.author + '\''"
+          auto-grow solo
+          v-model="inputBody" :disabled="processComment"
+        ></v-textarea>
       </v-flex>
       <!--버튼 영역-->
-      <v-flex>
-        <v-btn color="primary" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">저장</v-btn>
+      <v-flex class="text-xs-right pt-0">
+        <v-btn color="primary" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
         <v-btn @click="condition.openEdit = false" :disabled="processComment">취소</v-btn>
-        <!--<v-btn @click="processComment = !processComment">test</v-btn>-->
       </v-flex>
       <!--미리보기 영역-->
-      <v-flex v-if="markedBody !== ''">
+      <!-- <v-flex v-if="markedBody !== ''">
         <v-flex tag="small">preview</v-flex>
         <v-flex d-block v-html="markedBody" class="MarkdownViewer Markdown elevation-3 pa-2"></v-flex>
-      </v-flex>
+      </v-flex> -->
     </v-layout>
 </template>
 
@@ -89,5 +92,7 @@
 </script>
 
 <style scoped>
-
+>>>.v-text-field__details {
+  display: none;
+}
 </style>

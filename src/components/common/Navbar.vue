@@ -2,6 +2,12 @@
   <div>
     <v-navigation-drawer :clipped="$vuetify.breakpoint.lgAndUp" fixed v-model="drawer" left app width="230">
       <v-list dense class="pa-4">
+        <v-list-tile>
+          <v-list-tile-content>
+            <router-link to="/create" class="btn-link"><v-btn block color="primary">글쓰기</v-btn></router-link>
+          </v-list-tile-content>
+        </v-list-tile>
+        <v-divider class="my-4"></v-divider>
         <v-list-tile v-for="(cate, i) in categories" :key="i">
           <v-list-tile-content>
             <v-list-tile-title><router-link :to="{ name: 'Categories', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link></v-list-tile-title>
@@ -48,7 +54,7 @@
   text-decoration: none;
 }
 .v-toolbar__subtitle {
-  font-size: 0.8em;
+  font-size: 0.6em;
   padding-left: 0.4em;
 }
 .menu-bottom {
@@ -63,6 +69,11 @@
 }
 >>>.v-navigation-drawer > .v-list .v-list__tile {
   font-weight: 600;
+}
+.btn-link {
+  text-decoration: none;
+  display: block;
+  width: 100%;
 }
 .link {
   text-decoration: none;

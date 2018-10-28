@@ -1,27 +1,21 @@
 <template>
-    <div>
-      <div>
-        <div>
-          <v-flex sm12 class="vote-text1">당신의 투표는 US {{ getVoteValue() }} 만큼의 가치가 있을 것입니다.</v-flex>
-          <v-flex sm12 class="text-xs-right">
-            <v-btn outline color="light-blue" flat="flat" @click="vote" :loading="isVoting">승인</v-btn>
-            <v-btn outline color="red darken-1" flat="flat" @click="close">취소</v-btn>
-          </v-flex>
-        </div>
-        <div style="padding-top: 1rem; padding-bottom: 1rem;">
-          <v-slider v-model="weight" color="deep-purple"></v-slider>
-          <v-layout>
-            <div style="width: 12.5%; text-align: left">0%</div>
-            <div style="width: 25%; text-align: center">25%</div>
-            <div style="width: 25%; text-align: center">50%</div>
-            <div style="width: 25%; text-align: center">75%</div>
-            <div style="width: 12.5%; text-align: right">100%</div>
-          </v-layout>
-        </div>
-        <div class="vote-text2">현재까지 {{ weight }}% 달성되었습니다.</div>
-      </div>
-
-    </div>
+  <div>
+    <v-slider v-model="weight" color="deep-purple"></v-slider>
+    <v-layout row wrap class="ma-0">
+      <div style="width: 12.5%; text-align: left">0%</div>
+      <div style="width: 25%; text-align: center">25%</div>
+      <div style="width: 25%; text-align: center">50%</div>
+      <div style="width: 25%; text-align: center">75%</div>
+      <div style="width: 12.5%; text-align: right">100%</div>
+    </v-layout>
+    <v-layout row wrap>
+      <v-flex xs12 sm7 class="pt-4 vote-text1">당신의 투표는 {{ getVoteValue() | kwn | number }}원 만큼의 가치가 있을 것입니다.</v-flex>
+      <v-flex xs12 sm5 class="text-xs-right">
+        <v-btn outline color="light-blue" small flat @click="vote" :loading="isVoting">승인</v-btn>
+        <v-btn outline color="red darken-1" small flat @click="close">취소</v-btn>
+      </v-flex>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -129,5 +123,10 @@
 </script>
 
 <style scoped>
-
+>>>.v-input--slider .v-input__slot {
+  margin-bottom: 0;
+}
+>>>.v-input--slider .v-messages {
+  display: none;
+}
 </style>

@@ -5,74 +5,99 @@
       <v-flex xs-12 v-if="!content.data.id">
         <v-layout column>
           <v-progress-circular :size="70" :width="7" color="primary" indeterminate class="mt-5 mx-auto"></v-progress-circular>
-          <v-flex class="mt-3 mx-auto" :tag="'h2'">컨텐츠를 불러오고 있습니다.</v-flex>
         </v-layout>
       </v-flex>
 
       <v-flex xs12 lg8 v-else>
         <v-card
-          width="720"
+          :width="width"
           dark
           color="black"
           d-flex
         >
+          <card-menu :item="content.steem" class="post-menu"></card-menu>
           <v-carousel
-            interval="99999"
+            hide-delimiters
+            interval="9999999"
           >
             <v-carousel-item
               v-for="(card, i) in content.data.contents"
               :key="i"
-              :src="card.url"
             >
-            <card-menu :item="content.steem" class="post-menu"></card-menu>
-            {{ card.text }}
+              <v-img
+                contain
+                :witdh="width"
+                :height="height"
+                :src="card.url ? card.url : ''"
+              ></v-img>
+              <div v-if="!i"
+                class="px-4 py-3"
+              >
+                <v-layout row wrap>
+                  <v-flex xs10>
+                    <h2>{{ card.text }}</h2>
+                  </v-flex>
+                  <v-flex xs2
+                    class="text-xs-right"
+                  >
+                    <v-icon>bookmark</v-icon>
+                  </v-flex>
+                </v-layout>
+                <v-layout align-center row>
+                  <div class="ml-3">
+                    <v-avatar
+                      :size="40"
+                      color="white"
+                    >
+                      <v-img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'"></v-img>
+                    </v-avatar>
+                  </div>
+                  <div class="ml-3">
+                    <div @click="jumpToUserPage" class="author">
+                      {{ content.data.author }} <span title='평판'>({{ reputationCount }})</span>
+                    </div>
+                    <div class="created">
+                      {{ content.data.created_at | convdate | ago }} · {{ category }}
+                    </div>
+                  </div>
+                  <div class="ml-3">
+                    <v-btn
+                      v-if="!isMyFollowing"
+                      :loading="isFollowProcessing"
+                      outline round color="white"
+                      @click="addFollowing"
+                    >+팔로우</v-btn>
+                    <v-btn
+                      v-else
+                      :loading="isFollowProcessing"
+                      light round color="white"
+                      @click="removeFollowing"
+                    >팔로잉중</v-btn>
+                  </div>
+                </v-layout>
+              </div>
+              <div v-else
+                class="px-4 py-3 text"
+              >
+                <pre class="pre">{{ card.text }}</pre>
+              </div>
             </v-carousel-item>
           </v-carousel>
-          <v-card-actions>
-            <v-layout row wrap>
-              <v-flex xs10>
-                {{ content.data.title }}
-              </v-flex>
-              <v-flex xs2>
-                <v-btn icon>
-                  <v-icon>bookmark</v-icon>
-                </v-btn>
-              </v-flex>
-              <v-flex xs12 class="mt-3">
-                <v-avatar>
-                  <v-img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'"></v-img>
-                </v-avatar>
-                <v-flex d-inline-block class="subheading" @click="jumpToUserPage" :tag="'a'">
-                  <div>
-                    {{ content.data.author }} <span title='평판'>({{ reputationCount }})</span>
-                  </div>
-                  <div>
-                    {{ content.data.created_at | convdate | ago }}
-                  </div>
-                </v-flex>
-                <v-btn
-                  v-if="!isMyFollowing"
-                  :loading="isFollowProcessing"
-                  outline round color="white" class="ml-3"
-                  @click="addFollowing"
-                >+팔로우</v-btn>
-                <v-btn
-                  v-else
-                  :loading="isFollowProcessing"
-                  dark round color="white" class="ml-3"
-                  @click="removeFollowing"
-                >팔로잉중</v-btn>
-              </v-flex>
-            </v-layout>
-          </v-card-actions>
         </v-card>
 
-        <v-layout row justify-start>
+        <div class="mt-2">
+          <v-chip outline color="indigo" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></v-chip>
+        </div>
+
+        <v-layout
+          row
+          class="mt-2 mx-2 mb-3"
+        >
           <div class="block-cus_icon" @click="openVote">
             <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
             <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
           </div>
-          <div class="mr-3">${{ parseFloat(content.steem.pending_payout_value).toFixed(2) }}</div>
+          <div class="ml-1 mr-3">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div>
           <a @click="viewVotes = !viewVotes">{{ content.steem.active_votes.length }}보팅</a>
           <a class="d-inline-block px-2" @click="editComment.openEdit = true">댓글달기</a>
           <v-dialog v-model="viewVotes" max-width="290">
@@ -91,26 +116,26 @@
           </v-dialog>
         </v-layout>
 
-        <v-flex xs10 offset-xs1>
-          <v-chip label v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"> {{ tag }} </v-chip>
-        </v-flex>
-
         <!--코멘트 컴포넌트-->
         <v-slide-y-transition class="py-0" tag="v-flex">
-          <edit-comment v-if="editComment.openEdit" :item="content" :condition="editComment" :complete="completeComment"></edit-comment>
+          <edit-comment v-if="editComment.openEdit" :item="content.steem" :condition="editComment" :complete="completeComment"></edit-comment>
         </v-slide-y-transition>
         <!--보트 컴포넌트-->
         <v-slide-y-transition class="py-0" tag="v-flex">
-          <vote v-if="dialog" :item="content" :close="closeVote" :complete="completeVote"></vote>
+          <vote v-if="dialog" :item="content.steem" :close="closeVote" :complete="completeVote"></vote>
         </v-slide-y-transition>
 
-        <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
+        <div class="mt-5">
+          <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
+        </div>
       </v-flex>
       <v-flex xs12 lg4>
         <h3>연관 게시물</h3>
-        <v-layout row wrap class="asd">
-          <v-flex xs12 v-for="(card, i) in list" :key="list.id">
-            <card v-if="id != card.id" :item="card"></card>
+        <v-layout row wrap>
+          <v-flex v-if="id != card.id" xs12 v-for="(card, i) in list" :key="list.id">
+            <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+              <card :item="card"></card>
+            </router-link>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -141,9 +166,6 @@
     },
     data: function () {
       return {
-        category: '',
-        author: '',
-        permlink: '',
         content: {
           data: {
             contents: []
@@ -183,6 +205,23 @@
       },
       isFollowProcessing: function () {
         return this.$store.state.me.followDoing
+      },
+      category () {
+        return this.$store.state.terms.categories[this.content.data.category]
+      },
+      width () {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return '100%'
+          case 'sm': return '100%'
+          default: return this.content.data.layout.width
+        }
+      },
+      height () {
+        switch (this.$vuetify.breakpoint.name) {
+          case 'xs': return 'initial'
+          case 'sm': return 'initial'
+          default: return this.content.data.layout.height
+        }
       }
     },
     created: function () {
@@ -214,6 +253,13 @@
           this.getVoted()
         },
         deep: true
+      },
+      'id': {
+        handler: function (val, oldVal) {
+          this.content.data.id = null
+          this.getContent()
+        },
+        deep: true
       }
     },
     methods: {
@@ -234,7 +280,6 @@
         api.getByCategory(data)
           .then(res => {
             vm.list = res.data
-            this.page.isLoading = false
           })
           .catch(error => {
             console.log(error)
@@ -319,7 +364,30 @@
   }
 </script>
 
-<style lang="scss">
+<style scoped>
+  >>>.v-carousel,
+  >>>.v-carousel__item {
+    height: 100%!important;
+  }
+
+  .link {
+    text-decoration: none;
+  }
+  .author {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .created {
+    font-size: .9rem;
+    color: #989898;
+  }
+  .text {
+    font-size: 1.1rem;
+  }
+  .pre {
+    white-space: pre-line;
+  }
+
 
   .block-cus_icon {
     clear: both;
@@ -346,7 +414,10 @@
   }
 
   .post-menu {
-    float: right;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
   }
 
   .Markdown {

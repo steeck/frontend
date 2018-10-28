@@ -1,24 +1,25 @@
 <template>
-  <v-layout column>
-    <v-layout row class="block-comment pa-1" align-start>
-      <v-avatar color="grey lighten-4 mr-3">
-        <!--<img :src="'https://steemitimages.com/u/' + item.author + '/avatar'" alt="avatar">-->
-        <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
-      </v-avatar>
-      <v-layout column>
-        <!--코멘트 상단-->
-        <v-flex class="caption">
-          <span>{{ item.author }}</span>
-          <span>({{ reputationCount }})</span>
-          <span>{{ item.last_update | convdate | ago }}</span>
-
-        </v-flex>
+  <div class="comment">
+    <v-layout row align-start justify-start
+      class="ma-0"
+    >
+      <div>
+        <v-avatar
+          :size="30"
+          color="grey lighten-4 mr-3"
+        >
+          <v-img :src="'https://steemitimages.com/u/' + item.author + '/avatar'"></v-img>
+        </v-avatar>
+      </div>
+      <div>
+        <div>
+          <span class="author">{{ item.author }} ({{ reputationCount }})</span> <span class="created">{{ item.last_update | convdate | ago }}</span>
+        </div>
+        <div v-html="markedBody" class="pa-0 pt-2 area-comment MarkdownViewer Markdown"></div>
         <!--실패시-->
         <v-alert :value="actionFail" type="error" transition="scale-transition">
           작업을 완료하지 못했습니다.
         </v-alert>
-        <!--코멘트 내용-->
-        <v-flex v-html="markedBody" class="area-comment MarkdownViewer Markdown"></v-flex>
         <!--보팅관련 -->
         <v-flex>
           <v-layout row justify-start>
@@ -26,23 +27,28 @@
               <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
               <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
             </div>
-            <div class="mr-2">${{ parseFloat(item.pending_payout_value.replace(' SBD', '')).toFixed(2) }}</div>
+            <div class="ml-1 mr-3">{{ parseFloat(item.pending_payout_value).toFixed(2) | kwn | number }}원</div>
             <a @click="viewVotes = !viewVotes">{{ item.active_votes.length }}보팅</a>
             <a class="mx-2" v-if="item.author === $store.state.me.account.name" @click="openConfirm = true">삭제</a>
             <a class="mx-2" @click="editComment.openEdit = true">댓글</a>
           </v-layout>
         </v-flex>
-      </v-layout>
+
+        <!--코멘트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex">
+          <edit-comment v-if="editComment.openEdit" :item="item" :condition="editComment" :complete="completeInComment"></edit-comment>
+        </v-slide-y-transition>
+        <!--보트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
+          <vote :item="item" :close="closeVote" :complete="completeVote"></vote>
+        </v-slide-y-transition>
+      </div>
     </v-layout>
-    <!--코멘트 컴포넌트-->
-    <v-slide-y-transition class="py-0" tag="v-flex">
-      <edit-comment v-if="editComment.openEdit" :item="item" :condition="editComment" :complete="completeInComment"></edit-comment>
-    </v-slide-y-transition>
-    <!--보트 컴포넌트-->
-    <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
-      <vote :item="item" :close="closeVote" :complete="completeVote"></vote>
-    </v-slide-y-transition>
-    <v-layout row v-if="subList.length > 0" align-start>
+    <v-layout
+      v-if="subList.length > 0"
+      row align-start
+      class="mx-0"
+    >
       <v-icon class="replay">reply</v-icon>
       <!--하위 코멘트-->
       <v-flex>
@@ -61,7 +67,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-  </v-layout>
+  </div>
 </template>
 
 <script>
@@ -162,7 +168,31 @@
 </script>
 
 <style lang="scss" scoped>
+  .comment {
+    padding: 10px 0 15px;
+    border-bottom: 1px solid #ededed;
+  }
+  .author {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #425363;
+  }
+  .created {
+    font-size: .9rem;
+    color: #989898;
+  }
   .replay {
     transform: rotate(180deg);
+  }
+  .block-cus_icon {
+    clear: both;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .block-cus_icon i:nth-child(2) {
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 </style>
