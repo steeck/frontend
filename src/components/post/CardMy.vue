@@ -21,13 +21,15 @@
       </v-layout>
     </v-card-text>
     <v-card-title>
-      <v-layout column v-if="postType === 'post'" @click="jumpToPost" class="area-click">
-        <div class="headline">{{ item.title }}</div>
-        <div class="grey--text text-truncate">{{ this.bodyChip }}</div>
-      </v-layout>
-      <v-layout column v-else-if="postType === 'comment'">
-        <div class="headline">RE : {{ this.bodyChip}}</div>
-      </v-layout>
+      <v-flex column v-if="postType === 'post'" @click="jumpToPost" class="area-click" xs12>
+        <v-flex xs12 class="headline text-truncate">{{ item.title }}</v-flex>
+        <v-flex xs12 class="grey--text text-truncate">{{ this.bodyChip }}</v-flex>
+      </v-flex>
+      <v-flex column v-else-if="postType === 'comment'" xs12>
+        <v-flex xs12 class="grey--text text-truncate area-click"  @click="jumpToRootPost">{{ item.root_title }}</v-flex>
+        <!--<v-flex xs12 class="title area-click" @click="jumpToPost">RE : {{ this.bodyChip }}</v-flex>-->
+        <v-flex xs12 v-html="markedBody" class="area-post MarkdownViewer Markdown"></v-flex>
+      </v-flex>
     </v-card-title>
     <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
       <v-carousel hide-delimiters class="area-carousel">
@@ -73,7 +75,14 @@
 </template>
 
 <script>
+  /**
+   * @property root_title
+   * @property root_author
+   * @property root_permlink
+   */
   import CardMenu from '@/components/post/Menu'
+  import Remarkable from 'remarkable'
+  let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
 
   export default {
     name: 'CardMy',
@@ -125,16 +134,23 @@
       getPayoutValue: function () {
         // console.log(this.item.content.pending_payout_value)
         return parseFloat(this.item.pending_payout_value.replace(' SBD', '')).toFixed(2)
+      },
+      // 댓글 마크업 html
+      markedBody: function () {
+        return this.item.body ? md.render(this.item.body) : ''
       }
     },
     methods: {
       jumpToPost: function () {
         let url = '/' + this.item.category + '/' + this.item.author + '/' + this.item.permlink
         this.$router.push(url)
+      },
+      jumpToRootPost: function () {
+        let url = '/' + this.item.category + '/' + this.item.root_author + '/' + this.item.root_permlink
+        this.$router.push(url)
       }
     },
     mounted () {
-      // console.log(this.postType)
       if (this.item.json_metadata) {
         this.jsonMetadata = Object.assign(this.jsonMetadata, JSON.parse(this.item.json_metadata))
       }
@@ -169,9 +185,147 @@
  .area-carousel{
    max-height: 80vw;
  }
-  
+
  .area-click {
    cursor: pointer;
+ }
+
+
+ .Markdown {
+   font-family: 'Source Serif Pro', serif;
+   font-size: 120%;
+   line-height: 150%;
+ }
+
+ .Markdown, .ReplyEditor__body.rte {
+   overflow-wrap: break-word;
+   word-wrap: break-word;
+   word-break: break-word;
+   -webkit-hyphens: none;
+   -ms-hyphens: none;
+   hyphens: none;
+ }
+
+ .Markdown h1, .Markdown h2, .Markdown h3, .Markdown h4, .Markdown h5, .Markdown h6, .ReplyEditor__body.rte h1, .ReplyEditor__body.rte h2, .ReplyEditor__body.rte h3, .ReplyEditor__body.rte h4, .ReplyEditor__body.rte h5, .ReplyEditor__body.rte h6 {
+   font-family: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+   font-weight: 600;
+ }
+
+ .Markdown h1, .ReplyEditor__body.rte h1 {
+   margin: 2.5rem 0 .3rem;
+   font-size: 160%;
+ }
+
+ .Markdown h2, .ReplyEditor__body.rte h2 {
+   margin: 2.5rem 0 .3rem;
+   font-size: 140%;
+ }
+
+ .Markdown h3, .ReplyEditor__body.rte h3 {
+   margin: 2rem 0 0.3rem;
+   font-size: 120%;
+ }
+
+ .Markdown h4, .ReplyEditor__body.rte h4 {
+   margin: 1.5rem 0 0.2rem;
+   font-size: 110%;
+ }
+
+ .Markdown h5, .ReplyEditor__body.rte h5 {
+   margin: 1rem 0 0.2rem;
+   font-size: 100%;
+ }
+
+ .Markdown h6, .ReplyEditor__body.rte h6 {
+   margin: 1rem 0 0.2rem;
+   font-size: 90%;
+ }
+
+ .Markdown code, .ReplyEditor__body.rte code {
+   padding: 0.2rem;
+   font-size: 85%;
+   border-radius: 3px;
+   border: none;
+   background-color: #F4F4F4;
+   font-weight: inherit;
+   overflow: scroll;
+ }
+
+ .Markdown pre > code, .ReplyEditor__body.rte pre > code {
+   display: block;
+ }
+
+ .Markdown strong, .ReplyEditor__body.rte strong {
+   font-weight: 600;
+ }
+
+ .Markdown ol, .Markdown ul, .ReplyEditor__body.rte ol, .ReplyEditor__body.rte ul {
+   margin-left: 2rem;
+ }
+
+ .Markdown table td, .ReplyEditor__body.rte table td {
+   word-break: normal;
+ }
+
+ .Markdown p, .ReplyEditor__body.rte p {
+   font-size: 100%;
+   line-height: 150%;
+   margin: 0 0 0.5rem 0;
+ }
+
+ .Markdown img, .ReplyEditor__body.rte img {
+   width: auto;
+   max-width: 100%;
+   height: auto;
+   max-height: none;
+ }
+
+ .Markdown iframe, .ReplyEditor__body.rte iframe {
+   max-width: 100%;
+   max-height: 75vw;
+ }
+
+ .Markdown div.pull-right, .ReplyEditor__body.rte div.pull-right {
+   float: right;
+   padding-left: 1rem;
+   max-width: 50%;
+ }
+
+ .Markdown div.pull-left, .ReplyEditor__body.rte div.pull-left {
+   float: left;
+   padding-right: 1rem;
+   max-width: 50%;
+ }
+
+ .Markdown div.text-justify, .ReplyEditor__body.rte div.text-justify {
+   text-align: justify;
+ }
+
+ .Markdown div.text-right, .ReplyEditor__body.rte div.text-right {
+   text-align: right;
+ }
+
+ .Markdown div.text-center, .ReplyEditor__body.rte div.text-center {
+   text-align: center;
+ }
+
+ .Markdown div.text-rtl, .ReplyEditor__body.rte div.text-rtl {
+   direction: rtl;
+ }
+
+ .Markdown div.videoWrapper, .ReplyEditor__body.rte div.videoWrapper {
+   width: 100%;
+   height: 0;
+   padding-bottom: 56.2%;
+   position: relative;
+ }
+
+ .Markdown div.videoWrapper iframe, .ReplyEditor__body.rte div.videoWrapper iframe {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   left: 0;
+   top: 0;
  }
 
 </style>

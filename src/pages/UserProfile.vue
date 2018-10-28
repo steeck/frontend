@@ -33,7 +33,7 @@
     </div>
 
     <!--my 페이지 중앙 메뉴 -->
-    <div class="area-my-mid-menu">
+    <v-flex xs12 class="area-my-mid-menu">
       <v-flex sm12 justify-center text-xs-center class="my-mid-menu">
         <v-flex  d-inline-block class="item" :class="{'active' : page.midSelect === 'sticker'}" @click="setMidMenu('sticker')">스티커</v-flex>
         <v-flex  d-inline-block class="item" :class="{'active' : page.midSelect === 'comment'}" @click="setMidMenu('comment')">댓글</v-flex>
@@ -141,13 +141,17 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
-        <v-list v-else key="reward-none">
-          <v-flex>조회된 정보가 없습니다.</v-flex>
-        </v-list>
-
+        <v-flex key="'reward-none'" v-else>
+          <v-flex v-if="page.ableLoading && page.steemRewardList.length === 0" justify-center text-xs-center>
+            조회된 정보가 없습니다.
+          </v-flex>
+          <v-flex v-else justify-center text-xs-center>
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-flex>
       </v-slide-y-transition>
 
-    </div>
+    </v-flex>
     <!--My 페이지 종료-->
 
   </v-container>
