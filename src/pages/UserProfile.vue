@@ -79,7 +79,7 @@
         <!--내가 쓴 댓글 or 받은 댓글 선택 -->
         <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'menu'">
           <v-flex text-xs-left>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'myComment'}" @click="setSubMenu('myComment')">내가 쓴 댓글</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'myComment'}" @click="setSubMenu('myComment')">작성한 댓글</v-flex>
             <v-flex d-inline-block class="item-separator">|</v-flex>
             <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'receivedComment'}" @click="setSubMenu('receivedComment')">받은 댓글</v-flex>
           </v-flex>
