@@ -26,9 +26,11 @@
         <v-flex xs12 class="grey--text text-truncate">{{ this.bodyChip }}</v-flex>
       </v-flex>
       <v-flex column v-else-if="postType === 'comment'" xs12>
-        <v-flex xs12 class="grey--text text-truncate area-click"  @click="jumpToRootPost">{{ item.root_title }}</v-flex>
-        <!--<v-flex xs12 class="title area-click" @click="jumpToPost">RE : {{ this.bodyChip }}</v-flex>-->
-        <v-flex xs12 v-html="markedBody" class="area-post MarkdownViewer Markdown"></v-flex>
+        <v-flex xs12 class="grey--text text-truncate pb-2">
+          <div @click="jumpToRootPost" class="area-click" >Post Title : {{ item.root_title }}</div>
+          <div @click=openParentUser class="caption area-click">Comment to : {{ item.parent_author }} </div>
+        </v-flex>
+        <v-flex xs12 v-html="markedCommentBody" class="MarkdownViewer Markdown area-click" @click="jumpToPost"></v-flex>
       </v-flex>
     </v-card-title>
     <v-card-text v-if="jsonMetadata && jsonMetadata.image.length > 0">
@@ -136,7 +138,7 @@
         return parseFloat(this.item.pending_payout_value.replace(' SBD', '')).toFixed(2)
       },
       // 댓글 마크업 html
-      markedBody: function () {
+      markedCommentBody: function () {
         return this.item.body ? md.render(this.item.body) : ''
       }
     },
@@ -148,6 +150,10 @@
       jumpToRootPost: function () {
         let url = '/' + this.item.category + '/' + this.item.root_author + '/' + this.item.root_permlink
         this.$router.push(url)
+      },
+      openParentUser: function () {
+        let url = '/user/' + this.item.parent_author
+        window.open(url)
       }
     },
     mounted () {
