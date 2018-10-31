@@ -39,8 +39,8 @@
       color="indigo" dark fixed app
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title><router-link to="/">Steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
-      <v-text-field flat solo-inverted hide-details prepend-inner-icon="search" label="Search" class="ml-5 hidden-sm-and-down"></v-text-field>
+      <v-toolbar-title><router-link to="/">steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
+      <v-text-field flat solo hide-details prepend-inner-icon="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
       <logged-on v-if="this.$store.state.auth.accessToken"></logged-on>
       <v-btn v-else :href="loginUrl">로그인</v-btn>
@@ -49,13 +49,25 @@
 </template>
 
 <style scoped>
+>>>.v-toolbar {
+  background-color: #6633ff !important;
+}
 >>>.v-toolbar__title a {
   color: #fff;
   text-decoration: none;
+  font-size: 1.5rem;
 }
 .v-toolbar__subtitle {
   font-size: 0.6em;
   padding-left: 0.4em;
+}
+>>>.theme--dark.v-text-field--solo .v-input__slot {
+  background-color: hsla(0,0%,100%,.4);
+  caret-color: #fff !important;
+}
+>>>.v-icon.material-icons.theme--dark.primary--text {
+  color: #fff !important;
+  caret-color: #fff !important;
 }
 .menu-bottom {
   font-size: 0.9em;

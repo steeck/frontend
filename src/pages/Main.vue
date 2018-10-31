@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container py-0>
-      <v-carousel fullscreen>
+      <v-carousel fullscreen height="300">
         <!-- <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item> -->
       </v-carousel>
     </v-container>
@@ -76,8 +76,7 @@
   </div>
 </template>
 
-<style lang="scss" scoped>
-@import "../colorset.scss";
+<style scoped>
 >>>.v-carousel {
   height: 320px;
 }
@@ -113,7 +112,8 @@
 }
 .categories a {
   text-decoration: none;
-  color: #37474F;
+  color: #425363;
+  font-weight: 600;
 }
 .link {
   text-decoration: none;
