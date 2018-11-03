@@ -1,11 +1,11 @@
 <template>
-    <v-layout column>
+    <v-flex xs12 wrap pa-0>
       <!--실패시-->
       <v-alert :value="actionFail" type="error" transition="scale-transition">
         작업을 완료하지 못했습니다.
       </v-alert>
       <!--작성 영역-->
-      <v-flex d-block ma0>
+      <v-flex xs12 pa-0 ma-0>
         <v-textarea
           :label="'Comment to \'' + item.author + '\''"
           auto-grow solo
@@ -13,7 +13,7 @@
         ></v-textarea>
       </v-flex>
       <!--버튼 영역-->
-      <v-flex class="text-xs-right pt-0">
+      <v-flex xs12 class="text-xs-right pt-0">
         <v-btn color="primary" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
         <v-btn @click="condition.openEdit = false" :disabled="processComment">취소</v-btn>
       </v-flex>
@@ -22,7 +22,7 @@
         <v-flex tag="small">preview</v-flex>
         <v-flex d-block v-html="markedBody" class="MarkdownViewer Markdown elevation-3 pa-2"></v-flex>
       </v-flex> -->
-    </v-layout>
+    </v-flex>
 </template>
 
 <script>

@@ -92,7 +92,7 @@
                 :class="{'md12' : viewWide, 'md5' : !viewWide}"
                 v-if="loadingComplete">
           <v-layout justify-space-between column fill-height :style="'margin:0;'">
-            <v-flex xs12>
+            <div>
               <v-layout row wrap pa-1 xs12>
 
                 <div class="block-cus_icon" @click="openVote" :style="'position:relative;'">
@@ -106,24 +106,19 @@
                 <a class="px-2" @click="editComment.openEdit = true">댓글달기</a>
                 <div class="border-bottom"></div>
                 <!--보트 컴포넌트-->
-                <v-slide-y-transition class="py-0" tag="v-flex">
-                  <v-flex xs12>
-                    <vote v-if="dialog" :item="content.steem" :close="closeVote" :complete="completeVote"></vote>
-                  </v-flex>
+                <v-slide-y-transition class="py-0" tag="div">
+                  <vote v-if="dialog" :item="content.steem" :close="closeVote" :complete="completeVote"></vote>
                 </v-slide-y-transition>
                 <!--코멘트 컴포넌트-->
-                <v-slide-y-transition class="py-0" tag="v-flex">
-                  <v-flex xs12>
-                    <edit-comment v-if="editComment.openEdit" :item="content.steem" :condition="editComment" :complete="completeComment"></edit-comment>
-                  </v-flex>
+                <v-slide-y-transition class="py-0" tag="div">
+                  <edit-comment v-if="editComment.openEdit" :item="content.steem" :condition="editComment" :complete="completeComment"></edit-comment>
                 </v-slide-y-transition>
-
                 <!--달린 코멘트-->
                 <v-flex xs12 class="area-comment" :style="'overflow-y:auto;'" :class="{'wide' : viewWide, 'relative' : !viewWide}">
                   <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
                 </v-flex>
               </v-layout>
-            </v-flex>
+            </div>
 
 
 
