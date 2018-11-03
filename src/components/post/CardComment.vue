@@ -16,7 +16,7 @@
           <div>
             <span class="author">{{ item.author }} ({{ reputationCount }})</span> <span class="created">{{ item.last_update | convdate | ago }}</span>
           </div>
-          <div v-html="markedBody" class="pa-0 pt-2 area-comment MarkdownViewer Markdown"></div>
+          <v-flex xs12 v-html="markedBody" class="pa-0 pt-2 area-comment MarkdownViewer Markdown"></v-flex>
           <!--실패시-->
           <v-alert :value="actionFail" type="error" transition="scale-transition">
             작업을 완료하지 못했습니다.
@@ -197,4 +197,5 @@
     left: 0;
     top: 0;
   }
+
 </style>

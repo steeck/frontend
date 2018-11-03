@@ -1,8 +1,11 @@
 <template>
   <v-container grid-list-xl>
-    <v-flex v-for="(item, i) in list" :key="i">
-      <list-card :item="item"></list-card>
+    <v-flex v-for="(item, i) in list" :key="i+1">
+      <content-card :item="item" :viewWide="false"></content-card>
     </v-flex>
+    <!--<v-flex v-for="(item, i) in list" :key="i">-->
+      <!--<list-card :item="item"></list-card>-->
+    <!--</v-flex>-->
   </v-container>
 </template>
 
@@ -20,6 +23,7 @@ import FeedCard from '@/components/post/FeedCard'
 import ListCard from '@/components/post/ListCard'
 import CardFeed from '@/components/post/CardFeed'
 import InfiniteLoading from 'vue-infinite-loading'
+import ContentCard from '@/components/post/ContentCard'
 
 export default {
   components: {
@@ -28,7 +32,8 @@ export default {
     CardFeed,
     Vote,
     ListCard,
-    InfiniteLoading
+    InfiniteLoading,
+    ContentCard
   },
   props: ['category'],
   data () {
