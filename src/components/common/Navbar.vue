@@ -2,12 +2,14 @@
   <div>
     <v-navigation-drawer :clipped="$vuetify.breakpoint.lgAndUp" fixed v-model="drawer" left app width="230">
       <v-list dense class="pa-4">
-        <v-list-tile>
-          <v-list-tile-content>
-            <router-link to="/create" class="btn-link"><v-btn block color="primary">글쓰기</v-btn></router-link>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-divider class="my-4"></v-divider>
+        <div v-if="false">
+          <v-list-tile>
+            <v-list-tile-content>
+              <router-link to="/create" class="btn-link"><v-btn block color="primary">글쓰기</v-btn></router-link>
+            </v-list-tile-content>
+          </v-list-tile>
+          <v-divider class="my-4"></v-divider>
+        </div>
         <v-list-tile v-for="(cate, i) in categories" :key="i">
           <v-list-tile-content>
             <v-list-tile-title><router-link :to="{ name: 'Categories', params: {category: cate.value} }" class="link">{{ cate.text }}</router-link></v-list-tile-title>
@@ -42,6 +44,13 @@
       <v-toolbar-title><router-link to="/">steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
       <v-text-field flat solo hide-details prepend-inner-icon="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
+      <router-link to="/create"
+        v-if="this.$store.state.auth.accessToken"
+        class="btn-create"
+      >
+        <img src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/btn-symbol.png">
+        <span class="hidden-sm-and-down">스티커작성</span>
+      </router-link>
       <logged-on v-if="this.$store.state.auth.accessToken"></logged-on>
       <v-btn v-else :href="loginUrl">로그인</v-btn>
     </v-toolbar>
@@ -82,6 +91,17 @@
 >>>.v-navigation-drawer > .v-list .v-list__tile {
   font-weight: 600;
 }
+.btn-create {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 20px;
+}
+.btn-create img {
+  vertical-align: middle;
+  margin-right: 3px;
+}
+
 .btn-link {
   text-decoration: none;
   display: block;

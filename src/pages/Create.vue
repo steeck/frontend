@@ -289,6 +289,10 @@ export default {
         author: this.$store.state.me.account.name,
         title: this.title,
         contents: this.contents,
+        layout: { 'width': '700', 'height': '700', 'layout': 'bottom' },
+        pending_payout_value: (Math.random() * 100).toFixed(3),
+        children: 8,
+        net_votes: 13,
         json_metadata: {
           tags: this.tags,
           format: 'html'

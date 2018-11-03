@@ -97,8 +97,8 @@
             <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
             <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
           </div>
-          <div class="ml-1 mr-3">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div>
-          <a @click="viewVotes = !viewVotes">{{ content.steem.active_votes.length }}보팅</a>
+          <div class="ml-1 mr-3">{{ parseFloat(content.data.pending_payout_value).toFixed(2) | kwn | number }}원</div>
+          <a @click="viewVotes = !viewVotes">{{ content.data.net_votes }}보팅</a>
           <a class="d-inline-block px-2" @click="editComment.openEdit = true">댓글달기</a>
           <v-dialog v-model="viewVotes" max-width="290">
             <v-toolbar color="light-blue" dark class="text-xs-center">

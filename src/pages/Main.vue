@@ -29,9 +29,32 @@
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in best.slice(3)" :key="card.permlink">
+            <v-flex xs12 sm6 v-for="(card, i) in best.slice(3, 9)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card :item="card" :rating="i + 4"></card>
+              </router-link>
+            </v-flex>
+          </v-layout>
+
+          <div class="popular-editors">
+            <div class="inner">
+              <div class="title">
+                인기 에디터를 팔로우하세요
+              </div>
+              <v-layout row wrap>
+                <v-flex xs6 sm3 md2 v-for="(editor, i) in editors" :key="editor.name">
+                  <router-link :to="{ name: 'User', params: { username: editor.name } }" class="link">
+                    <editor :editor="editor"></editor>
+                  </router-link>
+                </v-flex>
+              </v-layout>
+            </div>
+          </div>
+
+          <v-layout row wrap class="asd">
+            <v-flex xs12 sm6 v-for="(card, i) in best.slice(9)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card :item="card" :rating="i + 10"></card>
               </router-link>
             </v-flex>
           </v-layout>
@@ -124,6 +147,20 @@
 .asd .flex {
   padding: 12px 24px !important;
 }
+.popular-editors {
+  background-color: #f6f6f6;
+  margin: 12px -1000px;
+  padding: 0 1000px;
+}
+.popular-editors .inner {
+  padding: 24px 0;
+}
+.popular-editors .title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #425363;
+  margin: 12px 0;
+}
 
 table.table-tag {
   width: 100%;
@@ -144,9 +181,10 @@ table.table-tag {
 
 <script>
 import api from '@/api/posts'
-// import steem from '@/services/steem'
+import steem from '@/services/steem'
 import CardBest from '@/components/post/CardBest'
 import Card from '@/components/post/Card'
+import Editor from '@/components/Editor'
 
 export default {
   data () {
@@ -168,15 +206,19 @@ export default {
         { value: 'food', text: '푸드' },
         { value: 'essey', text: '공감·에세이' },
         { value: 'sponsor', text: '스폰서' }
-      ]
+      ],
+      usernames: ['meno', 'jjogorae', 'marlon6', 'chibera', 'isaria', 'onepercentbetter'],
+      editors: []
     }
   },
   components: {
     CardBest,
-    Card
+    Card,
+    Editor
   },
   mounted () {
     this.getPosts()
+    this.getEditors()
   },
   methods: {
     getPosts: function () {
@@ -202,6 +244,14 @@ export default {
         .catch(err => {
           console.log(err)
         })
+    },
+    getEditors: function () {
+      let vm = this
+
+      steem.api.getAccounts(this.usernames, function (err, res) {
+        if (err) {}
+        vm.editors = res
+      })
     }
   }
 }

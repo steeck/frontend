@@ -30,7 +30,7 @@
         <v-icon color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
         <v-icon :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
       </div>
-      ${{ getPayoutValue }}
+      {{ item.pending_payout_value | kwn | number }}원
       | {{ item.children }}개
     </v-card-actions>
     <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
