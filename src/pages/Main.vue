@@ -2,7 +2,7 @@
   <div>
     <v-container py-0>
       <v-carousel fullscreen height="300">
-        <!-- <v-carousel-item v-for="(item,i) in items" :key="i" :src="item.src"></v-carousel-item> -->
+        <v-carousel-item v-for="(banner, i) in banners" :key="i" :src="banner.url"></v-carousel-item>
       </v-carousel>
     </v-container>
     <div class="grey lighten-3 hidden-sm-and-down">
@@ -208,7 +208,12 @@ export default {
         { value: 'sponsor', text: '스폰서' }
       ],
       usernames: ['meno', 'jjogorae', 'marlon6', 'chibera', 'isaria', 'onepercentbetter'],
-      editors: []
+      editors: [],
+      banners: [
+        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/01_banner_main_steeck.png' },
+        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/02_banner_main_steeck.png' },
+        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png' },
+      ]
     }
   },
   components: {

@@ -76,7 +76,10 @@
           </v-flex>
 
           <v-flex xs10>
-            <h3 class="mb-3">스티커</h3>
+            <h3 class="mb-3">스티커
+              - <span v-if="selected === 0">표지</span>
+              <span v-else>{{ selected }}</span>
+            </h3>
             <div class="editor">
               <input v-if="!url" type="file" class="file-upload" @change="upload">
               <div v-else style="box-shadow: none !important;">
