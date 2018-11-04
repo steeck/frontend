@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-flex xs12 wrap>
     <v-slider v-model="weight" color="deep-purple"></v-slider>
     <v-layout row wrap class="ma-0">
       <div style="width: 12.5%; text-align: left">0%</div>
@@ -15,7 +15,7 @@
         <v-btn outline color="red darken-1" small flat @click="close">취소</v-btn>
       </v-flex>
     </v-layout>
-  </div>
+  </v-flex>
 </template>
 
 <script>

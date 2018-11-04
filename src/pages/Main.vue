@@ -165,18 +165,23 @@
 table.table-tag {
   width: 100%;
   border-collapse: collapse;
-  td {
-    width: calc(100% / 6);
-    padding: 1rem;
-    color: #37474F;
-    border: 0.5px solid #dedede;
-    cursor: pointer;
-    transition: 0.2s;
-    &:hover {
-      color: black;
-    }
-  }
+
 }
+
+table.table-tag td {
+  width: calc(100% / 6);
+  padding: 1rem;
+  color: #37474F;
+  border: 0.5px solid #dedede;
+  cursor: pointer;
+  transition: 0.2s;
+
+}
+
+table.table-tag td:hover {
+  color: black;
+}
+
 </style>
 
 <script>
