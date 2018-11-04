@@ -18,6 +18,12 @@ const steemutil = {
     },
     spToVests: function (sp, decimals = 6) {
       return (sp * this.vestsFor1SP).toFixed(decimals)
+    },
+    calculateEstAccountValue: function (user, steemRate, sbdRate) {
+      return (
+        (this.getSP(user.vesting_shares) + parseFloat(user.vesting_balance)) * parseFloat(steemRate) +
+        parseFloat(user.sbd_balance) * parseFloat(sbdRate)
+      )
     }
   }
 }

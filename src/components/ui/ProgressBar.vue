@@ -25,6 +25,7 @@
 .progress-bar.progress-bar__background {
   height: 100%;
   width: 100%;
+  text-align: center;
   background-color: inherit;
   opacity: 0.2;
   position: absolute;

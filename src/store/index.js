@@ -16,7 +16,7 @@ export default new Vuex.Store({
     terms
   },
   state: {
-    currency: 1150,
+    currency: 1118,
     version: '',
     layout: 'default-layout',
     follower: [],

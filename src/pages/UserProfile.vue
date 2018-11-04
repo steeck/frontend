@@ -151,6 +151,100 @@
         </v-flex>
       </v-slide-y-transition>
 
+      <!--지갑 관련 내용-->
+      <v-slide-y-transition class="py-0" group tag="v-flex" v-if="page.midSelect === 'wallet'">
+        <v-layout row wrap key="'wallet'" class="mt-3">
+          <v-flex xs12 sm8>
+            <table class="wallet-summary">
+              <tbody>
+                <tr>
+                  <th>포인트</th>
+                  <td>0 STEECKY</td>
+                </tr>
+                <tr>
+                  <th>스팀</th>
+                  <td>{{ me.vesting_balance }}</td>
+                </tr>
+                <tr>
+                  <th>스팀파워</th>
+                  <td>{{ mineSP }} SP ({{ (receivedSP - delegatedSP).toFixed(3) }} SP)</td>
+                </tr>
+                <tr>
+                  <th>스팀달러</th>
+                  <td>{{ me.sbd_balance }}</td>
+                </tr>
+                <tr>
+                  <th>안전금고</th>
+                  <td>{{ me.savings_balance }}, {{ me.savings_sbd_balance }}</td>
+                </tr>
+                <tr>
+                  <th>추정 자산 가치</th>
+                  <td>{{ getEstAccountValue() | kwn | number }} 원</td>
+                </tr>
+              </tbody>
+            </table>
+          </v-flex>
+          <v-flex xs12 sm4>
+            <div class="wallet-box">
+              <div class="wallet-box__title">
+                거래소 시세정보
+              </div>
+              <div class="wallet-box__body">
+                <div class="title">
+                  Steem
+                </div>
+                <div class="title">
+                  ${{ cryptoPrice.steem.price }}
+                  <span class="trend" :class="{ 'trend-up': cryptoPrice.steem.direction == 'up' }">
+                    ({{ cryptoPrice.steem.difference }}%)
+                    <v-icon v-if="cryptoPrice.steem.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
+                    <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
+                  </span>
+                </div>
+              </div>
+              <div class="wallet-box__body">
+                <div class="title">
+                  Steem Dollars
+                </div>
+                <div class="title">
+                  ${{ cryptoPrice.sbd.price }}
+                  <span class="trend" :class="{ 'trend-up': cryptoPrice.sbd.direction == 'up' }">
+                    ({{ cryptoPrice.sbd.difference }}%)
+                    <v-icon v-if="cryptoPrice.steem.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
+                    <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="wallet-box mt-3">
+              <div class="wallet-box__title">
+                보상
+              </div>
+              <div class="wallet-box__body">
+                <v-layout row wrap>
+                  <v-flex xs6 class="title">
+                    <span>스팀파워</span>
+                  </v-flex>
+                  <v-flex xs6 class="value">
+                    <span>{{ getSP(me.reward_vesting_balance).toFixed(3) }} SP</span>
+                  </v-flex>
+                </v-layout>
+                <v-btn
+                  block
+                  outline
+                  color="deep-purple"
+                  class="wallet-box__btn"
+                  :disabled="parseFloat(me.reward_vesting_balance) === 0"
+                  :loading="loading.claim"
+                  @click="claimReward()"
+                >보상 요청</v-btn>
+              </div>
+            </div>
+          </v-flex>
+        </v-layout>
+      </v-slide-y-transition>
+
     </v-flex>
     <!--My 페이지 종료-->
 
@@ -161,8 +255,9 @@
   import CardMy from '@/components/post/CardMy'
   import InfiniteLoading from 'vue-infinite-loading'
   import steem from '@/services/steem'
-  import steemutil from '@/mixins/steemutil'
   import steemconnect from '@/services/steemconnect'
+  import steemutil from '@/mixins/steemutil'
+  import ProgressBar from '@/components/ui/ProgressBar'
 
   export default {
     name: 'UserView',
@@ -174,8 +269,10 @@
     },
     components: {
       'card-my': CardMy,
-      InfiniteLoading
+      InfiniteLoading,
+      ProgressBar
     },
+    mixins: [steemutil],
     data () {
       return {
         username: '',
@@ -210,13 +307,66 @@
             lastId: -1
           },
           isFollowProcessing: false // 팔로잉 추가제거 (유저정보창, 자신이 다른유저를 볼떄 사용) 상태 값
+        },
+        rc: {},
+        fund: {},
+        weight: 100,
+        cryptoPrice: {
+          steem: {},
+          sbd: {}
+        },
+        loading: {
+          claim: false
         }
       }
     },
-    mixins: [steemutil],
+    mounted () {
+      this.username = this.name ? this.name : this.$route.params.username
+      this.$nextTick(function () {
+        this.getMe()
+        this.getFollow()
+        this.getRC()
+        this.getRewardFund()
+        this.getSteemPrice()
+        this.getCryptoPrice()
+      })
+    },
     computed: {
-      created: function () {
+      created () {
         return this.me.created ? this.me.created.substr(0, 10).replace(/-/g, '/') : ''
+      },
+      // sp () {
+      //   return this.getSP(parseFloat(this.me.vesting_shares) + parseFloat(this.me.received_vesting_shares) - parseFloat(this.me.delegated_vesting_shares))
+      // },
+      mineSP () {
+        return this.getSP(parseFloat(this.me.vesting_shares)).toFixed(3)
+      },
+      receivedSP () {
+        return this.getSP(parseFloat(this.me.received_vesting_shares)).toFixed(3)
+      },
+      delegatedSP () {
+        return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
+      },
+      vmana () {
+        return (this.me.voting_power / 100).toFixed(2)
+      },
+      rcmana () {
+        if (this.rc.rc_manabar) {
+          return (this.rc.rc_manabar.current_mana / this.rc.max_rc * 100).toFixed(2)
+        }
+      },
+      steemPrice () {
+        return this.$store.getters.steemPrice
+      },
+      votingValue () {
+        const sp = this.sp()
+        const vp = this.me.voting_power
+        const i = this.fund.rewardBalance / this.fund.recentClaims
+        const a = this.$store.state.global.properties.fund / this.$store.state.global.properties.shares
+        const r = sp / a
+        const m = parseInt(((vp * 100 / 100) + 49) / 50)
+        const l = parseInt(r * m * 100) * i * this.steemPrice
+        return isNaN(l) ? '(계산 중...)' : l.toFixed(2)
       }
     },
     watch: {
@@ -261,20 +411,16 @@
     methods: {
       getMe: function () {
         let vm = this
-        console.log('check steem api: ', steem)
-        steem.api
-          .callAsync('get_accounts', [[this.username]])
+        steem.api.callAsync('get_accounts', [[this.username]])
           .then(function (result) {
             result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
             vm.me = result[0]
-            console.log(vm.me)
             vm.getMyPost()
           })
       },
       getFollow: function () {
         let vm = this
-        steem.api
-          .callAsync('get_follow_count', [this.username])
+        steem.api.callAsync('get_follow_count', [this.username])
           .then(function (result) {
             vm.follow = result
           })
@@ -517,14 +663,88 @@
         this.page.isLoading = false
         this.page.ableLoading = true
         this.page.steemRewardLoadingCount = 30
+      },
+      getRC: function () {
+        let vm = this
+        steem.api.send('rc_api', { method: 'find_rc_accounts', params: { 'accounts': [this.username] } }, function (err, res) {
+          if (err) {
+            console.log(err)
+            return
+          }
+          vm.rc = res.rc_accounts[0]
+        })
+      },
+      getRewardFund: function () {
+        let vm = this
+        steem.api.getRewardFund('post', function (err, res) {
+          if (err) {}
+          vm.fund.recentClaims = res.recent_claims
+          vm.fund.rewardBalance = parseFloat(res.reward_balance)
+        })
+      },
+      getSteemPrice: function () {
+        let vm = this
+        steem.api.getCurrentMedianHistoryPrice(function (err, result) {
+          if (err) {}
+          // vm.steemPrice = result.base.replace(' SBD', '') / result.quote.replace(' STEEM', '')
+          const steemPrice = result.base.replace(' SBD', '') / result.quote.replace(' STEEM', '')
+          vm.$store.commit('setSteemPrice', steemPrice)
+        })
+      },
+      getVoteValue: function () {
+        const sp = this.sp
+        const vp = this.me.voting_power
+        const i = this.fund.rewardBalance / this.fund.recentClaims
+        const a = this.$store.state.global.properties.fund / this.$store.state.global.properties.shares
+        const r = sp / a
+        const m = parseInt(((vp * 100 / 100) + 49) / 50)
+        const l = parseInt(r * m * 100) * i * this.steemPrice
+        return isNaN(l) ? '(계산 중...)' : l.toFixed(2)
+      },
+      getEstAccountValue: function () {
+        return this.calculateEstAccountValue(this.me, this.cryptoPrice.steem.price, this.cryptoPrice.sbd.price)
+      },
+      getCryptoPrice: function () {
+        let vm = this
+        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=STEEM&tsym=USD&limit=0')
+          .then(res => {
+            return res.text()
+          })
+          .then(html => {
+            const json = JSON.parse(html)
+            const diff = (1 - (json.Data[0].close / json.Data[0].open)) * 100
+            vm.cryptoPrice.steem = {
+              price: json.Data[0].close.toFixed(2),
+              difference: Math.abs(diff).toFixed(2),
+              direction: diff > 0 ? 'down' : 'up'
+            }
+          })
+        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=SBD*&tsym=USD&limit=0')
+          .then(res => {
+            return res.text()
+          })
+          .then(html => {
+            const json = JSON.parse(html)
+            const diff = (1 - (json.Data[0].close / json.Data[0].open)) * 100
+            vm.cryptoPrice.sbd = {
+              price: json.Data[0].close.toFixed(2),
+              difference: Math.abs(diff).toFixed(2),
+              direction: diff > 0 ? 'down' : 'up'
+            }
+          })
+      },
+      claimReward: function () {
+        let vm = this
+        vm.loading.claim = true
+        steemconnect.claimRewardBalance(this.$store.state.auth.username, this.me.reward_steem_balance, this.me.reward_sbd_balance, this.me.reward_vesting_balance, function (err, res) {
+          vm.loading.claim = false
+          if (err) {}
+          else {
+            // console.log(res)
+            vm.getMe()
+          }
+        })
       }
-    },
-    mounted () {
-      this.username = this.name ? this.name : this.$route.params.username
-      this.$nextTick(function () {
-        this.getMe()
-        this.getFollow()
-      })
     }
   }
 </script>
@@ -633,5 +853,83 @@
     user-select: none;
   }
 
-</style>
+  .wallet-summary {
+    width: 100%;
+    border: 1px solid #c3c3c3;
+    border-spacing: 0;
 
+    th {
+      font-size: 22px;
+      font-weight: 600;
+      text-align: left;
+      color: #414d6b;
+    }
+    td {
+      font-size: 18px;
+      font-weight: 600;
+      text-align: right;
+      color: #989898;
+    }
+    th, td {
+      padding: 15px 25px;
+    }
+    tr:not(:last-child) {
+      th, td {
+        border-bottom: 1px solid #c3c3c3;
+      }
+    }
+  }
+
+  .wallet-box {
+    border-radius: 2px;
+    border: 1px solid #c3c3c3;
+
+    .wallet-box__title {
+      font-size: 18px;
+      font-weight: 500;
+      color: #414d6b;
+      opacity: .8;
+      background-color: #f6f6f6;
+      padding: 10px 15px;
+    }
+    .wallet-box__body {
+      padding: 30px 15px;
+
+      .title {
+        font-size: 20px;
+        font-weight: 500;
+        color: #414d6b;
+      }
+      .value {
+        font-size: 18px;
+        font-weight: 500;
+        text-align: right;
+        color: #989898;
+      }
+    }
+    .wallet-box__body + .wallet-box__body {
+      border-top: 1px solid #c3c3c3;
+    }
+    .wallet-box__btn {
+      border-radius: 2px;
+      border: solid 1.5px #6633ff;
+      color: #6633ff !important;
+      height: 50px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .trend {
+      font-size: 12px;
+      font-weight: 400;
+      color: #3fc2ff;
+    }
+    .trend-up {
+      color: #ff5a5a !important;
+    }
+    .trend-icon {
+      font-size: 20px;
+      line-height: 12px;
+      color: inherit;
+    }
+  }
+</style>

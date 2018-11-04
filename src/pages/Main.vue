@@ -212,7 +212,7 @@ export default {
       banners: [
         { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/01_banner_main_steeck.png' },
         { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/02_banner_main_steeck.png' },
-        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png' },
+        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png' }
       ]
     }
   },
