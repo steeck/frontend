@@ -58,6 +58,9 @@
 </template>
 
 <style scoped>
+>>>.v-toolbar--clipped {
+  z-index: 5;
+}
 >>>.v-toolbar {
   background-color: #6633ff !important;
 }

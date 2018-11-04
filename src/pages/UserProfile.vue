@@ -738,8 +738,9 @@
         vm.loading.claim = true
         steemconnect.claimRewardBalance(this.$store.state.auth.username, this.me.reward_steem_balance, this.me.reward_sbd_balance, this.me.reward_vesting_balance, function (err, res) {
           vm.loading.claim = false
-          if (err) {}
-          else {
+          if (err) {
+
+          } else {
             // console.log(res)
             vm.getMe()
           }

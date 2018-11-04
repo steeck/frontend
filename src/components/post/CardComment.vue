@@ -22,7 +22,7 @@
             작업을 완료하지 못했습니다.
           </v-alert>
           <!--보팅관련 -->
-          <v-flex>
+          <v-flex v-if="false">
             <v-layout row justify-start>
               <div class="block-cus_icon" @click="openVote">
                 <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
@@ -59,7 +59,7 @@
       </v-dialog>
     </div>
     <v-layout
-      v-if="subList.length > 0"
+      v-if="subList.length > 0 && false"
       row align-start
       class="mx-0"
     >
