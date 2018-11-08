@@ -41,7 +41,7 @@ export default {
       { property: 'og:image', content: 'https://s3.ap-northeast-2.amazonaws.com/steeck/og/steeck_og.png' }
     ],
     link: [
-      { rel: 'icon', href: 'https://s3.ap-northeast-2.amazonaws.com/steeck/fav/fav_16.png', sizes: '16x16', type: 'image/png' }
+      { rel: 'icon', href: 'https://s3.ap-northeast-2.amazonaws.com/steeck/fav/fav_64.png', sizes: '64x64', type: 'image/png' }
     ]
   },
   created () {

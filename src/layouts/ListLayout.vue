@@ -24,6 +24,14 @@
     max-width: 900px;
   }
 }
+@media only screen and (max-width: 959px) {
+  .container.fluid {
+    padding: 16px 0;
+  }
+  .container {
+    padding: 12px;
+  }
+}
 </style>
 
 <script>

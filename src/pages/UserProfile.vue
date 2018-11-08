@@ -158,7 +158,7 @@
             <table class="wallet-summary">
               <tbody>
                 <tr>
-                  <th>포인트</th>
+                  <th>스틱 포인트</th>
                   <td>0 STEECKY</td>
                 </tr>
                 <tr>
@@ -187,6 +187,31 @@
           <v-flex xs12 sm4>
             <div class="wallet-box">
               <div class="wallet-box__title">
+                보상
+              </div>
+              <div class="wallet-box__body">
+                <v-layout row wrap>
+                  <v-flex xs6 class="title">
+                    <span>스팀파워</span>
+                  </v-flex>
+                  <v-flex xs6 class="value">
+                    <span>{{ getSP(me.reward_vesting_balance).toFixed(3) }} SP</span>
+                  </v-flex>
+                </v-layout>
+                <v-btn
+                  block
+                  outline
+                  color="deep-purple"
+                  class="wallet-box__btn"
+                  :disabled="parseFloat(me.reward_vesting_balance) === 0"
+                  :loading="loading.claim"
+                  @click="claimReward()"
+                >보상 요청</v-btn>
+              </div>
+            </div>
+
+            <div class="wallet-box mt-3">
+              <div class="wallet-box__title">
                 거래소 시세정보
               </div>
               <div class="wallet-box__body">
@@ -214,31 +239,6 @@
                     <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
                   </span>
                 </div>
-              </div>
-            </div>
-
-            <div class="wallet-box mt-3">
-              <div class="wallet-box__title">
-                보상
-              </div>
-              <div class="wallet-box__body">
-                <v-layout row wrap>
-                  <v-flex xs6 class="title">
-                    <span>스팀파워</span>
-                  </v-flex>
-                  <v-flex xs6 class="value">
-                    <span>{{ getSP(me.reward_vesting_balance).toFixed(3) }} SP</span>
-                  </v-flex>
-                </v-layout>
-                <v-btn
-                  block
-                  outline
-                  color="deep-purple"
-                  class="wallet-box__btn"
-                  :disabled="parseFloat(me.reward_vesting_balance) === 0"
-                  :loading="loading.claim"
-                  @click="claimReward()"
-                >보상 요청</v-btn>
               </div>
             </div>
           </v-flex>
@@ -322,6 +322,7 @@
     },
     mounted () {
       this.username = this.name ? this.name : this.$route.params.username
+      this.page.midSelect = this.$route.params.tab ? this.$route.params.tab : 'sticker'
       this.$nextTick(function () {
         this.getMe()
         this.getFollow()
@@ -370,6 +371,9 @@
       }
     },
     watch: {
+      '$route.params.tab': function () {
+        this.page.midSelect = this.$route.params.tab
+      },
       '$route.params.username': function () {
         this.username = this.$route.params.username
         this.resetPageContent()

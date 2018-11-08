@@ -11,15 +11,18 @@
     </v-avatar>
     <v-list>
       <V-list-tile>
-        <v-list-tile-title><router-link to="/my">내 프로필</router-link></v-list-tile-title>
+        <v-list-tile-title><router-link to="/my/sticker">내 정보</router-link></v-list-tile-title>
       </V-list-tile>
+        <V-list-tile>
+          <v-list-tile-title><router-link to="/my/wallet">내 지갑</router-link></v-list-tile-title>
+        </V-list-tile>
       <V-list-tile>
         <v-layout row wrap>
           <v-flex xs12>보팅마나</v-flex>
           <v-flex xs8>
             <v-progress-linear
               height="10"
-              :value="98"
+              :value="vp"
             ></v-progress-linear>
           </v-flex>
           <v-flex xs4 class="text-xs-right">

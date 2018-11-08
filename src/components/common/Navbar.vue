@@ -18,9 +18,8 @@
         <v-divider class="my-4"></v-divider>
         <div class="menu-bottom">
           <ul>
-            <li>스틱소개</li>
-            <li><router-link to="/center/lease">펀딩센터</router-link></li>
-            <li>공식채널</li>
+            <li><a href="https://about.steeck.io" target="about">스틱소개</a></li>
+            <li><router-link to="/center/lease">자산센터</router-link></li>
           </ul>
           <ul class="mt-2">
             <li>고객지원</li>
@@ -31,7 +30,7 @@
             <li>개인정보 처리방침</li>
           </ul>
           <div class="mt-3">
-            &copy;2018 — <strong>STEECK</strong>
+            &copy;2018 — <strong>steeck Inc.</strong>
           </div>
         </div>
       </v-list>
@@ -41,14 +40,14 @@
       color="indigo" dark fixed app
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title><router-link to="/">steeck <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
+      <v-toolbar-title><router-link to="/"><img src="https://s3.ap-northeast-2.amazonaws.com/steeck/main_logo.png" class="logo"> <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
       <v-text-field flat solo hide-details prepend-inner-icon="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
       <router-link to="/create"
         v-if="this.$store.state.auth.accessToken"
         class="btn-create"
       >
-        <img src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/btn-symbol.png">
+        <img src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/btn-symbol@2x.png" style="width: 24px;">
         <span class="hidden-sm-and-down">스티커작성</span>
       </router-link>
       <logged-on v-if="this.$store.state.auth.accessToken"></logged-on>
@@ -58,11 +57,19 @@
 </template>
 
 <style scoped>
+.logo {
+  height: 20px;
+  vertical-align: middle;
+  margin-bottom: 5px;
+}
 >>>.v-toolbar--clipped {
   z-index: 5;
 }
 >>>.v-toolbar {
   background-color: #6633ff !important;
+}
+>>>.v-toolbar__title {
+  margin-left: 5px;
 }
 >>>.v-toolbar__title a {
   color: #fff;
@@ -72,6 +79,7 @@
 .v-toolbar__subtitle {
   font-size: 0.6em;
   padding-left: 0.4em;
+  opacity: .6;
 }
 >>>.theme--dark.v-text-field--solo .v-input__slot {
   background-color: hsla(0,0%,100%,.4);
@@ -125,7 +133,7 @@ li {
   display: inline-block;
 }
 li + li:before {
-  content: '|';
+  content: '';
   width: 20px;
   display: inline-block;
   text-align: center;

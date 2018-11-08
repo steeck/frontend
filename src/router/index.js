@@ -55,7 +55,7 @@ const router = new Router({
       component: Activities
     },
     {
-      path: '/my',
+      path: '/my/:tab',
       name: 'My',
       component: My
     },

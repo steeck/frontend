@@ -1,5 +1,6 @@
 <template>
-  <v-container pa-0 mb-5 wrap class="area-content-card" :class="{ 'wide': viewWide, 'relative': !viewWide }">
+  <v-container pa-0 mb-5 wrap class="area-content-card" :class="{ 'wide': viewWide, 'relative': !viewWide }"
+  style="height: calc(100vh - 44px);">
     <v-layout row wrap class="c-all">
       <v-flex xs12 class="cc-top">
         <!--상단 유저 관련 내용 및 메뉴 -->
@@ -58,14 +59,18 @@
             v-model="cardIndex" ref="carousel"
           >
             <v-carousel-item v-for="(card, i) in content.data.contents" :key="(i+1)">
-              <v-flex xs12 pa-0>
+              <v-flex xs12 pa-0 style="position: relative;">
                 <ui-image :src="card.url"></ui-image>
+                <div class="card-text">
+                  {{ card.text }}
+                </div>
                 <!-- <v-img :src="card.url ? card.url : ''" max-height="500"></v-img> -->
               </v-flex>
             </v-carousel-item>
           </v-carousel>
         </div>
         <v-tabs
+          v-if="false"
           show-arrows centered hide-slider dark
           color="white"
           class="ccp-post"
@@ -95,7 +100,7 @@
 
       <!--코멘트영역-->
       <v-flex xs12 sm12 class="cc-comment"
-        v-if="loadingComplete"
+        v-if="loadingComplete && false"
         :class="{'md12' : viewWide, 'md5' : !viewWide}"
       >
         <v-layout justify-space-between column fill-height>
@@ -440,6 +445,15 @@
     &.relative {
       max-height: 500px;
     }
+  }
+  .card-text {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 2;
+    color: white;
+    background: rgba(0,0,0,.4);
   }
   .border-bottom {
     border-bottom: 1px solid #e5e5e5;
