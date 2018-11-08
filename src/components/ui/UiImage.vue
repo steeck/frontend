@@ -8,7 +8,7 @@
 export default {
   props: ['src'],
   mounted () {
-    console.log(this.src)
+    // console.log(this.src)
     let el = this.$el.getElementsByClassName('image-inner')
     el[0].style.backgroundImage = `url(${this.src})`
   }

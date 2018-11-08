@@ -1,7 +1,6 @@
 <template>
-  <v-container pa-0 mb-5 wrap class="area-content-card" :class="{ 'wide': viewWide, 'relative': !viewWide }"
-  style="height: calc(100vh - 44px);">
-    <v-layout row wrap class="c-all">
+  <div class="mb-5">
+    <v-layout row wrap>
       <v-flex xs12 class="cc-top">
         <!--상단 유저 관련 내용 및 메뉴 -->
         <v-layout row wrap align-center px-2 py-2>
@@ -10,9 +9,7 @@
           </v-avatar>
           <div class="ml-3">
             <div class="card-author">
-              <router-link
-                :tag="'a'" :to="{ name: 'User', params: { username: item.author } }" target="_blank" class="link"
-              >{{ item.author }}</router-link>
+              <router-link :to="{ name: 'User', params: { username: item.author } }" target="_user" class="link">{{ item.author }}</router-link>
             </div>
             <div class="card-created caption">{{ item.created_at | convdate | ago }}</div>
           </div>
@@ -54,7 +51,8 @@
           </v-btn>
 
           <v-carousel
-            hide-delimiters hide-controls :cycle="false" height="fit-content"
+            hide-controls
+            :cycle="false" height="fit-content"
             class="elevation-0"
             v-model="cardIndex" ref="carousel"
           >
@@ -69,70 +67,40 @@
             </v-carousel-item>
           </v-carousel>
         </div>
-        <v-tabs
-          v-if="false"
-          show-arrows centered hide-slider dark
-          color="white"
-          class="ccp-post"
-          v-model="cardIndex"
-        >
-          <v-tab
-            v-for="(card, i) in content.data.contents" :key="(i)"
-            active-class="active"
-            v-show="false"
-            ripple
-            tag="span"
-          >
-            <v-icon pa-0 ma-0 size="10">fiber_manual_record</v-icon>
-          </v-tab>
-          <v-tab-item
-            v-for="(card, i) in content.data.contents" :key="(i)"
-            :style="'padding-bottom: 2.5rem;'"
-          >
-            <v-flex xs12 v-html="markedCardBody(card.text)" class="ccpc-html Markdown"></v-flex>
-          </v-tab-item>
-        </v-tabs>
 
         <div class="ma-2 area-tag">
           <v-chip outline class="tag" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></v-chip>
         </div>
       </v-flex>
 
+      <!-- <vote v-if="dialog" :item="content.steem" :close="closeVote" :complete="completeVote"></vote> -->
       <!--코멘트영역-->
-      <v-flex xs12 sm12 class="cc-comment"
-        v-if="loadingComplete && false"
-        :class="{'md12' : viewWide, 'md5' : !viewWide}"
+      <v-flex
+        v-if="loadingComplete"
+        xs12 class="cc-comment" :class="{'md12' : viewWide, 'md5' : !viewWide}"
       >
         <v-layout justify-space-between column fill-height>
           <v-flex xs12>
             <v-layout row wrap pa-3 xs12 class="border-bottom">
-              <div class="block-cus_icon" @click="openVote" :style="'position:relative;'">
-                <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
-                <v-icon
-                  size="20"
-                  color="isVoted ? 'rgb(255,255,255)' : 'primary'"
-                  :style="'position:absolute; left:0; top:0;'"
-                  v-text="'keyboard_arrow_up'"
-                ></v-icon>
-              </div>
+              <vote :item="content.steem" :complete="completeVote"></vote>
               <div class="ml-1 mr-2 btn-link">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div>
-              | <a class="mx-2 btn-link" @click="viewVotes = !viewVotes">{{ content.steem.active_votes.length }}보팅</a>
-              | <a class="mx-2 btn-link" @click="editComment.openEdit = true">댓글달기</a>
+              | <a class="mx-2 btn-link" @click="viewVotes = !viewVotes">보팅 {{ content.steem.active_votes.length }}</a>
+              | <comment class="mx-2 btn-link" :item="content.steem" :list="commentList" :complete="completeComment"></comment>
             </v-layout>
             <v-layout row wrap pa-3 xs12>
               <div class="border-bottom"></div>
               <!--보트 컴포넌트-->
-              <v-slide-y-transition class="py-0" tag="div">
-                <vote v-if="dialog" :item="content.steem" :close="closeVote" :complete="completeVote"></vote>
-              </v-slide-y-transition>
+
+
+
               <!--코멘트 컴포넌트-->
-              <v-slide-y-transition class="py-0" tag="div">
+              <!-- <v-slide-y-transition class="py-0" tag="div">
                 <edit-comment v-if="editComment.openEdit" :item="content.steem" :condition="editComment" :complete="completeComment"></edit-comment>
-              </v-slide-y-transition>
+              </v-slide-y-transition> -->
               <!--달린 코멘트-->
-              <v-flex xs12 class="area-comment" :style="'overflow-y:auto;'" :class="{'wide' : viewWide, 'relative' : !viewWide}">
+              <!-- <v-flex xs12 v-if="false" class="area-comment" :style="'overflow-y:auto;'" :class="{'wide' : viewWide, 'relative' : !viewWide}">
                 <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
-              </v-flex>
+              </v-flex> -->
             </v-layout>
           </v-flex>
         </v-layout>
@@ -154,7 +122,8 @@
         </v-layout>
       </v-list>
     </v-dialog>
-  </v-container>
+
+  </div>
 </template>
 
 <script>
@@ -163,6 +132,7 @@
   import steemconnect from '@/services/steemconnect'
   import Card from '@/components/post/Card'
   import Vote from '@/components/post/Vote'
+  import Comment from '@/components/post/Comment'
   import CardMenu from '@/components/post/Menu'
   import EditComment from '@/components/post/EditComment'
   import CardComment from '@/components/post/CardComment'
@@ -175,6 +145,7 @@
     props: ['item', 'viewWide'],
     components: {
       Vote,
+      Comment,
       CardMenu,
       CardComment,
       EditComment,
@@ -199,9 +170,7 @@
         isVoted: false,
         viewVotes: false,
         dialog: false,
-        comment: {
-          list: []
-        },
+        commentList: [],
         editComment: {
           openEdit: false
         },
@@ -254,6 +223,11 @@
         }
       }
     },
+    created: function () {
+    },
+    mounted () {
+      this.getContent()
+    },
     watch: {
       'content.steem.active_votes': {
         handler: function (val, oldVal) {
@@ -284,22 +258,22 @@
             vm.content = res.data
             // console.log('content', vm.content)
             this.loadComment()
-            this.getContents()
-          })
-      },
-      getContents: function () {
-        let data = {
-          category: this.content.data.category
-        }
-        let vm = this
-        api.getByCategory(data)
-          .then(res => {
-            vm.list = res.data
             vm.loadingComplete = true
           })
-          .catch(error => {
-            console.log(error)
+      },
+      getVoted: function () {
+        let vm = this
+        this.isVoted = false
+        if (this.content.steem) {
+          this.content.steem.active_votes.forEach(function (obj) {
+            if (obj.voter === vm.$store.state.me.account.name) {
+              if (obj.percent > 0) {
+                vm.isVoted = true
+              }
+              return true
+            }
           })
+        }
       },
       addFollowing: function () {
         if (this.$store.state.me.account.name === null) {
@@ -336,20 +310,6 @@
           vm.$store.state.me.followDoing = false
         })
       },
-      getVoted: function () {
-        let vm = this
-        this.isVoted = false
-        if (this.content.steem) {
-          this.content.steem.active_votes.forEach(function (obj) {
-            if (obj.voter === vm.$store.state.me.account.name) {
-              if (obj.percent > 0) {
-                vm.isVoted = true
-              }
-              return true
-            }
-          })
-        }
-      },
       jumpToUserPage: function () {
         this.$router.push('/user/' + this.content.steem.author)
       },
@@ -369,24 +329,39 @@
       loadComment: function () {
         steem.api.getContentRepliesAsync(this.content.data.author, this.content.data.permlink)
           .then((res) => {
-            this.comment.list = res
-            // console.log(res)
+            this.commentList = res
+            console.log(res)
           })
       },
       completeComment: function () {
         this.loadComment()
       }
-    },
-    created: function () {
-    },
-    mounted () {
-      this.getContent()
     }
   }
 </script>
 
-<style lang="scss" scoped>
-
+<style scoped>
+  .v-carousel {
+    display: flex;
+    flex-direction: column;
+  }
+  >>>.v-carousel__controls {
+    order: 2;
+    position: relative;
+    height: 20px;
+    background-color: transparent;
+  }
+  >>>.v-carousel__controls .v-carousel__controls__item {
+    width: 14px;
+    height: 14px;
+    color: #aaa;
+  }
+  >>>.v-carousel__controls .v-carousel__controls__item.v-btn--active {
+    color: #333;
+  }
+  .v-carousel .v-window__container {
+    order: 1;
+  }
   .area-content-card.wide {
     max-width: 700px;
   }
@@ -411,6 +386,7 @@
   }
 
   .cc-top {
+    border-top: 1px solid #e5e5e5;
     border-bottom: 1px solid #e5e5e5;
     /*background-color: red;*/
   }
@@ -426,10 +402,8 @@
     background-color: rgb(0,0,0);
     opacity: 0.5;
   }
-  .ccp-carousel {
-    &.none-img {
-      height: 0 !important;
-    }
+  .ccp-carousel .none-img {
+    height: 0 !important;
   }
 
   .cc-comment {
@@ -441,10 +415,9 @@
     /*max-height: 400px;*/
     overflow-x: hidden;
     overflow-y: auto;
-
-    &.relative {
-      max-height: 500px;
-    }
+  }
+  .area-comment .relative {
+    max-height: 500px;
   }
   .card-text {
     position: absolute;
