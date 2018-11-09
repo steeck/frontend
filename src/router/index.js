@@ -106,7 +106,8 @@ router.beforeResolve((to, from, next) => {
   const defaultLayout = ['My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   const viewLayout = ['View']
-  const listLayout = ['Activities', 'Categories', 'Feeds']
+  const listLayout = ['Activities', 'Feeds']
+  const categoryLayout = ['Categories']
 
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {
@@ -115,6 +116,8 @@ router.beforeResolve((to, from, next) => {
     store.commit('SET_LAYOUT', 'default-layout')
   } else if (listLayout.indexOf(to.name) >= 0) {
     store.commit('SET_LAYOUT', 'list-layout')
+  } else if (categoryLayout.indexOf(to.name) >= 0) {
+    store.commit('SET_LAYOUT', 'category-layout')
   } else if (viewLayout.indexOf(to.name) >= 0) {
     store.commit('SET_LAYOUT', 'view-layout')
   } else if (centerLayout.indexOf(to.name) >= 0) {

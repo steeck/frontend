@@ -192,7 +192,7 @@ export default {
       category: '',
       title: '',
       contents: [{url: null, text: ''}],
-      tags: ['steeck'],
+      tags: [],
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
       submit: false,
@@ -218,17 +218,17 @@ export default {
       if (!this.tag || this.tags.indexOf(this.tag) >= 0) {
         return
       }
-      if (this.tags.length >= 5) {
-        alert('태그는 5개까지 가능합니다.')
+      if (this.tags.length >= 4) {
+        alert('태그는 4개까지 가능합니다.')
         return
       }
       this.tags.push(this.tag)
       this.tag = ''
     },
     removeTag: function (index) {
-      if (index === 0 || this.tags[index] === 'steeck') {
-        return
-      }
+      // if (index === 0 || this.tags[index] === 'steeck') {
+      //   return
+      // }
       this.tags.splice(index, 1)
     },
     navigation: function (direction) {
@@ -280,6 +280,10 @@ export default {
       this.contents.forEach((item, i) => {
         if (!item.url && !item.text) {  // remove empty card
           this.contents.splice(i, 1)
+        } else if (!item.url) {
+          alert('스티커 카드마다 이미지 첨부는 필수입니다.')
+          this.selected = i
+          return
         }
       })
       if (!this.contents.length) {
@@ -297,7 +301,7 @@ export default {
         children: 8,
         net_votes: 13,
         json_metadata: {
-          tags: this.tags,
+          tags: ['steeck'].concat(this.tags),
           format: 'html'
         }
       }

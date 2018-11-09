@@ -5,15 +5,6 @@
         <v-carousel-item v-for="(banner, i) in banners" :key="i" :src="banner.url"></v-carousel-item>
       </v-carousel>
     </v-container>
-    <div class="grey lighten-3 hidden-sm-and-down">
-      <v-container class="py-0">
-        <v-layout row wrap class="darken-3">
-          <v-flex class="categories" md2 v-for="(cate, i) in categories" :key="i">
-            <router-link :to="{ name: 'Categories', params: { category: cate.value } }" class="link">{{ cate.text }}</router-link>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </div>
     <v-container grid-list-xl>
       <v-tabs hide-slider>
         <v-tab ripple>스틱30</v-tab>
