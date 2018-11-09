@@ -1,6 +1,6 @@
 <template>
   <div class="mb-5">
-    <v-layout row wrap>
+    <v-layout row wrap style="border: 1px solid #e5e5e5;">
       <v-flex xs12 class="cc-top">
         <!--상단 유저 관련 내용 및 메뉴 -->
         <v-layout row wrap align-center px-2 py-2>
@@ -32,7 +32,6 @@
       <!--포스트 영역 -->
       <v-flex pa-0 xs12 class="cc-post"
         v-if="loadingComplete"
-        :class="{'md12' : viewWide, 'md7' : !viewWide}"
       >
         <div style="position: relative;">
           <v-btn small fab dark right absolute
@@ -52,7 +51,8 @@
 
           <v-carousel
             hide-controls
-            :cycle="false" height="fit-content"
+            :cycle="false"
+            height="fit-content"
             class="elevation-0"
             v-model="cardIndex" ref="carousel"
           >
@@ -77,31 +77,21 @@
       <!--코멘트영역-->
       <v-flex
         v-if="loadingComplete"
-        xs12 class="cc-comment" :class="{'md12' : viewWide, 'md5' : !viewWide}"
+        xs12 class="cc-comment"
       >
         <v-layout justify-space-between column fill-height>
           <v-flex xs12>
             <v-layout row wrap pa-3 xs12 class="border-bottom">
               <vote :item="content.steem" :complete="completeVote"></vote>
-              <div class="ml-1 mr-2 btn-link">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div>
-              | <a class="mx-2 btn-link" @click="viewVotes = !viewVotes">보팅 {{ content.steem.active_votes.length }}</a>
-              | <comment class="mx-2 btn-link" :item="content.steem" :list="commentList" :complete="completeComment"></comment>
+              <div class="ml-1 mr-2 btn-link">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div> |
+              <a class="mx-2 btn-link" @click="viewVotes = !viewVotes">보팅 {{ content.steem.active_votes.length }}</a> |
+              <a class="mx-2 btn-link" @click="showComment = !showComment"
+              >댓글 {{ commentList.length }}</a>
+              <!-- <comment class="mx-2 btn-link" :item="content.steem" :list="commentList" :complete="completeComment"></comment> -->
             </v-layout>
-            <v-layout row wrap pa-3 xs12>
-              <div class="border-bottom"></div>
-              <!--보트 컴포넌트-->
-
-
-
-              <!--코멘트 컴포넌트-->
-              <!-- <v-slide-y-transition class="py-0" tag="div">
-                <edit-comment v-if="editComment.openEdit" :item="content.steem" :condition="editComment" :complete="completeComment"></edit-comment>
-              </v-slide-y-transition> -->
-              <!--달린 코멘트-->
-              <!-- <v-flex xs12 v-if="false" class="area-comment" :style="'overflow-y:auto;'" :class="{'wide' : viewWide, 'relative' : !viewWide}">
-                <card-comment v-for="(list, index) in comment.list" :item="list" :key="'c_' + index" :completeComment="completeComment"></card-comment>
-              </v-flex> -->
-            </v-layout>
+          </v-flex>
+          <v-flex xs12 v-if="showComment">
+            <comment :show="showComment" :item="content.steem" :list="commentList" :complete="completeComment" @child-event="showComment = !showComment"></comment>
           </v-flex>
         </v-layout>
       </v-flex>
@@ -170,6 +160,7 @@
         isVoted: false,
         viewVotes: false,
         dialog: false,
+        showComment: false,
         commentList: [],
         editComment: {
           openEdit: false

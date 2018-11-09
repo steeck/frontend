@@ -16,12 +16,12 @@
 <style scoped>
 @media only screen and (min-width: 1904px) {
   .container {
-    max-width: 900px !important;
+    max-width: 772px !important;
   }
 }
 @media only screen and (min-width: 1264px) {
   .container {
-    max-width: 900px;
+    max-width: 772px;
   }
 }
 @media only screen and (max-width: 959px) {

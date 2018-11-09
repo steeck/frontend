@@ -19,7 +19,7 @@ export default {
 .image-wrapper {
   background-color: #000;
   width: 100%;
-  height: 500px;
+  height: 700px;
 }
 .image-inner {
   background-size: contain;
