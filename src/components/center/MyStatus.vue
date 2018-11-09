@@ -2,8 +2,8 @@
   <div class="my-profile text-xs-center px-4">
     <h3>{{ username }} 스팀 파워</h3>
     <h3>{{ mineSP }} SP ({{ (receivedSP - delegatedSP).toFixed(3) }} SP)</h3>
-    <h4>Delegated SP : {{ delegatedSP }} SP</h4>
-    <h4>{{ me.vesting_balance }} / {{ me.sbd_balance }}</h4>
+    <h4>임대된 스팀파워 : {{ delegatedSP }} SP</h4>
+    <h4>{{ parseFloat(me.vesting_balance) }} 스팀 / {{ parseFloat(me.sbd_balance) }} 스팀달러</h4>
     <!-- <h4>Steem : {{ me.vesting_balance }}</h4>
     <h4>Steem Dollor : {{ me.sbd_balance }}</h4> -->
     <h4>보팅 마나</h4>
@@ -12,12 +12,15 @@
       :text="vmana + '%'"
       :color="'dark'"
       ></progress-bar>
-    <h4>RC 마나</h4>
+    <h4>리소스 크레딧</h4>
     <progress-bar
       :percent="rcmana"
       :text="rcmana + '%'"
       ></progress-bar>
-    <h4>Vote Value : ${{ (votingValue * weight / 100).toFixed(2) }}</h4>
+    <h4>보팅가치 : {{ (votingValue * weight / 100).toFixed(2) | kwn | number }}원</h4>
+    <div>
+      * 드래그하시면 보팅파워에 따른 예상 보팅액을 보실 수 있습니다. 
+    </div>
     <div>
       <v-slider v-model="weight" color="deep-purple"></v-slider>
       <v-layout>

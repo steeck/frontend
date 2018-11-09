@@ -7,7 +7,7 @@
           class="mb-5"
         ></my-status>
         <v-text-field
-          label="Delegatee"
+          label="임대요청 계정"
           v-model="data.to"
           readonly
         ></v-text-field>
@@ -32,10 +32,10 @@
           ></v-text-field>
           <v-text-field
             label="임대기간"
-            v-model="data.weeks"
-            mask="###"
-            suffix="주"
-            :rules="rules.weeks"
+            v-model="data.days"
+            mask="####"
+            suffix="일"
+            :rules="rules.days"
             required
           ></v-text-field>
           <v-checkbox
@@ -64,7 +64,7 @@
             <td class="text-xs-center">{{ props.item.from }}</td>
             <td class="text-xs-center">{{ props.item.to }}</td>
             <td class="text-xs-center">{{ props.item.sp }}</td>
-            <td class="text-xs-center">{{ props.item.weeks }}</td>
+            <td class="text-xs-center">{{ restDays(props.item) }}일 남음</td>
             <td class="text-xs-center">{{ props.item.created_at | moment('YYYY-MM-DD HH:mm:ss') }}</td>
           </template>
         </v-data-table>
@@ -122,15 +122,15 @@ export default {
       rules: {
         sp: [v => !!v || 'SP를 입력하세요'],
         wif: [v => !!v || 'Private Active Key를 입력하세요'],
-        weeks: [v => !!v || '임대기간을 입력하세요'],
+        days: [v => !!v || '임대기간을 입력하세요'],
         agree: [v => !!v || '사용자 동의가 필요합니다']
       },
       headers: [
-        {text: 'Delegator', align: 'center', sortable: false, value: 'from'},
-        {text: 'Delegatee', align: 'center', sortable: false, value: 'to'},
-        {text: 'Steem Power', align: 'center', sortable: false, value: 'sp'},
-        {text: 'Weeks', align: 'center', sortable: false, value: 'weeks'},
-        {text: 'Date', align: 'center', sortable: false, value: 'created_at'}
+        {text: '빌려준 계정', align: 'center', sortable: false, value: 'from'},
+        {text: '임대한 계정', align: 'center', sortable: false, value: 'to'},
+        {text: '임대 스팀파워량', align: 'center', sortable: false, value: 'sp'},
+        {text: '남은 임대기간', align: 'center', sortable: false, value: 'days'},
+        {text: '임대일시', align: 'center', sortable: false, value: 'created_at'}
       ],
       delegations: []
     }
@@ -147,6 +147,13 @@ export default {
     }
   },
   methods: {
+    restDays (item) {
+      const created = new Date(item.created_at)
+      const today = new Date()
+      const duration = parseInt((today - created) / 86400 / 1000)
+      const rest = item.days - duration
+      return rest > 0 ? rest : 0
+    },
     init: function () {
       this.$refs.form.reset()
       this.data = {

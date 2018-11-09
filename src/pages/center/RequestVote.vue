@@ -7,7 +7,7 @@
           class="mb-5"
         ></my-status>
         <v-text-field
-          label="Username"
+          label="보팅요청 계정"
           v-model="data.username"
           readonly
         ></v-text-field>
@@ -126,10 +126,10 @@ export default {
         agree: [v => !!v || '사용자 동의가 필요합니다']
       },
       headers: [
-        {text: 'URL', align: 'center', sortable: false, value: 'url'},
-        {text: 'Amount', align: 'center', sortable: false, value: 'amount'},
-        {text: 'Payment Type', align: 'center', sortable: false, value: 'payment_type'},
-        {text: 'Date', align: 'center', sortable: false, value: 'created_at'}
+        {text: '스티커 주소', align: 'center', sortable: false, value: 'url'},
+        {text: '송금액', align: 'center', sortable: false, value: 'amount'},
+        {text: '송금액 종류', align: 'center', sortable: false, value: 'payment_type'},
+        {text: '요청일시', align: 'center', sortable: false, value: 'created_at'}
       ],
       requests: []
     }
