@@ -199,18 +199,23 @@ export default {
      * 검색 기능 시작
      */
     search: function () {
+      console.log(this.q)
       if (this.q.length < 2) {
         this.qError = '검색어는 2글자 이상 입력해주세요'
         this.qToast = true
         return
       }
+      console.log('search')
       api.getSearch(this.q)
         .then(res => {
           let data = res.data
           if (data.totalCount === 0) {
             this.qError = '검색결과가 없습니다.'
-            this.qToast = true
-            this.$store.state.searchObj = {}
+            console.log(location)
+            if (location.pathname.indexOf('search') === -1) {
+              this.qToast = true
+            }
+            this.$store.state.searchObj = data
             return false
           } else {
             this.$store.state.searchObj = data

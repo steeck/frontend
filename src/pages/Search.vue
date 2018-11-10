@@ -3,12 +3,12 @@
     <v-flex v-if="!isAllow">
       <h3 class="text-xs-center">{{ errorText }}</h3>
     </v-flex>
-    <v-flex v-else>
+    <v-flex v-if="isAllow">
       <v-flex mb-5>
         <div>'{{ q }}' 키워드로 총 {{ searchResult.totalCount }} 건의 검색결과가 있습니다. <span @click="viewDetail = !viewDetail" class="span-more">..more</span>
         </div>
         <v-slide-y-transition class="py-0">
-          <ul v-if="viewDetail">
+          <ul v-if="viewDetail && searchResult.q && searchResult.totalCount > 0">
             <li>
               글제목 부분으로 총 {{ searchResult.title.length }} 건의 결과를 찾았습니다.
               <span v-if="searchResult.title.length > 0" @click="$vuetify.goTo('#titleElement', { offset: -100 })" class="span-more">..이동</span>
@@ -118,7 +118,19 @@
         this.getContents()
       }
     },
-    watch: {},
+    watch: {
+      searchResult: {
+        handler: function (val, oldVal) {
+          if (this.searchResult.totalCount === 0) {
+            this.isAllow = false
+            this.errorText = '검색결과가 없습니다.'
+          } else {
+            this.isAllow = true
+          }
+        },
+        deep: true
+      }
+    },
     methods: {
       getContents: function () {
         if (this.q.length < 2) {
@@ -128,16 +140,7 @@
         }
         api.getSearch(this.q)
           .then(res => {
-            let data = res.data
-            if (data.totalCount === 0) {
-              this.isAllow = false
-              this.errorText = '검색결과가 없습니다.'
-              this.$store.state.searchObj = {}
-              return false
-            } else {
-              this.isAllow = true
-              this.$store.state.searchObj = data
-            }
+            this.$store.state.searchObj = res.data
           })
           .catch(error => {
             console.log(error)
