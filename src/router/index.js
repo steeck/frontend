@@ -15,6 +15,7 @@ import RequestVote from '@/pages/center/RequestVote'
 import UserProfile from '@/pages/UserProfile'
 import Post from '@/pages/Post'
 import View from '@/pages/View'
+import Search from '@/pages/Search'
 
 import Create from '@/pages/Create'
 
@@ -99,6 +100,12 @@ const router = new Router({
       name: 'View',
       component: View,
       props: true
+    },
+    {
+      path: '/search/:q',
+      name: 'Search',
+      component: Search,
+      props: true
     }
   ]
 })
@@ -106,7 +113,7 @@ router.beforeResolve((to, from, next) => {
   const defaultLayout = ['My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
   const viewLayout = ['View']
-  const listLayout = ['Activities', 'Feeds']
+  const listLayout = ['Activities', 'Feeds', 'Search']
   const categoryLayout = ['Categories']
 
   // const appLayout = ['Delegate']

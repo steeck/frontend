@@ -409,7 +409,7 @@ export default {
   width: 100%;
   height:250px;
   box-shadow: none !important;
-  background-color: rgb(224, 224, 224, 0.3);
+  background-color: rgba(224, 224, 224, 0.3);
 }
 .editor .text-field {
   width: 100%;
