@@ -211,8 +211,7 @@ export default {
           let data = res.data
           if (data.totalCount === 0) {
             this.qError = '검색결과가 없습니다.'
-            console.log(location)
-            if (location.pathname.indexOf('search') === -1) {
+            if (location.pathname.indexOf('/search') !== 0) {
               this.qToast = true
             }
             this.$store.state.searchObj = data
