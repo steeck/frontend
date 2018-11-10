@@ -29,7 +29,8 @@ export default new Vuex.Store({
       }
     },
     draft: {},
-    contentObj: {}  // obj array with card contents
+    contentObj: {},  // obj array with card contents
+    searchObj: {} // obj for search result
   },
   actions: {
   },

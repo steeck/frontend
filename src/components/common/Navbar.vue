@@ -41,7 +41,7 @@
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title><router-link to="/"><img src="https://s3.ap-northeast-2.amazonaws.com/steeck/main_logo.png" class="logo"> <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
-      <v-text-field flat solo hide-details prepend-inner-icon="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
+      <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
       <v-spacer></v-spacer>
       <router-link to="/create"
         v-if="this.$store.state.auth.accessToken"
@@ -53,6 +53,25 @@
       <logged-on v-if="this.$store.state.auth.accessToken"></logged-on>
       <v-btn v-else :href="loginUrl">로그인</v-btn>
     </v-toolbar>
+    <v-snackbar
+      v-model="qToast"
+      :bottom="false"
+      :left="false"
+      :multi-line="false"
+      :right="true"
+      :timeout="3000"
+      :top="true"
+      :vertical="false"
+    >
+      {{ qError }}
+      <v-btn
+        color="white"
+        flat
+        @click="qToast = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -147,6 +166,7 @@ li a {
 <script>
 import steemconnect from '@/services/steemconnect'
 import LoggedOn from '@/components/common/LoggedOn'
+import api from '@/api/posts'
 
 export default {
   components: {
@@ -168,7 +188,38 @@ export default {
         { value: 'food', text: '푸드' },
         { value: 'essey', text: '공감·에세이' },
         { value: 'sponsor', text: '스폰서' }
-      ]
+      ],
+      q: '',
+      qError: '',
+      qToast: false
+    }
+  },
+  methods: {
+    /**
+     * 검색 기능 시작
+     */
+    search: function () {
+      if (this.q.length < 2) {
+        this.qError = '검색어는 2글자 이상 입력해주세요'
+        this.qToast = true
+        return
+      }
+      api.getSearch(this.q)
+        .then(res => {
+          let data = res.data
+          if (data.totalCount === 0) {
+            this.qError = '검색결과가 없습니다.'
+            this.qToast = true
+            this.$store.state.searchObj = {}
+            return false
+          } else {
+            this.$store.state.searchObj = data
+            this.$router.push({name: 'Search', params: { q: this.q }})
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   mounted () {

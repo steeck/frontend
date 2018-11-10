@@ -24,5 +24,8 @@ export default {
   },
   getWeekly (data) {
     return http.get('/posts/weekly')
+  },
+  getSearch (q) {
+    return http.get('posts/search/' + q)
   }
 }
