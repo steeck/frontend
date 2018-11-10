@@ -7,7 +7,7 @@
       <main-toolbar></main-toolbar>
       <div class="grey lighten-3 hidden-sm-and-down">
         <v-container class="py-0">
-          <v-layout row wrap class="darken-3">
+          <v-layout row wrap class="darken-3" style="padding-left: 12px; padding-right: 12px;">
             <v-flex class="categories" md2 v-for="(cate, i) in categories" :key="i">
               <router-link
                 :to="{ name: 'Categories', params: { category: cate.value } }"
@@ -29,12 +29,12 @@
 <style scoped>
 @media only screen and (min-width: 1904px) {
   .container {
-    max-width: 772px !important;
+    max-width: 674px !important;
   }
 }
 @media only screen and (min-width: 1264px) {
   .container {
-    max-width: 772px;
+    max-width: 674px;
   }
 }
 @media only screen and (max-width: 959px) {

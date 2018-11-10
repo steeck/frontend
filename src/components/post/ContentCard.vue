@@ -69,7 +69,9 @@
         </div>
 
         <div class="ma-2 area-tag">
-          <v-chip outline class="tag" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></v-chip>
+          <v-chip
+            v-if="tag !== 'steeck'"
+            outline class="tag" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></v-chip>
         </div>
       </v-flex>
 
@@ -346,9 +348,13 @@
     width: 14px;
     height: 14px;
     color: #aaa;
+    margin: 0 !important;
   }
   >>>.v-carousel__controls .v-carousel__controls__item.v-btn--active {
-    color: #333;
+    color: #6633ff;
+  }
+  >>>.v-carousel__controls .v-carousel__controls__item .v-icon {
+    font-size: 10px !important;
   }
   .v-carousel .v-window__container {
     order: 1;

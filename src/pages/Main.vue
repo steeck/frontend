@@ -53,6 +53,24 @@
         <v-tab ripple>뉴비30</v-tab>
         <v-tab-item>
           <v-layout row wrap>
+            <v-flex xs12 sm4 v-for="(card, i) in newbies.slice(0, 3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card-best :item="card" :rating="i + 1"></card-best>
+              </router-link>
+            </v-flex>
+          </v-layout>
+          <v-layout row wrap class="asd">
+            <v-flex xs12 sm6 v-for="(card, i) in newbies.slice(3)" :key="card.permlink">
+              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
+                <card :item="card" :rating="i + 4"></card>
+              </router-link>
+            </v-flex>
+          </v-layout>
+        </v-tab-item>
+        <v-spacer></v-spacer>
+        <v-tab ripple>실시간</v-tab>
+        <v-tab-item>
+          <v-layout row wrap>
             <v-flex xs12 sm4 v-for="(card, i) in news.slice(0, 3)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card-best :item="card" :rating="i + 1"></card-best>
@@ -67,18 +85,17 @@
             </v-flex>
           </v-layout>
         </v-tab-item>
-        <v-spacer></v-spacer>
-        <v-tab ripple>주간</v-tab>
+        <v-tab ripple>페이아웃</v-tab>
         <v-tab-item>
           <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(card, i) in weekly.slice(0, 3)" :key="card.permlink">
+            <v-flex xs12 sm4 v-for="(card, i) in payout.slice(0, 3)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card-best :item="card" :rating="i + 1"></card-best>
               </router-link>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in weekly.slice(3)" :key="card.permlink">
+            <v-flex xs12 sm6 v-for="(card, i) in payout.slice(3)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card :item="card" :rating="i + 4"></card>
               </router-link>
@@ -187,6 +204,7 @@ export default {
     return {
       best: [],
       news: [],
+      newbies: [],
       weekly: [],
       payout: [],
       categories: [
@@ -238,9 +256,16 @@ export default {
         .catch(err => {
           console.log(err)
         })
-      api.getWeekly({})
+      api.getNewbie({})
         .then(res => {
-          vm.weekly = res.data
+          vm.newbies = res.data
+        })
+        .catch(err => {
+          console.log(err)
+        })
+      api.getPayout({})
+        .then(res => {
+          vm.payout = res.data
         })
         .catch(err => {
           console.log(err)

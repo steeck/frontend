@@ -82,6 +82,7 @@
   import steemconnect from '@/services/steemconnect'
   import EditComment from '@/components/post/EditComment'
   import CardComment from '@/components/post/CardComment'
+  import api from '@/api/steecky'
   import Remarkable from 'remarkable'
   let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
 
@@ -138,6 +139,7 @@
             this.complete()
             this.condition.openEdit = false
             this.processComment = false
+            this.createSteecky()
           })
           .catch(err => {
             console.log(err)
@@ -148,6 +150,18 @@
       close: function () {
         this.dialog = false
         this.$emit('child-event', false)
+      },
+      createSteecky: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
+
+        api.create({username: this.$store.state.auth.username, type: 'comment', permlink: this.item.permlink})
+          .then(res => {
+            console.log(res)
+          }).catch(error => {
+            console.log(error)
+          })
       }
     }
   }

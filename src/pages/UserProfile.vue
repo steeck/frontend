@@ -1,7 +1,7 @@
 <template>
   <!--보상영역 스팀보상 스틱보상-->
   <v-container grid-list-xl v-else>
-    <div class="my-profile text-xs-center">
+    <div class="my-profile text-xs-center" v-bind:style="{ 'background-image': 'url(' + me.json_metadata.profile.profile_image + ')' }">
       <v-avatar size="80" color="grey lighten-4">
         <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
       </v-avatar>
@@ -141,6 +141,19 @@
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
         </v-list>
+        <v-list v-else-if="page.subSelect === 'steeckReward' && steecky.length" key="'steecktReward'">
+          <v-data-table :items="steecky" class="elevation-5 table-steem-reward" hide-headers hide-actions>
+            <template slot="items" slot-scope="props">
+              <td class="reward-time">{{ props.item.created_at | ago }}</td>
+              <td class="reward-title">{{ props.item.type | steeckyType }}</td>
+              <td class="reward-detail">{{ props.item.point | number }} STEECKY</td>
+            </template>
+          </v-data-table>
+          <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
+          <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
+            <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
+          </v-flex>
+        </v-list>
         <v-flex key="'reward-none'" v-else>
           <v-flex v-if="page.ableLoading && page.steemRewardList.length === 0" justify-center text-xs-center>
             조회된 정보가 없습니다.
@@ -159,7 +172,7 @@
               <tbody>
                 <tr>
                   <th>스틱 포인트</th>
-                  <td>0 STEECKY</td>
+                  <td>{{ steeckyPoint | number }} STEECKY</td>
                 </tr>
                 <tr>
                   <th>스팀</th>
@@ -198,6 +211,14 @@
                     <span>{{ getSP(me.reward_vesting_balance).toFixed(3) }} SP</span>
                   </v-flex>
                 </v-layout>
+                <v-layout row wrap>
+                  <v-flex xs6 class="title">
+                    <span>스팀달러</span>
+                  </v-flex>
+                  <v-flex xs6 class="value">
+                    <span>{{ me.reward_sbd_balance }}</span>
+                  </v-flex>
+                </v-layout>
                 <v-btn
                   block
                   outline
@@ -216,10 +237,10 @@
               </div>
               <div class="wallet-box__body">
                 <div class="title">
-                  Steem
+                  스팀
                 </div>
-                <div class="title">
-                  ${{ cryptoPrice.steem.price }}
+                <div class="title mt-2">
+                  {{ cryptoPrice.steem.price | kwn | number }}원
                   <span class="trend" :class="{ 'trend-up': cryptoPrice.steem.direction == 'up' }">
                     ({{ cryptoPrice.steem.difference }}%)
                     <v-icon v-if="cryptoPrice.steem.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
@@ -229,16 +250,17 @@
               </div>
               <div class="wallet-box__body">
                 <div class="title">
-                  Steem Dollars
+                  스팀달러
                 </div>
-                <div class="title">
-                  ${{ cryptoPrice.sbd.price }}
+                <div class="title mt-2">
+                  {{ cryptoPrice.sbd.price | kwn | number }}원
                   <span class="trend" :class="{ 'trend-up': cryptoPrice.sbd.direction == 'up' }">
                     ({{ cryptoPrice.sbd.difference }}%)
                     <v-icon v-if="cryptoPrice.steem.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
                     <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
                   </span>
                 </div>
+                <div class="mt-3" style="color: #414d6b;">출처: cryptocompare.com</div>
               </div>
             </div>
           </v-flex>
@@ -258,6 +280,7 @@
   import steemconnect from '@/services/steemconnect'
   import steemutil from '@/mixins/steemutil'
   import ProgressBar from '@/components/ui/ProgressBar'
+  import api from '@/api/steecky'
 
   export default {
     name: 'UserView',
@@ -317,7 +340,8 @@
         },
         loading: {
           claim: false
-        }
+        },
+        steecky: []
       }
     },
     mounted () {
@@ -325,12 +349,22 @@
       this.page.midSelect = this.$route.params.tab ? this.$route.params.tab : 'sticker'
       this.$nextTick(function () {
         this.getMe()
+        this.getSteecky()
         this.getFollow()
         this.getRC()
         this.getRewardFund()
         this.getSteemPrice()
         this.getCryptoPrice()
       })
+    },
+    filters: {
+      steeckyType: function (value) {
+        if (value === 'daily') return '출석체크'
+        else if (value === 'post') return '글쓰기'
+        else if (value === 'comment') return '댓글'
+        else if (value === 'vote') return '보팅'
+        else return '기타'
+      }
     },
     computed: {
       created () {
@@ -368,6 +402,13 @@
         const m = parseInt(((vp * 100 / 100) + 49) / 50)
         const l = parseInt(r * m * 100) * i * this.steemPrice
         return isNaN(l) ? '(계산 중...)' : l.toFixed(2)
+      },
+      steeckyPoint () {
+        let point = 0
+        this.steecky.forEach(function (item) {
+          point += item.point
+        })
+        return point
       }
     },
     watch: {
@@ -413,6 +454,16 @@
       }
     },
     methods: {
+      getSteecky: function () {
+        let vm = this
+        api.get(this.username)
+          .then(res => {
+            vm.steecky = res.data
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      },
       getMe: function () {
         let vm = this
         steem.api.callAsync('get_accounts', [[this.username]])
@@ -761,6 +812,9 @@
     border: 0.5px solid #c3c3c3;
     padding-top: 15px;
     padding-bottom: 20px;
+    background-position: center;
+    background-size: cover;
+    
     .my-me-name {
       font-size: 1.8rem;
       font-weight: 600;

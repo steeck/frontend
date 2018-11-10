@@ -1,6 +1,14 @@
 <template>
-  <v-menu offset-x :disabled="isVoted">
-    <v-btn icon flat slot="activator" class="btn-vote">
+  <v-menu
+    offset-x
+    :close-on-content-click="false"
+    :disabled="isVoted"
+    v-model="show"
+  >
+    <v-btn icon flat
+      slot="activator"
+      class="btn-vote"
+    >
       <v-icon
         size="20"
         :color="isVoted ? '#6633ff' : '#414d6b'"
@@ -38,6 +46,7 @@
   import steem from '@/services/steem'
   import steemutil from '@/mixins/steemutil'
   import steemconnect from '@/services/steemconnect'
+  import api from '@/api/steecky'
 
   export default {
     name: 'Vote',
@@ -71,7 +80,8 @@
           recentClaims: 0,
           rewardBalance: 0
         },
-        isVoted: false
+        isVoted: false,
+        show: false
       }
     },
     computed: {
@@ -142,7 +152,10 @@
             let now = new Date()
             let global = new Date(now.setMinutes(now.getMinutes() + now.getTimezoneOffset()))
             vm.item.active_votes.push({voter: vote.voter, percent: vote.weight, time: global.toISOString()})
+
+            vm.createSteecky()
             vm.complete()
+            vm.show = false
           }
           vm.isVoting = false
         })
@@ -153,6 +166,18 @@
           .then(function (result) {
             vm.fond.recentClaims = result.recent_claims
             vm.fond.rewardBalance = result.reward_balance.replace(' STEEM', '')
+          })
+      },
+      createSteecky: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
+
+        api.create({username: this.$store.state.auth.username, type: 'vote', permlink: this.item.permlink})
+          .then(res => {
+            console.log(res)
+          }).catch(error => {
+            console.log(error)
           })
       }
     }

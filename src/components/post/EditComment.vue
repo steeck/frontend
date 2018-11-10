@@ -27,6 +27,7 @@
 
 <script>
   import steemconnect from '@/services/steemconnect'
+  import api from '@/api/steecky'
   // import steem from '@/services/steem'
   import Remarkable from 'remarkable'
   let md = new Remarkable({html: true, linkify: true, linkTarget: '_blank'})
@@ -51,6 +52,12 @@
         actionFail: false
       }
     },
+    mounted: function () {
+    },
+    destroyed: function () {
+      this.actionFail = false
+      this.inputBody = ''
+    },
     computed: {
       markedBody: function () {
         return this.inputBody ? md.render(this.inputBody) : ''
@@ -74,19 +81,26 @@
             this.complete()
             this.condition.openEdit = false
             this.processComment = false
+            this.createSteecky()
           })
           .catch(err => {
             console.log(err)
             this.actionFail = true
             this.processComment = false
           })
+      },
+      createSteecky: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
+
+        api.create({username: this.$store.state.auth.username, type: 'comment', permlink: this.item.permlink})
+          .then(res => {
+            console.log(res)
+          }).catch(error => {
+            console.log(error)
+          })
       }
-    },
-    mounted: function () {
-    },
-    destroyed: function () {
-      this.actionFail = false
-      this.inputBody = ''
     }
   }
 </script>

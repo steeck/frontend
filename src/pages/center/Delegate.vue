@@ -47,6 +47,7 @@
             <v-btn
               color="info"
               @click="delegate"
+              :loading="isDelegating"
             >
               임대하기
             </v-btn>
@@ -64,7 +65,43 @@
             <td class="text-xs-center">{{ props.item.from }}</td>
             <td class="text-xs-center">{{ props.item.to }}</td>
             <td class="text-xs-center">{{ props.item.sp }}</td>
-            <td class="text-xs-center">{{ restDays(props.item) }}일 남음</td>
+            <td class="text-xs-center">
+              <span v-if="restDays(props.item) > 0">{{ restDays(props.item) }}일 남음</span>
+              <v-menu
+                v-else
+                offset-x
+                :close-on-content-click="false"
+                :disabled="isVoted"
+                v-model="show"
+              >
+                <v-btn
+                  round
+                  outline
+                  color="#6633ff"
+                  slot="activator"
+                >
+                  임대회수
+                </v-btn>
+                <!-- <v-list>
+                  <v-list-tile> -->
+                <div class="px-3">
+                  <v-layout row wrap align-center>
+                    <v-flex xs8>
+                      <v-text-field
+                        type="password"
+                        label="Active Key"
+                        v-model="wif2"
+                        required
+                      ></v-text-field>
+                    </v-flex>
+                    <v-flex xs4 class="text-xs-right">
+                      <v-btn class="btn-upvote" outline color="deep-purple" round small flat @click="withdraw()" :loading="isWithdrawing">임대회수</v-btn>
+                    </v-flex>
+                  </v-layout>
+                  <v-flex class="pt-1 vote-text">임대회수에는 7일이 소요됩니다</v-flex>
+                </div>
+              </v-menu>
+            </td>
             <td class="text-xs-center">{{ props.item.created_at | moment('YYYY-MM-DD HH:mm:ss') }}</td>
           </template>
         </v-data-table>
@@ -102,6 +139,11 @@
 .my-me-link a {
   color: #425363;
 }
+
+.v-menu__content {
+  background-color: #fff;
+  padding-bottom: 8px;
+}
 </style>
 
 <script>
@@ -118,6 +160,7 @@ export default {
   data () {
     return {
       data: {},
+      wif2: '',
       valid: true,
       rules: {
         sp: [v => !!v || 'SP를 입력하세요'],
@@ -132,7 +175,10 @@ export default {
         {text: '남은 임대기간', align: 'center', sortable: false, value: 'days'},
         {text: '임대일시', align: 'center', sortable: false, value: 'created_at'}
       ],
-      delegations: []
+      delegations: [],
+      show: false,
+      isDelegating: false,
+      isWithdrawing: false
     }
   },
   mounted () {
@@ -161,6 +207,7 @@ export default {
         to: 'steeck',
         from: this.$store.state.auth.username
       }
+      this.wif2 = ''
     },
     getVestingDelegations: function () {
       let vm = this
@@ -186,22 +233,56 @@ export default {
       }
 
       this.data.vests = this.vests
+      this.isDelegating = true
       api.delegate(this.data).then(res => {
         if (res.status === 200) {
           alert('임대가 완료되었습니다. 임대한 SP를 회수할 경우 7일이 소요됩니다.')
           this.init()
           this.getDelegations()
+          this.isDelegating = false
         }
       }).catch(error => {
         if (error) {}
         alert('임대를 실패했습니다. 입력값들을 확인하세요.')
+        this.isDelegating = false
+      })
+    },
+    withdraw: function () {
+      if (!this.wif2) {
+        alert('Private Active Key를 입력하세요')
+        return
+      }
+
+      const data = {
+        type: 'delegate',
+        to: 'steeck',
+        from: this.$store.state.auth.username,
+        wif: this.wif2,
+        sp: 0,
+        vests: '0.000000'
+      }
+      this.isWithdrawing = true
+      api.delegate(data).then(res => {
+        if (res.status === 200) {
+          alert('임대회수가 완료되었습니다. 임대회수에는 7일이 소요됩니다.')
+          this.init()
+          vm.delegations = []
+          this.show = false
+          this.isWithdrawing = false
+        }
+      }).catch(error => {
+        if (error) {}
+        alert('임대회수를 실패했습니다. 입력값들을 확인하세요.')
+        this.isWithdrawing = false
       })
     },
     getDelegations: function () {
       let vm = this
 
       api.getDelegations(this.$store.state.auth.username).then(res => {
-        vm.delegations = res.data
+        if (res.data.length > 0 && res.data[0].vests > 0) {
+          vm.delegations = res.data.slice(0, 1)
+        }
       })
     }
   }

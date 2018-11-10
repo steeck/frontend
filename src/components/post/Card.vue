@@ -13,6 +13,7 @@
            </v-card-title>
            <v-card-text>
              <span class="category">{{ category }}</span><span class="author">{{ item.author }}</span>
+             <span class="reward">{{ item.pending_payout_value | kwn | number }}원</span>
            </v-card-text>
          </v-flex>
          <v-flex class="col-img">
@@ -89,6 +90,12 @@
 .author::before {
   content: '|';
   margin: 0 10px;
+}
+.reward {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8e8e8e;
+  float: right;
 }
 </style>
 

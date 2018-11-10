@@ -32,7 +32,7 @@
       </V-list-tile>
       <V-list-tile>
         <v-layout row wrap>
-          <v-flex xs12>RC마나</v-flex>
+          <v-flex xs12>리소스크레딧</v-flex>
           <v-flex xs8>
             <v-progress-linear
               height="10"

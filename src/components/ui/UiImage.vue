@@ -19,7 +19,7 @@ export default {
 .image-wrapper {
   background-color: #000;
   width: 100%;
-  height: 700px;
+  height: 600px;
 }
 .image-inner {
   background-size: contain;
@@ -28,7 +28,8 @@ export default {
   height: 100%;
 }
 .image-mobile {
-  height: calc(100vw - 32px - 10px);
+  height: 100vw;
+  /* height: calc(100vw - 32px - 10px); */
 }
 @media
 </style>

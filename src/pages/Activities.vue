@@ -3,7 +3,18 @@
     <v-layout row wrap align-center justify-space-between>
       <v-flex class="font-weight-bold body-2">{{ today }}</v-flex>
       <v-flex justify-end class="text-xs-right">
-        <v-btn outline dark round color="deep-purple darken-1" class="font-weight-medium">출석체크</v-btn>
+        <v-btn
+          :outline="!isDaily"
+          dark
+          round
+          color="#6633ff"
+          class="font-weight-medium"
+          @click="dailySteecky()"
+        >
+          <span v-if="processing">+{{ point }}</span>
+          <span v-else-if="isDaily">출석완료</span>
+          <span v-else>출석체크</span>
+        </v-btn>
       </v-flex>
     </v-layout>
     <v-data-table :items="history" class="elevation-5" hide-headers hide-actions v-if="history.length > 0">
@@ -25,6 +36,7 @@
 import steem from '@/services/steem'
 import Activity from '@/components/activities/Activity'
 import InfiniteLoading from 'vue-infinite-loading'
+import api from '@/api/steecky'
 
 export default {
   name: 'Activities',
@@ -42,12 +54,16 @@ export default {
       ],
       ableLoading: true,
       isLoading: false,
-      today: ''
+      today: '',
+      isDaily: false,
+      processing: false,
+      point: 0
     }
   },
   mounted () {
     this.isLoading = true
     this.fetchBlog()
+    this.checkDaily()
     let todayDate = new Date()
     let dd = todayDate.getDate()
     let mm = todayDate.getMonth() + 1
@@ -61,9 +77,21 @@ export default {
     this.today = yyyy + '년 ' + mm + '월' + dd + '일'
   },
   methods: {
+    checkDaily: function () {
+      if (!this.$store.state.auth.username) {
+        return
+      }
+      let vm = this
+      api.getDaily(this.$store.state.auth.username)
+        .then(res => {
+          vm.isDaily = !!res.data.length
+        }).catch(err => {
+          console.log(err)
+        })
+    },
     fetchBlog: function () {
       let vm = this
-      let username = this.$store.state.me.account.name
+      let username = this.$store.state.auth.username
       // let username = 'smtion'
       if (!username) {
         return
@@ -98,6 +126,31 @@ export default {
         console.log('call infiny other')
         this.ableLoading = false
       }
+    },
+    dailySteecky: function () {
+      if (this.isDaily) {
+        return
+      }
+      if (!this.$store.state.auth.username) {
+        alert('로그인 이후에 이용이 가능합니다.')
+        return
+      }
+
+      let vm = this
+      api.create({username: this.$store.state.auth.username, type: 'daily'})
+        .then(res => {
+          console.log(res)
+          vm.processing = true
+          vm.point = res.data.point
+          vm.isDaily = true
+          setTimeout(function () {
+            vm.processing = false
+          }, 3000)
+        }).catch(error => {
+          if (error.response.status === 409) {
+            alert('이미 출석체크하셨습니다. 내일 출석체크 해주세요.')
+          }
+        })
     }
   }
 }

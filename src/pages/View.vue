@@ -93,10 +93,11 @@
           row
           class="mt-2 mx-2 mb-3"
         >
-          <div class="block-cus_icon" @click="openVote">
+          <vote :item="content.steem" :complete="completeVote"></vote>
+          <!-- <div class="block-cus_icon" @click="openVote">
             <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
             <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
-          </div>
+          </div> -->
           <div class="ml-1 mr-3">{{ parseFloat(content.data.pending_payout_value).toFixed(2) | kwn | number }}원</div>
           <a @click="viewVotes = !viewVotes">{{ content.data.net_votes }}보팅</a>
           <a class="d-inline-block px-2" @click="editComment.openEdit = true">댓글달기</a>

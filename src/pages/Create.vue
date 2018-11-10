@@ -157,7 +157,7 @@
 
 <script>
 import api from '@/api/posts'
-// import steem from '@/services/steem'
+import steem from '@/services/steem'
 import steemconnect from '@/services/steemconnect'
 // import vue2Dropzone from 'vue2-dropzone'
 // import 'vue2-dropzone/dist/vue2Dropzone.min.css'
@@ -277,17 +277,21 @@ export default {
       })
     },
     publish: function () { // create the contents
+      let isValid = true
       this.contents.forEach((item, i) => {
         if (!item.url && !item.text) {  // remove empty card
           this.contents.splice(i, 1)
         } else if (!item.url) {
           alert('스티커 카드마다 이미지 첨부는 필수입니다.')
           this.selected = i
-          return
+          isValid = false
         }
       })
       if (!this.contents.length) {
         alert('내용을 작성해주세요')
+        isValid = false
+      }
+      if (!isValid) {
         return
       }
 
@@ -303,7 +307,8 @@ export default {
         json_metadata: {
           tags: ['steeck'].concat(this.tags),
           format: 'html'
-        }
+        },
+        reputation: steem.formatter.reputation(this.$store.state.me.account.reputation)
       }
 
       api.create(data)

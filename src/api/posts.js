@@ -22,6 +22,12 @@ export default {
   getNew (data) {
     return http.get('/posts/new')
   },
+  getNewbie (data) {
+    return http.get('/posts/newbie')
+  },
+  getPayout (data) {
+    return http.get('/posts/payout')
+  },
   getWeekly (data) {
     return http.get('/posts/weekly')
   }
