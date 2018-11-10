@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xl>
     <v-flex v-if="!isAllow">
-      <h3>{{ ErrorText }}</h3>
+      <h3 class="text-xs-center">{{ errorText }}</h3>
     </v-flex>
     <v-flex v-else>
       <v-flex mb-5>
@@ -90,7 +90,7 @@
     data () {
       return {
         isAllow: false,
-        ErrorText: '',
+        errorText: '',
         viewDetail: false,
         list: [],
         page: {
