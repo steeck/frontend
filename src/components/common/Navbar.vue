@@ -199,13 +199,11 @@ export default {
      * 검색 기능 시작
      */
     search: function () {
-      console.log(this.q)
       if (this.q.length < 2) {
         this.qError = '검색어는 2글자 이상 입력해주세요'
         this.qToast = true
         return
       }
-      console.log('search')
       api.getSearch(this.q)
         .then(res => {
           let data = res.data
