@@ -1,6 +1,6 @@
 <template>
   <v-menu
-    offset-x
+    bottom
     :close-on-content-click="false"
     :disabled="isVoted"
     v-model="show"
@@ -22,9 +22,9 @@
     </v-btn>
     <!-- <v-list>
       <v-list-tile> -->
-    <div class="px-3">
+    <div class="px-4 py-2">
       <v-layout row wrap align-center>
-        <v-flex xs8>
+        <v-flex xs12>
         <v-slider v-model="weight" color="deep-purple"></v-slider>
         <v-layout row wrap class="ma-0 percent">
           <div style="width: 12.5%; text-align: left">0%</div>
@@ -33,11 +33,13 @@
           <div style="width: 25%; text-align: center">75%</div>
           <div style="width: 12.5%; text-align: right">100%</div>
         </v-layout></v-flex>
-        <v-flex xs4 class="text-xs-right">
+        <v-flex xs9 class="vote-text mt-2 pt-1">
+          현재 <b>{{ getVoteValue() | kwn | number }}원</b>의 가치로 업보트를 할 수 있습니다
+        </v-flex>
+        <v-flex xs3 class="text-xs-right mt-2 pt-1">
           <v-btn class="btn-upvote" outline color="deep-purple" round small flat @click="vote()" :loading="isVoting">업보트</v-btn>
         </v-flex>
       </v-layout>
-      <v-flex class="pt-1 vote-text">현재 <b>{{ getVoteValue() | kwn | number }}원</b>의 가치로 업보트를 할 수 있습니다.</v-flex>
     </div>
   </v-menu>
 </template>
@@ -199,13 +201,14 @@
 .v-menu__content {
   background-color: #fff;
   padding-bottom: 8px;
+  max-width: 90%;
 }
 .percent {
-  font-size: 0.8em;
+  font-size: 0.9em;
 }
 .vote-text {
   color: #333;
-  font-size: 0.9em;
+  font-size: 0.85em;
 }
 >>>.v-input--slider {
   margin-top: 0;
