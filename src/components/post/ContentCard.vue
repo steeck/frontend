@@ -59,10 +59,41 @@
             <v-carousel-item v-for="(card, i) in content.data.contents" :key="(i+1)">
               <v-flex xs12 pa-0 style="position: relative;">
                 <ui-image :src="card.url"></ui-image>
-                <div class="card-text">
+                <div v-if="card.url === 'last'" class="card-lastpage text-xs-center">
+                  <div class="my-profile text-xs-center">
+                    <v-avatar size="80" color="grey lighten-4">
+                      <img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'" alt="avatar">
+                    </v-avatar>
+                    <div class="my-me-name">{{ author.name }}</div>
+                    <div class="my-me-about">
+                      {{ author.json_metadata.profile.about }}
+                    </div>
+                    <v-layout align-center justify-center row class="text-xs-center">
+                      <v-flex xs3 md2>
+                        <div class="my-me-follow-count">{{ follow.follower_count }}</div>
+                        <div class="my-me-follow-text">팔로워</div>
+                      </v-flex>
+                      <v-flex xs3 md2>
+                        <div class="my-me-follow-count">{{ follow.following_count }}</div>
+                        <div class="my-me-follow-text">팔로잉</div>
+                      </v-flex>
+                    </v-layout>
+                    <div class="my-me-created">가입일 {{ created }}</div>
+                    <div class="my-me-link">
+                      <a :href="author.json_metadata.profile.website" target="website">{{ author.json_metadata.profile.website }}</a>
+                    </div>
+                    <div v-if="$store.state.auth.username !== author.name" class="mt-2">
+                      <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(author.name) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
+                      <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
+                      <!-- <v-btn dark color="light-blue lighten-1">송금</v-btn> -->
+                      <v-btn color="error" v-if="$store.state.me.ignore.indexOf(author.name) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
+                      <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="card-text">
                   {{ card.text }}
                 </div>
-                <!-- <v-img :src="card.url ? card.url : ''" max-height="500"></v-img> -->
               </v-flex>
             </v-carousel-item>
           </v-carousel>
@@ -134,7 +165,7 @@
 
   export default {
     name: 'ContentCard',
-    props: ['item', 'viewWide'],
+    props: ['item'],
     components: {
       Vote,
       Comment,
@@ -168,8 +199,29 @@
           openEdit: false
         },
         list: [],
-        cardIndex: 0
+        cardIndex: 0,
+        author: {
+          json_metadata: {
+            profile: {
+              profile_image: 'https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png',
+              about: 'Update about me',
+              name: '',
+              location: '',
+              website: 'https://about.steeck.io',
+              cover_image: ''
+            }
+          }
+        },
+        follow: {},
+        page: {
+          isFollowProcessing: false
+        }
       }
+    },
+    created: function () {
+    },
+    mounted () {
+      this.getContent()
     },
     computed: {
       id: function () {
@@ -214,12 +266,10 @@
           case 'sm': return 'type-v'
           default: return 'type-h'
         }
+      },
+      created () {
+        return this.author.created ? this.author.created.substr(0, 10).replace(/-/g, '/') : ''
       }
-    },
-    created: function () {
-    },
-    mounted () {
-      this.getContent()
     },
     watch: {
       'content.steem.active_votes': {
@@ -249,7 +299,10 @@
         api.get(this.id)
           .then(res => {
             vm.content = res.data
+            vm.content.data.contents.push({url: 'last'})
             // console.log('content', vm.content)
+            this.getAccount()
+            this.getFollow()
             this.loadComment()
             vm.loadingComplete = true
           })
@@ -269,38 +322,67 @@
         }
       },
       addFollowing: function () {
-        if (this.$store.state.me.account.name === null) {
-          return
-        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-        this.$store.state.me.followDoing = true
+        this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.follow(this.$store.state.me.account.name, this.content.steem.author, function (err, res) {
+        steemconnect.follow(this.$store.state.auth.username, this.author.name, function (err, res) {
           if (!err) {
-            vm.$store.commit('me/addFollowing', vm.content.steem.author)
+            vm.$store.commit('me/addFollowing', vm.author.name)
+            vm.$store.commit('me/removeIgnore', vm.author.name)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
+            vm.getFollow()
           }
-          vm.$store.state.me.followDoing = false
+          vm.page.isFollowProcessing = false
         })
       },
       removeFollowing: function () {
-        if (this.$store.state.me.account.name === null) {
-          return
-        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-        this.$store.state.me.followDoing = true
+        this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.unfollow(this.$store.state.me.account.name, this.content.steem.author, function (err, res) {
+        steemconnect.unfollow(this.$store.state.auth.username, this.author.name, function (err, res) {
           console.log(err, res)
           if (!err) {
-            vm.$store.commit('me/removeFollowing', vm.content.steem.author)
+            vm.$store.commit('me/removeFollowing', vm.author.name)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
+            vm.getFollow()
           }
-          vm.$store.state.me.followDoing = false
+          vm.page.isFollowProcessing = false
+        })
+      },
+      addIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.ignore(this.$store.state.auth.username, this.author.name, function (err, res) {
+          if (!err) {
+            vm.$store.commit('me/addIgnore', vm.author.name)
+            vm.$store.commit('me/removeFollowing', vm.author.name)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
+        })
+      },
+      removeIgnore: function () {
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        this.page.isFollowProcessing = true
+        let vm = this
+        steemconnect.unfollow(this.$store.state.auth.username, this.author.name, function (err, res) {
+          console.log(err, res)
+          if (!err) {
+            vm.$store.commit('me/removeIgnore', vm.author.name)
+            vm.$store.dispatch('me/getFollowInfo').catch(err => {
+              console.log(err)
+            })
+            vm.getFollow()
+          }
+          vm.page.isFollowProcessing = false
         })
       },
       jumpToUserPage: function () {
@@ -328,7 +410,22 @@
       },
       completeComment: function () {
         this.loadComment()
-      }
+      },
+      getAccount: function () {
+        let vm = this
+        steem.api.getAccounts([this.content.data.author], function (err, res) {
+          if (err) {}
+          res[0].json_metadata = Object.assign(vm.author.json_metadata, JSON.parse(res[0].json_metadata))
+          vm.author = res[0]
+        })
+      },
+      getFollow: function () {
+        let vm = this
+        steem.api.callAsync('get_follow_count', [this.content.data.author])
+          .then(function (result) {
+            vm.follow = result
+          })
+      },
     }
   }
 </script>
@@ -436,6 +533,36 @@
     color: #425363 !important;
     font-size: 10px;
     border-color: #6633ff !important;
+  }
+
+  .card-lastpage {
+    position: absolute;
+    width: 100%;
+    color: #fff;;
+    top: 30%;
+  }
+  .my-profile .my-me-name {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+  .my-profile .my-me-about {
+    font-size: .9rem;
+  }
+  .my-profile .my-me-follow-count {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .my-profile .my-me-follow-text {
+  }
+  .my-profile .my-me-created {
+  }
+  .my-profile .my-me-link a {
+    color: #fff;;
+  }
+  @media only screen and (max-width: 959px) {
+    .card-lastpage {
+      top: 10%;
+    }
   }
 
 

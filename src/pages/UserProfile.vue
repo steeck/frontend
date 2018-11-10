@@ -26,7 +26,7 @@
       <div v-if="username !== $store.state.me.account.name">
         <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
         <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
-        <v-btn dark color="light-blue lighten-1">송금</v-btn>
+        <!-- <v-btn dark color="light-blue lighten-1">송금</v-btn> -->
         <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
         <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
       </div>
@@ -814,7 +814,7 @@
     padding-bottom: 20px;
     background-position: center;
     background-size: cover;
-    
+
     .my-me-name {
       font-size: 1.8rem;
       font-weight: 600;

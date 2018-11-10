@@ -1,7 +1,7 @@
 <template>
   <v-container grid-list-xl>
     <v-flex v-for="(item, i) in list" :key="i+1">
-      <content-card :item="item" :viewWide="false"></content-card>
+      <content-card :item="item"></content-card>
     </v-flex>
     <!--<v-flex v-for="(item, i) in list" :key="i">-->
       <!--<list-card :item="item"></list-card>-->

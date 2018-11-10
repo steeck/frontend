@@ -112,8 +112,8 @@ const router = new Router({
 router.beforeResolve((to, from, next) => {
   const defaultLayout = ['My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
-  const viewLayout = ['View']
-  const listLayout = ['Activities', 'Feeds', 'Search']
+  const viewLayout = ['Feeds', 'View', 'Search']
+  const listLayout = ['Activities']
   const categoryLayout = ['Categories']
 
   // const appLayout = ['Delegate']

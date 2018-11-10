@@ -14,16 +14,16 @@
 </template>
 
 <style scoped>
-/* @media only screen and (min-width: 1904px) {
+@media only screen and (min-width: 1904px) {
   .container {
-    max-width: 900px !important;
+    max-width: 674px !important;
   }
 }
 @media only screen and (min-width: 1264px) {
   .container {
-    max-width: 900px;
+    max-width: 674px;
   }
-} */
+}
 </style>
 
 <script>

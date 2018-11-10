@@ -33,5 +33,8 @@ export default {
   },
   getSearch (q) {
     return http.get('posts/search/' + q)
+  },
+  getFeed (data) {
+    return http.post('posts/feed', data)
   }
 }

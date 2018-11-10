@@ -1,8 +1,18 @@
 <template>
   <div>
-    <v-container py-0>
+    <v-container py-0 :class="{ 'px-0': $vuetify.breakpoint.smAndDown }">
       <v-carousel fullscreen height="300">
-        <v-carousel-item v-for="(banner, i) in banners" :key="i" :src="banner.url"></v-carousel-item>
+        <v-carousel-item v-for="(banner, i) in banners" :key="i" :src="banner.url">
+          <div v-if="banner.text1" class="banner-text1">
+            <span v-html="banner.text1"></span>
+          </div>
+          <div v-if="banner.text2" class="banner-text2">
+            <span v-html="banner.text2"></span>
+          </div>
+          <div v-if="banner.text3" class="banner-text3">
+            <span v-html="banner.text3"></span>
+          </div>
+        </v-carousel-item>
       </v-carousel>
     </v-container>
     <v-container grid-list-xl>
@@ -27,7 +37,7 @@
             </v-flex>
           </v-layout>
 
-          <div class="popular-editors">
+          <div class="popular-editors" :class="{ 'popular-editors__mobile': $vuetify.breakpoint.smAndDown }">
             <div class="inner">
               <div class="title">
                 인기 에디터를 팔로우하세요
@@ -136,6 +146,49 @@
   color: #4321a9;
   font-weight: 500;
 }
+.banner-text1 {
+  padding-left: 15%;
+  color: #fff;
+  font-size: 1.2rem;
+  margin-top: 30px;
+}
+.banner-text2 {
+  padding-left: 15%;
+  color: #fff;
+  font-size: 1.8rem;
+  margin-top: 20px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+.banner-text3 {
+  padding-left: 15%;
+  color: #fff;
+  font-size: 1.1rem;
+  margin-top: 20px;
+  line-height: 1.4;
+}
+@media only screen and (max-width: 959px) {
+  .banner-text1 {
+    padding-left: 10%;
+    font-size: 1.2rem;
+    margin-top: 30px;
+  }
+  .banner-text2 {
+    padding-left: 10%;
+    color: #fff;
+    font-size: 1.4rem;
+    margin-top: 20px;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  .banner-text3 {
+    padding-left: 10%;
+    color: #fff;
+    font-size: 1rem;
+    margin-top: 20px;
+    line-height: 1.4;
+  }
+}
 .categories {
   text-align: center;
   padding: 1rem;
@@ -159,6 +212,10 @@
   background-color: #f6f6f6;
   margin: 12px -1000px;
   padding: 0 1000px;
+}
+.popular-editors__mobile {
+  margin: 0 -16px;
+  padding: 0 16px;
 }
 .popular-editors .inner {
   padding: 24px 0;
@@ -224,9 +281,24 @@ export default {
       usernames: ['meno', 'jjogorae', 'marlon6', 'chibera', 'isaria', 'onepercentbetter'],
       editors: [],
       banners: [
-        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/01_banner_main_steeck.png' },
-        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/02_banner_main_steeck.png' },
-        { url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png' }
+        {
+          url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/01_banner_main_steeck.png',
+          text1: '즐거운 세상이 주는 새로운 가치-스틱',
+          text2: '관심사별 콘텐츠에 업보트 하거나<br>나만의 노하우가 담긴 콘텐츠를 만들어<br>암호화폐 보상을 받으세요!',
+          text3: ''
+        },
+        {
+          url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/02_banner_main_steeck.png',
+          text1: '스틱에서 대학생 에디터를 모십니다',
+          text2: '블록체인이 변화시킬 세상을 위해<br>이제 그대들이 나설 차례!',
+          text3: '참가대상: 자신만의 콘텐츠를 만들어낼 수 있는 대학생<br>참여보상: 콘텐츠당 30스팀달러'
+        },
+        {
+          url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png',
+          text1: '암호화폐',
+          text2: 'UIOEX거래소 슬레이트 사기사건!',
+          text3: '슬레이트 본사도 모르는 슬레이트(SLX)코인이<br>UIO거래소에 상장되고<br>300~400명의 피해자가 발생...'
+        }
       ]
     }
   },

@@ -266,7 +266,7 @@ export default {
         if (res.status === 200) {
           alert('임대회수가 완료되었습니다. 임대회수에는 7일이 소요됩니다.')
           this.init()
-          vm.delegations = []
+          this.delegations = []
           this.show = false
           this.isWithdrawing = false
         }
