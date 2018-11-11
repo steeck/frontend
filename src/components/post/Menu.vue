@@ -41,142 +41,138 @@
 </template>
 
 <script>
-  /**
-   * @property {Array} active_votes
-   */
+import steemconnect from '@/services/steemconnect'
 
-  import steemconnect from '@/services/steemconnect'
-
-  export default {
-    name: 'cardMenu',
-    props: {
-      item: {
-        require: true,
-        type: Object
-      }
+export default {
+  name: 'cardMenu',
+  props: {
+    item: {
+      require: true,
+      type: Object
+    }
+  },
+  data: function () {
+    return {
+      author: null,
+      permlink: null,
+      isVoted: false,
+      dialog: false,
+      downVoteDoing: false,
+      downVoteFalse: false
+    }
+  },
+  computed: {
+    isLogin: function () {
+      return this.$store.state.me.account.name !== null
     },
-    data: function () {
-      return {
-        author: null,
-        permlink: null,
-        isVoted: false,
-        dialog: false,
-        downVoteDoing: false,
-        downVoteFalse: false
-      }
+    // isMyFollwer: function () {
+    //   return this.$store.state.me.follower.indexOf(this.author) > -1
+    // },
+    isMyFollowing: function () {
+      return this.$store.state.me.following.indexOf(this.author) > -1
+    }
+  },
+  mounted: function () {
+    steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+    this.author = this.item.author
+    this.permlink = this.item.permlink
+    this.getVoted()
+  },
+  watch: {
+    'item.active_votes': {
+      handler: function (val, oldVal) {
+        this.getVoted()
+      },
+      deep: true
+    }
+  },
+  methods: {
+    report: function () {
+      let subject = '[신고] : (제목을 넣어주세요)'
+      let body = '게시글 링크 : ' + this.permlink
+      let win = window.open('mailto:' + this.$store.state.manage.mail.report + '?subject=' + subject + '&body=' + body, 'report')
+      win.close()
     },
-    computed: {
-      isLogin: function () {
-        return this.$store.state.me.account.name !== null
-      },
-      // isMyFollwer: function () {
-      //   return this.$store.state.me.follower.indexOf(this.author) > -1
-      // },
-      isMyFollowing: function () {
-        return this.$store.state.me.following.indexOf(this.author) > -1
-      }
-    },
-    mounted: function () {
-      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-      this.author = this.item.author
-      this.permlink = this.item.permlink
-      this.getVoted()
-    },
-    watch: {
-      'item.active_votes': {
-        handler: function (val, oldVal) {
-          this.getVoted()
-        },
-        deep: true
-      }
-    },
-    methods: {
-      report: function () {
-        let subject = '[신고] : (제목을 넣어주세요)'
-        let body = '게시글 링크 : ' + this.permlink
-        let win = window.open('mailto:' + this.$store.state.manage.mail.report + '?subject=' + subject + '&body=' + body, 'report')
-        win.close()
-      },
-      followingAction: function () {
-        let vm = this
-        this.$store.state.me.followDoing = true
-        steemconnect.follow(this.$store.state.me.account.name, this.author, function (err, res) {
-          console.log(err, res)
-          if (!err) {
-            vm.$store.commit('me/addFollowing', vm.author)
-            vm.$store.dispatch('me/getFollowInfo').catch(err => {
-              console.log(err)
-            })
-          }
-          vm.$store.state.me.followDoing = false
-        })
-      },
-      unFollowingAction: function () {
-        let vm = this
-        this.$store.state.me.followDoing = true
-        steemconnect.unfollow(this.$store.state.me.account.name, this.author, function (err, res) {
-          console.log(err, res)
-          if (!err) {
-            vm.$store.commit('me/removeFollowing', vm.author)
-            vm.$store.dispatch('me/getFollowInfo').catch(err => {
-              console.log(err)
-            })
-          }
-          vm.$store.state.me.followDoing = false
-        })
-      },
-      getVoted: function () {
-        let vm = this
-        this.isVoted = false
-        this.item.active_votes.forEach(function (obj) {
-          if (obj.voter === vm.$store.state.me.account.name) {
-            if (obj.percent > 0) {
-              vm.isVoted = true
-            }
-            return true
-          }
-        })
-      },
-      downVote: function () {
-        this.downVoteDoing = true
-        let vote = {
-          voter: this.$store.state.auth.username,
-          author: this.item.author,
-          permlink: this.item.permlink,
-          weight: 0
-        }
-        let vm = this
-        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-        steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
-          vm.downVoteDoing = false
-          if (err) {
-            vm.downVoteFalse = true
+    followingAction: function () {
+      let vm = this
+      this.$store.state.me.followDoing = true
+      steemconnect.follow(this.$store.state.me.account.name, this.author, function (err, res) {
+        console.log(err, res)
+        if (!err) {
+          vm.$store.commit('me/addFollowing', vm.author)
+          vm.$store.dispatch('me/getFollowInfo').catch(err => {
             console.log(err)
+          })
+        }
+        vm.$store.state.me.followDoing = false
+      })
+    },
+    unFollowingAction: function () {
+      let vm = this
+      this.$store.state.me.followDoing = true
+      steemconnect.unfollow(this.$store.state.me.account.name, this.author, function (err, res) {
+        console.log(err, res)
+        if (!err) {
+          vm.$store.commit('me/removeFollowing', vm.author)
+          vm.$store.dispatch('me/getFollowInfo').catch(err => {
+            console.log(err)
+          })
+        }
+        vm.$store.state.me.followDoing = false
+      })
+    },
+    getVoted: function () {
+      let vm = this
+      this.isVoted = false
+      this.item.active_votes.forEach(function (obj) {
+        if (obj.voter === vm.$store.state.me.account.name) {
+          if (obj.percent > 0) {
+            vm.isVoted = true
           }
-          if (result) {
-            vm.downVoteFalse = false
-            let tmpVal = []
-            vm.item.active_votes.forEach(function (obj) {
-              if (obj.voter === vote.voter) {
-                obj.percent = 0
-              }
-              tmpVal.push(obj)
-            })
-            vm.item.active_votes = tmpVal
-            vm.dialog = false
-          }
-        })
-      },
-      copyLink: function () {
-        const el = document.createElement('textarea');
-        el.value = this.$store.state.app_host + '/posts/' + this.item.id;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
+          return true
+        }
+      })
+    },
+    downVote: function () {
+      this.downVoteDoing = true
+      let vote = {
+        voter: this.$store.state.auth.username,
+        author: this.item.author,
+        permlink: this.item.permlink,
+        weight: 0
       }
+      let vm = this
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+      steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
+        vm.downVoteDoing = false
+        if (err) {
+          vm.downVoteFalse = true
+          console.log(err)
+        }
+        if (result) {
+          vm.downVoteFalse = false
+          let tmpVal = []
+          vm.item.active_votes.forEach(function (obj) {
+            if (obj.voter === vote.voter) {
+              obj.percent = 0
+            }
+            tmpVal.push(obj)
+          })
+          vm.item.active_votes = tmpVal
+          vm.dialog = false
+        }
+      })
+    },
+    copyLink: function () {
+      const el = document.createElement('textarea')
+      el.value = this.$store.state.app_host + '/posts/' + this.item.id
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
     }
   }
+}
 </script>
 
 <style scoped>
