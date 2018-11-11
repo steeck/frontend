@@ -10,36 +10,45 @@
         <v-slide-y-transition class="py-0">
           <ul v-if="viewDetail && searchResult.q && searchResult.totalCount > 0">
             <li>
-              글제목 부분으로 총 {{ searchResult.title.length }} 건의 결과를 찾았습니다.
+              글제목 부분으로 총 {{ searchResult.countInfo.titleCount }} 건의 결과를 찾았습니다.
               <span v-if="searchResult.title.length > 0" @click="$vuetify.goTo('#titleElement', { offset: -100 })" class="span-more">..이동</span>
             </li>
             <li>
-              카테고리부분으로 총 {{ searchResult.category.length }} 건의 결과를 찾았습니다.
+              카테고리부분으로 총 {{ searchResult.countInfo.categoryCount }} 건의 결과를 찾았습니다.
               <span v-if="searchResult.category.length > 0" @click="$vuetify.goTo('#categoryElement', { offset: -100 })" class="span-more">..이동</span>
             </li>
             <li>
-              작성자 부분으로 총 {{ searchResult.author.length }} 건의 결과를 찾았습니다.
+              작성자 부분으로 총 {{ searchResult.countInfo.authorCount }} 건의 결과를 찾았습니다.
               <span v-if="searchResult.author.length > 0" @click="$vuetify.goTo('#authorElement', { offset: -100 })" class="span-more">..이동</span>
             </li>
           </ul>
         </v-slide-y-transition>
       </v-flex>
       <v-flex v-if="searchResult.title.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="titleElement">Title ... 총 {{ searchResult.title.length }}건</v-flex>
+        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="titleElement">Title ... 총 {{ searchResult.countInfo.titleCount }}건</v-flex>
         <v-flex v-for="(item, i) in searchResult.title" :key="i+1">
           <content-card :item="item" :viewWide="false"></content-card>
         </v-flex>
+        <v-flex text-xs-right mb-5 v-if="searchResult.title.length < searchResult.countInfo.titleCount">
+          <v-btn dark color="info" @click="moreSearch('title')">제목 검색결과 더보기</v-btn>
+        </v-flex>
       </v-flex>
       <v-flex v-if="searchResult.category.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="categoryElement">Category ... 총 {{ searchResult.category.length }}건</v-flex>
+        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="categoryElement">Category ... 총 {{ searchResult.countInfo.categoryCount }}건</v-flex>
         <v-flex v-for="(item, i) in searchResult.category" :key="i+1">
           <content-card :item="item" :viewWide="false"></content-card>
         </v-flex>
+        <v-flex text-xs-right mb-5 v-if="searchResult.category.length < searchResult.countInfo.categoryCount">
+          <v-btn dark color="info" @click="moreSearch('category')">카테고리 검색결과 더보기</v-btn>
+        </v-flex>
       </v-flex>
       <v-flex v-if="searchResult.author.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="authorElement">Author ... 총 {{ searchResult.author.length }}건</v-flex>
+        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="authorElement">Author ... 총 {{ searchResult.countInfo.authorCount }}건</v-flex>
         <v-flex v-for="(item, i) in searchResult.author" :key="i+1">
           <content-card :item="item" :viewWide="false"></content-card>
+        </v-flex>
+        <v-flex text-xs-right mb-5 v-if="searchResult.author.length < searchResult.countInfo.authorCount">
+          <v-btn dark color="info" @click="moreSearch('author')">작성자 검색결과 더보기</v-btn>
         </v-flex>
       </v-flex>
     </v-flex>
@@ -89,6 +98,7 @@
     props: ['q'],
     data () {
       return {
+        useQ: this.q,
         isAllow: false,
         errorText: '',
         viewDetail: false,
@@ -133,18 +143,32 @@
     },
     methods: {
       getContents: function () {
-        if (this.q.length < 2) {
+        if (this.useQ.length < 2) {
           this.isAllow = false
           this.errorText = '검색어는 2글자 이상 입력해주세요'
           return
         }
-        api.getSearch(this.q)
+        api.getSearch(this.useQ)
           .then(res => {
             this.$store.state.searchObj = res.data
           })
           .catch(error => {
             console.log(error)
           })
+      },
+      moreSearch: function (str) {
+        let targetPage = this.$store.state.searchObj.pages[str] + 1
+        let params = {
+          moreType: str,
+          page: targetPage
+        }
+        let url = '/posts/search/' + this.$store.state.searchObj.q
+        api.moreSearch(url, params)
+          .then(res => {
+            this.$store.state.searchObj.pages[str] ++
+            this.$store.state.searchObj[str] = this.$store.state.searchObj[str].concat(res.data)
+          })
+          .catch(err => console.log(err))
       }
     }
   }

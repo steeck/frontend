@@ -32,7 +32,10 @@ export default {
     return http.get('/posts/weekly')
   },
   getSearch (q) {
-    return http.get('posts/search/' + q)
+    return http.get('/posts/search/' + q)
+  },
+  moreSearch (url, params) {
+    return http.post(url, params)
   },
   getFeed (data) {
     return http.post('posts/feed', data)
