@@ -16,6 +16,7 @@ export default new Vuex.Store({
     terms
   },
   state: {
+    app_host: process.env.APP_HOST,
     currency: 1118,
     version: '',
     layout: 'default-layout',
