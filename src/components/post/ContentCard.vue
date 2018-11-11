@@ -425,7 +425,7 @@
           .then(function (result) {
             vm.follow = result
           })
-      },
+      }
     }
   }
 </script>
