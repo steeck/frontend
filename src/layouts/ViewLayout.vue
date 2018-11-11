@@ -21,7 +21,7 @@
 }
 @media only screen and (min-width: 1264px) {
   .container {
-    max-width: 674px;
+    max-width: 674px !important;
   }
 }
 </style>

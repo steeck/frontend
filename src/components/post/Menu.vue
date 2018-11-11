@@ -5,7 +5,7 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
       <v-list class="card-more">
-        <v-list-tile @click="" :key="'cardMenu1'">
+        <v-list-tile @click="copyLink()" :key="'cardMenu1'">
           <v-list-tile-title>게시글 주소 복사</v-list-tile-title>
         </v-list-tile>
         <v-list-tile @click="unFollowingAction" :key="'cardMenu2'" v-if="isMyFollowing && isLogin">
@@ -75,6 +75,12 @@
       isMyFollowing: function () {
         return this.$store.state.me.following.indexOf(this.author) > -1
       }
+    },
+    mounted: function () {
+      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+      this.author = this.item.author
+      this.permlink = this.item.permlink
+      this.getVoted()
     },
     watch: {
       'item.active_votes': {
@@ -160,16 +166,15 @@
             vm.dialog = false
           }
         })
+      },
+      copyLink: function () {
+        const el = document.createElement('textarea');
+        el.value = this.$store.state.app_host + '/posts/' + this.item.id;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
       }
-    },
-    mounted: function () {
-      // console.log('init menu')
-      // console.log(this.isLogin)
-      // console.log(this.author + ' / ' + this.permlink)
-      steemconnect.setAccessToken(this.$store.state.auth.accessToken)
-      this.author = this.item.author
-      this.permlink = this.item.permlink
-      this.getVoted()
     }
   }
 </script>

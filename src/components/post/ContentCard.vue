@@ -246,7 +246,6 @@
         return this.$store.state.terms.categories[this.content.data.category]
       },
       width () {
-        console.log(this.$vuetify.breakpoint.name)
         switch (this.$vuetify.breakpoint.name) {
           case 'xs': return '100%'
           case 'sm': return '100%'

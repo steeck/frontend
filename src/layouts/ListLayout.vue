@@ -21,7 +21,7 @@
 }
 @media only screen and (min-width: 1264px) {
   .container {
-    max-width: 772px;
+    max-width: 772px !important;
   }
 }
 @media only screen and (max-width: 959px) {
