@@ -204,24 +204,7 @@ export default {
         this.qToast = true
         return
       }
-      api.getSearch(this.q)
-        .then(res => {
-          let data = res.data
-          if (data.totalCount === 0) {
-            this.qError = '검색결과가 없습니다.'
-            if (location.pathname.indexOf('/search') !== 0) {
-              this.qToast = true
-            }
-            this.$store.state.searchObj = data
-            return false
-          } else {
-            this.$store.state.searchObj = data
-            this.$router.push({name: 'Search', params: { q: this.q }})
-          }
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      this.$router.push({name: 'Search', params: { q: this.q }})
     }
   },
   mounted () {

@@ -5,50 +5,15 @@
     </v-flex>
     <v-flex v-if="isAllow">
       <v-flex mb-5>
-        <div>'{{ q }}' 키워드로 총 {{ searchResult.totalCount }} 건의 검색결과가 있습니다. <span @click="viewDetail = !viewDetail" class="span-more">..more</span>
-        </div>
-        <v-slide-y-transition class="py-0">
-          <ul v-if="viewDetail && searchResult.q && searchResult.totalCount > 0">
-            <li>
-              글제목 부분으로 총 {{ searchResult.countInfo.titleCount }} 건의 결과를 찾았습니다.
-              <span v-if="searchResult.title.length > 0" @click="$vuetify.goTo('#titleElement', { offset: -100 })" class="span-more">..이동</span>
-            </li>
-            <li>
-              카테고리부분으로 총 {{ searchResult.countInfo.categoryCount }} 건의 결과를 찾았습니다.
-              <span v-if="searchResult.category.length > 0" @click="$vuetify.goTo('#categoryElement', { offset: -100 })" class="span-more">..이동</span>
-            </li>
-            <li>
-              작성자 부분으로 총 {{ searchResult.countInfo.authorCount }} 건의 결과를 찾았습니다.
-              <span v-if="searchResult.author.length > 0" @click="$vuetify.goTo('#authorElement', { offset: -100 })" class="span-more">..이동</span>
-            </li>
-          </ul>
-        </v-slide-y-transition>
+        <div>'{{ q }}' 키워드로 총 {{ searchResult.totalCount }} 건의 검색결과가 있습니다.</div>
       </v-flex>
-      <v-flex v-if="searchResult.title.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="titleElement">Title ... 총 {{ searchResult.countInfo.titleCount }}건</v-flex>
-        <v-flex v-for="(item, i) in searchResult.title" :key="i+1">
+      <v-flex v-if="list.length > 0">
+        <v-flex v-for="(item, i) in list" :key="i+1">
           <content-card :item="item" :viewWide="false"></content-card>
         </v-flex>
-        <v-flex text-xs-right mb-5 v-if="searchResult.title.length < searchResult.countInfo.titleCount">
-          <v-btn dark color="info" @click="moreSearch('title')">제목 검색결과 더보기</v-btn>
-        </v-flex>
-      </v-flex>
-      <v-flex v-if="searchResult.category.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="categoryElement">Category ... 총 {{ searchResult.countInfo.categoryCount }}건</v-flex>
-        <v-flex v-for="(item, i) in searchResult.category" :key="i+1">
-          <content-card :item="item" :viewWide="false"></content-card>
-        </v-flex>
-        <v-flex text-xs-right mb-5 v-if="searchResult.category.length < searchResult.countInfo.categoryCount">
-          <v-btn dark color="info" @click="moreSearch('category')">카테고리 검색결과 더보기</v-btn>
-        </v-flex>
-      </v-flex>
-      <v-flex v-if="searchResult.author.length > 0">
-        <v-flex tag="h2" mb-4 mt-2 class="title-list" id="authorElement">Author ... 총 {{ searchResult.countInfo.authorCount }}건</v-flex>
-        <v-flex v-for="(item, i) in searchResult.author" :key="i+1">
-          <content-card :item="item" :viewWide="false"></content-card>
-        </v-flex>
-        <v-flex text-xs-right mb-5 v-if="searchResult.author.length < searchResult.countInfo.authorCount">
-          <v-btn dark color="info" @click="moreSearch('author')">작성자 검색결과 더보기</v-btn>
+        <infinite-loading @infinite="infiniteHandler" v-if="list.length < searchResult.totalCount && !page.isLoading"></infinite-loading>
+        <v-flex xs12 justify-center text-xs-center v-if="list.length < searchResult.totalCount && page.isLoading">
+          <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
         </v-flex>
       </v-flex>
     </v-flex>
@@ -98,7 +63,6 @@
     props: ['q'],
     data () {
       return {
-        useQ: this.q,
         isAllow: false,
         errorText: '',
         viewDetail: false,
@@ -109,12 +73,8 @@
           loadingForOnce: 20, // 한번에 조회할 양
           ableLoading: true, // default true
           isLoading: true
-        }
-      }
-    },
-    computed: {
-      searchResult: function () {
-        return this.$store.state.searchObj
+        },
+        searchResult: {}
       }
     },
     mounted () {
@@ -129,6 +89,14 @@
       }
     },
     watch: {
+      q: function () {
+        this.searchResult.q = this.q
+        window.scroll({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        })
+      },
       searchResult: {
         handler: function (val, oldVal) {
           if (this.searchResult.totalCount === 0) {
@@ -139,36 +107,53 @@
           }
         },
         deep: true
+      },
+      'searchResult.q': function () {
+        this.getContents()
       }
     },
     methods: {
       getContents: function () {
-        if (this.useQ.length < 2) {
+        if (this.q.length < 2) {
           this.isAllow = false
           this.errorText = '검색어는 2글자 이상 입력해주세요'
           return
         }
-        api.getSearch(this.useQ)
+        api.getSearch(this.q)
           .then(res => {
-            this.$store.state.searchObj = res.data
+            this.searchResult = res.data
+            this.list = res.data.list
+            this.isAllow = true
+            this.page.isLoading = false
           })
           .catch(error => {
             console.log(error)
+            this.page.isLoading = false
           })
       },
-      moreSearch: function (str) {
-        let targetPage = this.$store.state.searchObj.pages[str] + 1
+      moreSearch: function () {
+        console.log('i')
+        let targetPage = this.searchResult.page + 1
         let params = {
-          moreType: str,
+          moreType: 'more',
           page: targetPage
         }
-        let url = '/posts/search/' + this.$store.state.searchObj.q
+        let url = '/posts/search/' + this.searchResult.q
         api.moreSearch(url, params)
           .then(res => {
-            this.$store.state.searchObj.pages[str] ++
-            this.$store.state.searchObj[str] = this.$store.state.searchObj[str].concat(res.data)
+            this.searchResult.page ++
+            this.searchResult.list = this.searchResult.list.concat(res.data)
+            this.list = this.list.concat(res.data)
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            console.log(err)
+            this.page.isLoading = false
+          })
+      },
+      infiniteHandler: function ($state) {
+        this.page.isLoading = true
+        this.moreSearch()
+        $state.loaded()
       }
     }
   }
