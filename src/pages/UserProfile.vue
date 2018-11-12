@@ -1,7 +1,7 @@
 <template>
   <!--보상영역 스팀보상 스틱보상-->
   <v-container grid-list-xl v-else>
-    <div class="my-profile text-xs-center" v-bind:style="{ 'background-image': 'url(' + me.json_metadata.profile.profile_image + ')' }">
+    <div class="my-profile text-xs-center" v-bind:style="[me.json_metadata.profile.profile_image ? { 'background-image': 'url(' + me.json_metadata.profile.profile_image + ')' } : {}]">
       <v-avatar size="80" color="grey lighten-4">
         <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
       </v-avatar>
@@ -67,7 +67,7 @@
           </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>
-          <v-flex v-if="page.ableLoading && page.list.length === 0" justify-center text-xs-center>
+          <v-flex v-if="!page.isLoading && page.list.length === 0" justify-center text-xs-center>
             글이 없습니다.
           </v-flex>
           <v-flex v-else justify-center text-xs-center>
@@ -101,7 +101,7 @@
           </v-flex>
         </v-list>
         <v-flex key="'empty'" v-else>
-          <v-flex v-if="page.ableLoading && page.commentList.length === 0" justify-center text-xs-center>
+          <v-flex v-if="!page.isLoading && page.commentList.length === 0" justify-center text-xs-center>
             글이 없습니다.
           </v-flex>
           <v-flex v-else justify-center text-xs-center>
@@ -469,7 +469,11 @@
         let vm = this
         steem.api.callAsync('get_accounts', [[this.username]])
           .then(function (result) {
-            result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
+            if (result[0].json_metadata) {
+              result[0].json_metadata = Object.assign(vm.me.json_metadata, JSON.parse(result[0].json_metadata))
+            } else {
+              result[0].json_metadata = vm.me.json_metadata
+            }
             vm.me = result[0]
             vm.getMyPost()
           })
