@@ -166,7 +166,6 @@ li a {
 <script>
 import steemconnect from '@/services/steemconnect'
 import LoggedOn from '@/components/common/LoggedOn'
-import api from '@/api/posts'
 
 export default {
   components: {

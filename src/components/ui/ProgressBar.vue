@@ -44,6 +44,9 @@ export default {
     let color = '#1976D2'
     if (!isNaN(this.percent)) {
       this.per = this.percent
+      if (this.per > 100) {
+        this.per = 100
+      }
     }
     if (this.color === 'dark') {
       color = '#283593'

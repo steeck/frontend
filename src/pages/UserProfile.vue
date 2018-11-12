@@ -220,6 +220,7 @@
                   </v-flex>
                 </v-layout>
                 <v-btn
+                  v-if="$store.state.auth.username === username"
                   block
                   outline
                   color="deep-purple"
@@ -302,11 +303,11 @@
         me: {
           json_metadata: {
             profile: {
-              profile_image: 'https://www.google.co.kr/images/branding/googlelogo/2x/googlelogo_color_120x44dp.png',
-              about: 'Update about me',
+              profile_image: '',
+              about: '',
               name: '',
               location: '',
-              website: 'https://about.steeck.io',
+              website: '',
               cover_image: ''
             }
           }
@@ -761,7 +762,7 @@
       },
       getCryptoPrice: function () {
         let vm = this
-        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=STEEM&tsym=USD&limit=0')
+        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=STEEM&tsym=USD&limit=1')
           .then(res => {
             return res.text()
           })
@@ -774,7 +775,7 @@
               direction: diff > 0 ? 'down' : 'up'
             }
           })
-        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=SBD*&tsym=USD&limit=0')
+        fetch('https://min-api.cryptocompare.com/data/histoday?fsym=SBD*&tsym=USD&limit=1')
           .then(res => {
             return res.text()
           })
