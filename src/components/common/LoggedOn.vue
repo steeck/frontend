@@ -67,14 +67,17 @@ a {
 </style>
 
 <script>
+import steemutil from '@/mixins/steemutil'
 export default {
+  mixins: [steemutil],
   mounted () {
     // this.$store.dispatch('me/getAccount')
   },
   computed: {
     vp () {
       if (this.$store.state.me.account) {
-        return (this.$store.state.me.account.voting_power / 100).toFixed(0)
+        return (this.calculateVotingPower(this.$store.state.me.account) / 100).toFixed(0)
+        // return (this.$store.state.me.account.voting_power / 100).toFixed(0)
       }
     },
     rc () {

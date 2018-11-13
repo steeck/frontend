@@ -24,6 +24,10 @@ const steemutil = {
         (this.getSP(user.vesting_shares) + parseFloat(user.vesting_balance)) * parseFloat(steemRate) +
         parseFloat(user.sbd_balance) * parseFloat(sbdRate)
       )
+    },
+    calculateVotingPower: function (user) {
+      var ago = (new Date().getTime() - new Date((user.last_vote_time) + 'Z').getTime()) / 1000
+      return Math.min(10000, user.voting_power + 10000 * ago / 432000)
     }
   }
 }

@@ -19,7 +19,7 @@
       ></progress-bar>
     <h4>보팅가치 : {{ (votingValue * weight / 100).toFixed(2) | kwn | number }}원</h4>
     <div>
-      * 드래그하시면 보팅파워에 따른 예상 보팅액을 보실 수 있습니다. 
+      * 드래그하시면 보팅파워에 따른 예상 보팅액을 보실 수 있습니다.
     </div>
     <div>
       <v-slider v-model="weight" color="deep-purple"></v-slider>
@@ -88,7 +88,7 @@ export default {
       return this.getSP(parseFloat(this.me.delegated_vesting_shares)).toFixed(3)
     },
     vmana () {
-      return (this.me.voting_power / 100).toFixed(2)
+      return (this.calculateVotingPower(this.me) / 100).toFixed(2)
     },
     rcmana () {
       if (this.rc.rc_manabar) {
