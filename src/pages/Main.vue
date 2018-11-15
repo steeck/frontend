@@ -207,10 +207,10 @@
   margin-left: 24px;
 }
 .asd {
-  margin: auto -24px !important;
+  margin: auto -12px !important;
 }
 .asd .flex {
-  padding: 12px 24px !important;
+  padding: 12px 12px !important;
 }
 .popular-editors {
   background-color: #f6f6f6;
