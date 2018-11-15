@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-img
-      height="130px"
+      aspect-ratio="2"
       :src="thumbnail"
       :lazy-src="defaultThumbnail"
     >
@@ -67,11 +67,12 @@
   font-size: 13px;
   font-weight: 500;
   color: #8e8e8e;
+  margin-left: 10px;
 }
-.author::before {
+/* .author::before {
   content: '|';
   margin: 0 10px;
-}
+} */
 .reward {
   font-size: 13px;
   font-weight: 500;

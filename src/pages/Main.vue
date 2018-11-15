@@ -16,27 +16,39 @@
       </v-carousel>
     </v-container>
     <v-container grid-list-xl>
-      <v-tabs hide-slider>
-        <v-tab ripple>스틱30</v-tab>
-        <v-tab-item>
-          <div class="text-xs-center ma-5" v-if="!best.length">
+      <v-layout row wrap class="list-menubar">
+        <v-flex xs6 class="list-menubar-lg">
+          <span class="list-menubar__steeck" :class="{ 'active': selected.lg == 'steeck' }" @click="selected.lg = 'steeck'">스틱30</span>
+          <span class="list-menubar-divider">|</span>
+          <span class="list-menubar__newbie" :class="{ 'active': selected.lg == 'newbie' }" @click="selected.lg = 'newbie'">뉴비30</span>
+        </v-flex>
+        <v-flex xs6 class="list-menubar-sm">
+          <span class="list-menubar__pending" :class="{ 'active': selected.sm == 'pending' }" @click="selected.sm = 'pending'">실시간</span>
+          <span class="list-menubar-divider">|</span>
+          <span class="list-menubar__payout" :class="{ 'active': selected.sm == 'payout' }" @click="selected.sm = 'payout'">페이아웃</span>
+        </v-flex>
+      </v-layout>
+      <div class="list mt-5">
+        <div v-if="isLoading">
+          <div class="text-xs-center" v-if="!list.length">
             <v-progress-circular indeterminate color="deep-purple"></v-progress-circular>
           </div>
+        </div>
+        <div v-else>
           <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(card, i) in best.slice(0, 3)" :key="card.id">
+            <v-flex xs12 sm4 v-for="(card, i) in list.slice(0, 3)" :key="card.id">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card-best :item="card" :rating="i + 1"></card-best>
               </router-link>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in best.slice(3, 9)" :key="card.permlink">
+            <v-flex xs12 sm6 v-for="(card, i) in list.slice(3, 9)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card :item="card" :rating="i + 4"></card>
               </router-link>
             </v-flex>
           </v-layout>
-
           <div class="popular-editors" :class="{ 'popular-editors__mobile': $vuetify.breakpoint.smAndDown }">
             <div class="inner">
               <div class="title">
@@ -51,68 +63,15 @@
               </v-layout>
             </div>
           </div>
-
           <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in best.slice(9)" :key="card.permlink">
+            <v-flex xs12 sm6 v-for="(card, i) in list.slice(9)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
                 <card :item="card" :rating="i + 10"></card>
               </router-link>
             </v-flex>
           </v-layout>
-        </v-tab-item>
-        <v-tab ripple>뉴비30</v-tab>
-        <v-tab-item>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(card, i) in newbies.slice(0, 3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card-best :item="card" :rating="i + 1"></card-best>
-              </router-link>
-            </v-flex>
-          </v-layout>
-          <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in newbies.slice(3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card :item="card" :rating="i + 4"></card>
-              </router-link>
-            </v-flex>
-          </v-layout>
-        </v-tab-item>
-        <v-spacer></v-spacer>
-        <v-tab ripple>실시간</v-tab>
-        <v-tab-item>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(card, i) in news.slice(0, 3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card-best :item="card" :rating="i + 1"></card-best>
-              </router-link>
-            </v-flex>
-          </v-layout>
-          <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in news.slice(3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card :item="card" :rating="i + 4"></card>
-              </router-link>
-            </v-flex>
-          </v-layout>
-        </v-tab-item>
-        <v-tab ripple>페이아웃</v-tab>
-        <v-tab-item>
-          <v-layout row wrap>
-            <v-flex xs12 sm4 v-for="(card, i) in payout.slice(0, 3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card-best :item="card" :rating="i + 1"></card-best>
-              </router-link>
-            </v-flex>
-          </v-layout>
-          <v-layout row wrap class="asd">
-            <v-flex xs12 sm6 v-for="(card, i) in payout.slice(3)" :key="card.permlink">
-              <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
-                <card :item="card" :rating="i + 4"></card>
-              </router-link>
-            </v-flex>
-          </v-layout>
-        </v-tab-item>
-      </v-tabs>
+        </div>
+      </div>
     </v-container>
   </div>
 </template>
@@ -168,6 +127,9 @@
   line-height: 1.4;
 }
 @media only screen and (max-width: 959px) {
+  >>>.v-carousel {
+    height: 220px !important;
+  }
   .banner-text1 {
     padding-left: 10%;
     font-size: 1.2rem;
@@ -202,6 +164,35 @@
 .link {
   text-decoration: none;
 }
+.list-menubar {
+  border-bottom: solid 1px #bbbbbb;
+  margin: 0 !important;
+}
+.list-menubar-lg {
+  cursor: pointer;
+  font-size: 18px;
+  color: #b1b1b1;
+  padding: 6px 0 !important;
+}
+.list-menubar-lg .active {
+  color: #4321a9;
+  font-weight: 600;
+}
+.list-menubar-sm {
+  cursor: pointer;
+  text-align: right;
+  font-size: 14px;
+  color: #b1b1b1;
+  padding: 6px 0 !important;
+}
+.list-menubar-sm .active {
+  color: #425363;
+  font-weight: 600;
+}
+.list-menubar-divider {
+  margin: 0 5px;
+}
+
 .asd {
   margin: auto -24px !important;
 }
@@ -259,6 +250,12 @@ import Editor from '@/components/Editor'
 export default {
   data () {
     return {
+      isLoading: false,
+      list: [],
+      selected: {
+        lg: 'steeck',
+        sm: 'pending'
+      },
       best: [],
       news: [],
       newbies: [],
@@ -308,41 +305,63 @@ export default {
     Editor
   },
   mounted () {
+    this.$store.dispatch('me/getAccount')
     this.getPosts()
     this.getEditors()
   },
+  watch: {
+    'selected': {
+      handler: function (val, oldVal) {
+        this.getPosts()
+      },
+      deep: true
+    }
+  },
   methods: {
     getPosts: function () {
+      this.isLoading = true
       let vm = this
-      api.getBest({})
+      api.getPosts(this.selected)
         .then(res => {
-          vm.best = res.data
+          vm.list = res.data
+          this.isLoading = false
         })
         .catch(err => {
           console.log(err)
-        })
-      api.getNew({})
-        .then(res => {
-          vm.news = res.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      api.getNewbie({})
-        .then(res => {
-          vm.newbies = res.data
-        })
-        .catch(err => {
-          console.log(err)
-        })
-      api.getPayout({})
-        .then(res => {
-          vm.payout = res.data
-        })
-        .catch(err => {
-          console.log(err)
+          this.isLoading = false
         })
     },
+    // getPosts: function () {
+    //   let vm = this
+    //   api.getBest({})
+    //     .then(res => {
+    //       vm.best = res.data
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    //   api.getNew({})
+    //     .then(res => {
+    //       vm.news = res.data
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    //   api.getNewbie({})
+    //     .then(res => {
+    //       vm.newbies = res.data
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    //   api.getPayout({})
+    //     .then(res => {
+    //       vm.payout = res.data
+    //     })
+    //     .catch(err => {
+    //       console.log(err)
+    //     })
+    // },
     getEditors: function () {
       let vm = this
 

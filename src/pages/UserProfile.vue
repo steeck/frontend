@@ -172,7 +172,7 @@
               <tbody>
                 <tr>
                   <th>스틱 포인트</th>
-                  <td>{{ steeckyPoint | number }} STEECKY</td>
+                  <td>{{ steeckyPoint | number }} STEECKY <v-btn outline color="#6633ff">포인트 인출 (개발중)</v-btn></td>
                 </tr>
                 <tr>
                   <th>스팀</th>
@@ -261,9 +261,9 @@
                     <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
                   </span>
                 </div>
-                <div class="mt-3" style="color: #414d6b;">출처: cryptocompare.com</div>
               </div>
             </div>
+            <div class="mt-3" style="color: #414d6b;">출처: cryptocompare.com</div>
           </v-flex>
         </v-layout>
       </v-slide-y-transition>
@@ -486,6 +486,10 @@
           })
       },
       addFollowing: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -502,6 +506,10 @@
         })
       },
       removeFollowing: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -518,6 +526,10 @@
         })
       },
       addIgnore: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -534,6 +546,10 @@
         })
       },
       removeIgnore: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -877,12 +893,12 @@
 
   /* 스팀 보상 테이블 */
   .table-steem-reward {
-    .reward-time {
-      min-width: 8rem;
-    }
-    .reward-title {
-      min-width: 10rem;
-    }
+    // .reward-time {
+    //   min-width: 8rem;
+    // }
+    // .reward-title {
+    //   min-width: 10rem;
+    // }
     .tc-import {
       color: $colorForce;
     }
@@ -923,19 +939,19 @@
     border-spacing: 0;
 
     th {
-      font-size: 22px;
+      font-size: 18px;
       font-weight: 600;
       text-align: left;
       color: #414d6b;
     }
     td {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       text-align: right;
       color: #989898;
     }
     th, td {
-      padding: 15px 25px;
+      padding: 10px 20px;
     }
     tr:not(:last-child) {
       th, td {

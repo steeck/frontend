@@ -1,7 +1,7 @@
 <template>
   <v-footer height="auto" color="white" v-scroll="onScroll">
     <v-fab-transition>
-      <v-btn fab dark bottom right fixed color="primary" v-show="isBtnView" @click="scrollToTop">
+      <v-btn fab dark bottom right fixed color="#6633ff" v-show="isBtnView" @click="scrollToTop">
         <v-icon dark>keyboard_arrow_up</v-icon>
       </v-btn>
     </v-fab-transition>

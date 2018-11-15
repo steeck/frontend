@@ -16,6 +16,9 @@ export default {
   getByCategory (data) {
     return http.get('/posts/c/' + data.category)
   },
+  getPosts (data) {
+    return http.get('/posts/' + data.lg + '/' + data.sm)
+  },
   getBest (data) {
     return http.get('/posts/best')
   },

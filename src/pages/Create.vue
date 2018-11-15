@@ -29,42 +29,46 @@
 
     <v-layout row wrap>
       <v-flex xs12 sm4 md2>
-        <div class="preview mb-5" justify-center v-for="(item, i) in contents" :key="i">
-          <v-layout row wrap>
-            <v-flex xs6 class="py-0">
-              <v-btn
-                class="ma-0"
-                small
-                flat
-                :color="selected === i ? 'indigo' : ''"
-                @click="selectCard(i)"
-              >
-                <span v-if="i === 0">표지</span>
-                <span v-else>{{ i }}</span>
-              </v-btn>
-            </v-flex>
-            <v-flex xs6 class="py-0 text-lg-right">
-              <v-btn
-                v-if="i !== 0"
-                class="ma-0"
-                small
-                flat
-                @click="removeCard(i)"
-              >Del</v-btn>
-            </v-flex>
-          </v-layout>
-          <div @click="selectCard(i)">
-            <v-card>
-              <v-img
-                class="preview-img"
-                :src="item.url ? item.url : 'https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png'"
-              ></v-img>
-              <v-card-text class="preview-text">
-                {{ item.text }}
-              </v-card-text>
-            </v-card>
-          </div>
-        </div>
+        <v-layout row wrap>
+          <v-flex xs6 sm12 justify-center v-for="(item, i) in contents" :key="i">
+            <div class="preview mb-5">
+              <v-layout row wrap>
+                <v-flex xs6 class="py-0">
+                  <v-btn
+                    class="ma-0"
+                    small
+                    flat
+                    :color="selected === i ? 'indigo' : ''"
+                    @click="selectCard(i)"
+                  >
+                    <span v-if="i === 0">표지</span>
+                    <span v-else>{{ i }}</span>
+                  </v-btn>
+                </v-flex>
+                <v-flex xs6 class="py-0 text-lg-right">
+                  <v-btn
+                    v-if="i !== 0"
+                    class="ma-0"
+                    small
+                    flat
+                    @click="removeCard(i)"
+                  >Del</v-btn>
+                </v-flex>
+              </v-layout>
+              <div @click="selectCard(i)">
+                <v-card>
+                  <v-img
+                    class="preview-img"
+                    :src="item.url ? item.url : 'https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png'"
+                  ></v-img>
+                  <v-card-text class="preview-text">
+                    {{ item.text }}
+                  </v-card-text>
+                </v-card>
+              </div>
+            </div>
+          </v-flex>
+        </v-layout>
       </v-flex>
 
       <v-flex xs12 sm6 md8>
@@ -127,6 +131,7 @@
               <v-text-field v-model="tag"
                 label="태그단어"
                 single-line
+                color="#6633ff"
                 v-on:keyup.enter="addTag"
               ></v-text-field>
               <v-layout row wrap align-center >
@@ -134,9 +139,9 @@
                   class="black--text caption"
                   depressed small
                   round
-                  outline color="indigo"
+                  outline
                   @click="removeTag(i)"
-                >{{ tag }}</v-btn>
+                >{{ tag }} X</v-btn>
               </v-layout>
             </v-flex>
           </v-card>

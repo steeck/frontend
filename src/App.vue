@@ -35,9 +35,6 @@ export default {
     }
   },
   head: {
-    title: {
-      inner: 'Steeck'
-    },
     meta: [
       { property: 'og:title', content: 'Steeck' },
       { property: 'og:image', content: 'https://s3.ap-northeast-2.amazonaws.com/steeck/og/steeck_og.png' }

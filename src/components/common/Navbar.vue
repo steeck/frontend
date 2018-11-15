@@ -30,7 +30,7 @@
             <li>개인정보 처리방침</li>
           </ul>
           <div class="mt-3">
-            &copy;2018 — <strong>steeck Inc.</strong>
+            &copy;2018 <strong>Steeck Inc.</strong>
           </div>
         </div>
       </v-list>
