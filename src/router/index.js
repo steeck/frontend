@@ -16,6 +16,8 @@ import UserProfile from '@/pages/UserProfile'
 import Post from '@/pages/Post'
 import View from '@/pages/View'
 import Search from '@/pages/Search'
+import Account from '@/pages/Account'
+
 import Create from '@/pages/Create'
 
 Vue.use(Router)
@@ -105,6 +107,11 @@ const router = new Router({
       name: 'Search',
       component: Search,
       props: true
+    },
+    {
+      path: '/account',
+      name: 'Account',
+      component: Account
     }
   ]
 })

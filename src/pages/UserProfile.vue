@@ -32,6 +32,9 @@
           <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
         </div>
       </div>
+      <div v-else>
+        <v-btn dark color="deep-purple" @click="$router.push({name: 'Account'})">프로필 설정</v-btn>
+      </div>
     </div>
 
     <!--my 페이지 중앙 메뉴 -->
