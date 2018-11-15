@@ -138,14 +138,16 @@ export default {
 
       let vm = this
       this.isVoted = false
-      this.item.active_votes.forEach(function (obj) {
-        if (obj.voter === vm.$store.state.auth.username) {
-          if (obj.percent > 0) {
-            vm.isVoted = true
+      if (this.item.active_votes) {
+        this.item.active_votes.forEach(function (obj) {
+          if (obj.voter === vm.$store.state.auth.username) {
+            if (obj.percent > 0) {
+              vm.isVoted = true
+            }
+            return true
           }
-          return true
-        }
-      })
+        })
+      }
     },
     downVote: function () {
       if (!this.$store.state.auth.username) {
