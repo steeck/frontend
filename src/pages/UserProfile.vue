@@ -31,9 +31,9 @@
           <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
           <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
         </div>
-      </div>
-      <div v-else>
-        <v-btn dark color="deep-purple" @click="$router.push({name: 'Account'})">프로필 설정</v-btn>
+        <div v-else>
+          <v-btn dark color="deep-purple" @click="$router.push({name: 'Account'})">프로필 설정</v-btn>
+        </div>
       </div>
     </div>
 
@@ -132,7 +132,7 @@
           <v-data-table :items="page.steemRewardList" class="elevation-5 table-steem-reward" hide-headers hide-actions>
             <template slot="items" slot-scope="props">
               <td class="reward-time">{{ props.item[1].timestamp | convdate | ago }}</td>
-              <td class="reward-title">{{ props.item[1].op[0] === 'curation_reward' ? '큐레이션 보상' : '저자 보상' }}</td>
+              <td class="reward-title">{{ props.item[1].op[0] === 'curation_reward' ? '큐레이션' : '저자' }}</td>
               <td v-if="props.item[1].op[0] === 'curation_reward'" class="reward-detail">
                 <span>{{ sp(props.item[1].op[1].reward) }} STEEM POWER</span>
                 <span class="tc-import">for {{ props.item[1].op[1].comment_author}} / {{ props.item[1].op[1].comment_permlink}}</span>
@@ -941,14 +941,22 @@
 
   /* 스팀 보상 테이블 */
   .table-steem-reward {
-    // .reward-time {
-    //   min-width: 8rem;
-    // }
-    // .reward-title {
-    //   min-width: 10rem;
-    // }
+    .reward-time {
+      min-width: 60px;
+    }
+    .reward-title {
+      min-width: 72px;
+    }
     .tc-import {
       color: $colorForce;
+    }
+  }
+  @media only screen and (max-width: 600px) {
+    .table-steem-reward {
+      .reward-time,
+      .reward-title {
+        padding: 6px 12px;
+      }
     }
   }
 
@@ -1069,4 +1077,5 @@
       color: inherit;
     }
   }
+
 </style>
