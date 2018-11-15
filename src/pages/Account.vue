@@ -133,7 +133,17 @@
         return this.account.created ? this.account.created.substr(0, 10).replace(/-/g, '/') : ''
       },
       jsonMetaData: function () {
-        return JSON.parse(this.$store.state.me.account.json_metadata)
+        let tmp = {
+          profile: {
+            profile_image: '',
+            cover_image: '',
+            name: '',
+            about: '',
+            location: '',
+            website: ''
+          }
+        }
+        return Object.assign(tmp, JSON.parse(this.$store.state.me.account.json_metadata))
       }
     },
     methods: {
