@@ -101,6 +101,9 @@ const mutations = {
     let profile = Object.assign({created}, {about, coverImage, location, name, profileImage, website})
     state.profile = profile
   },
+  setJsonMetaData (state, data) {
+    state.account.json_metadata = data
+  },
   setFollow (state, value) {
     state.follow = value
   },
