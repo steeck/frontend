@@ -54,13 +54,13 @@
               <div class="title">
                 인기 에디터를 팔로우하세요
               </div>
-              <v-layout row wrap>
-                <v-flex xs6 sm3 md2 v-for="(editor, i) in editors" :key="editor.name">
+              <ul class="editors-list">
+                <li class="editors-item" v-for="(editor, i) in editors" :key="editor.name">
                   <router-link :to="{ name: 'User', params: { username: editor.name } }" class="link">
                     <editor :editor="editor"></editor>
                   </router-link>
-                </v-flex>
-              </v-layout>
+                </li>
+              </ul>
             </div>
           </div>
           <v-layout row wrap class="asd">
@@ -192,7 +192,20 @@
 .list-menubar-divider {
   margin: 0 5px;
 }
-
+.editors-list {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  padding-left: 0;
+}
+.editors-item {
+  display: inline-block;
+  position: relative;
+  width: 170px;
+}
+.editors-item + .editors-item {
+  margin-left: 24px;
+}
 .asd {
   margin: auto -24px !important;
 }

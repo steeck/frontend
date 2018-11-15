@@ -2,13 +2,12 @@
   <v-menu
     bottom
     :close-on-content-click="false"
-    :open-on-click="this.$store.state.auth.username"
+    :open-on-click="!!this.$store.state.auth.username"
     v-model="show"
   >
     <v-btn icon flat
       slot="activator"
       class="btn-vote"
-      @click="openVote()"
     >
       <v-icon
         size="20"
@@ -24,9 +23,17 @@
     <!-- <v-list>
       <v-list-tile> -->
     <div class="px-4 py-2">
-      <v-layout row wrap align-center>
+      <v-layout row wrap align-center v-if="isVoted">
+        <v-flex xs9 class="unvote-text mt-2 pr-3 pt-1">
+          업보트를 취소하시겠습니까?
+        </v-flex>
+        <v-flex xs3 class="text-xs-right mt-2 pt-1">
+          <v-btn class="btn-upvote" outline color="#6644ff" round small flat @click="unvote()" :loading="isVoting">언보트</v-btn>
+        </v-flex>
+      </v-layout>
+      <v-layout row wrap align-center v-else>
         <v-flex xs12>
-        <v-slider v-model="weight" color="deep-purple"></v-slider>
+        <v-slider v-model="weight" color="#6644ff"></v-slider>
         <v-layout row wrap class="ma-0 percent">
           <div style="width: 12.5%; text-align: left">0%</div>
           <div style="width: 25%; text-align: center">25%</div>
@@ -38,7 +45,7 @@
           현재 <b>{{ getVoteValue() | kwn | number }}원</b>의 가치로 업보트를 할 수 있습니다
         </v-flex>
         <v-flex xs3 class="text-xs-right mt-2 pt-1">
-          <v-btn class="btn-upvote" outline color="deep-purple" round small flat @click="vote()" :loading="isVoting">업보트</v-btn>
+          <v-btn class="btn-upvote" outline color="#6644ff" round small flat @click="vote()" :loading="isVoting">업보트</v-btn>
         </v-flex>
       </v-layout>
     </div>
@@ -167,6 +174,34 @@
             vm.createSteecky()
             vm.complete()
             vm.show = false
+          } else {
+            alert('보팅할 수 없습니다')
+            vm.show = false
+          }
+          vm.isVoting = false
+        })
+      },
+      unvote: function () {
+        let vote = {
+          voter: this.$store.state.auth.username,
+          author: this.item.author,
+          permlink: this.item.permlink,
+          weight: 0
+        }
+        // console.log(vote)
+        let vm = this
+        this.isVoting = true
+        steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+        // old steemconnect
+        steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
+          if (!err) {
+            // console.log('ok')
+            vm.isVoted = false
+            vm.complete()
+            vm.show = false
+          } else {
+            alert('보팅할 수 없습니다')
+            vm.show = false
           }
           vm.isVoting = false
         })
@@ -218,6 +253,10 @@
 .vote-text {
   color: #333;
   font-size: 0.85em;
+}
+.unvote-text {
+  color: #333;
+  font-size: 1em;
 }
 >>>.v-input--slider {
   margin-top: 0;

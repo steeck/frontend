@@ -18,7 +18,7 @@
         <v-divider class="my-4"></v-divider>
         <div class="menu-bottom">
           <ul>
-            <li><a href="https://about.steeck.io" target="about">스틱소개</a></li>
+            <li><a href="http://about.steeck.io" target="about">스틱소개</a></li>
             <li><router-link to="/center/lease">자산센터</router-link></li>
           </ul>
           <ul class="mt-2">

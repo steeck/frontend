@@ -2,33 +2,35 @@
   <!--보상영역 스팀보상 스틱보상-->
   <v-container grid-list-xl v-else>
     <div class="my-profile text-xs-center" v-bind:style="[me.json_metadata.profile.profile_image ? { 'background-image': 'url(' + me.json_metadata.profile.profile_image + ')' } : {}]">
-      <v-avatar size="80" color="grey lighten-4">
-        <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
-      </v-avatar>
-      <div class="my-me-name">{{ username }}</div>
-      <div class="my-me-about">
-        {{ me.json_metadata.profile.about }}
-      </div>
-      <v-layout align-center justify-center row class="text-xs-center">
-        <v-flex xs2 md1>
-          <div class="my-me-follow-count">{{ follow.follower_count }}</div>
-          <div class="my-me-follow-text">팔로워</div>
-        </v-flex>
-        <v-flex xs2 md1>
-          <div class="my-me-follow-count">{{ follow.following_count }}</div>
-          <div class="my-me-follow-text">팔로잉</div>
-        </v-flex>
-      </v-layout>
-      <div class="my-me-created">가입일 {{ created }}</div>
-      <div class="my-me-link">
-        <a :href="me.json_metadata.profile.website" target="website">{{ me.json_metadata.profile.website }}</a>
-      </div>
-      <div v-if="username !== $store.state.me.account.name">
-        <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
-        <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
-        <!-- <v-btn dark color="light-blue lighten-1">송금</v-btn> -->
-        <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
-        <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
+      <div class="my-profile-inner">
+        <v-avatar size="80" color="grey lighten-4">
+          <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
+        </v-avatar>
+        <div class="my-me-name">{{ username }}</div>
+        <div class="my-me-about">
+          {{ me.json_metadata.profile.about }}
+        </div>
+        <v-layout align-center justify-center row class="text-xs-center">
+          <v-flex xs3 md1>
+            <div class="my-me-follow-count">{{ follow.follower_count }}</div>
+            <div class="my-me-follow-text">팔로워</div>
+          </v-flex>
+          <v-flex xs3 md1>
+            <div class="my-me-follow-count">{{ follow.following_count }}</div>
+            <div class="my-me-follow-text">팔로잉</div>
+          </v-flex>
+        </v-layout>
+        <div class="my-me-created">가입일 {{ created }}</div>
+        <div class="my-me-link">
+          <a :href="me.json_metadata.profile.website" target="website">{{ me.json_metadata.profile.website }}</a>
+        </div>
+        <div v-if="username !== $store.state.me.account.name">
+          <v-btn dark color="deep-purple" v-if="$store.state.me.following.indexOf(username) === -1" @click="addFollowing" :loading="page.isFollowProcessing">팔로우</v-btn>
+          <v-btn dark color="deep-purple" v-else @click="removeFollowing"  :loading="page.isFollowProcessing">팔로우 취소</v-btn>
+          <!-- <v-btn dark color="light-blue lighten-1">송금</v-btn> -->
+          <v-btn color="error" v-if="$store.state.me.ignore.indexOf(username) === -1" @click="addIgnore" :loading="page.isFollowProcessing">차단</v-btn>
+          <v-btn color="error" v-else @click="removeIgnore" :loading="page.isFollowProcessing">차단 해제</v-btn>
+        </div>
       </div>
     </div>
 
@@ -57,15 +59,16 @@
           </v-flex>
         </v-flex>
 
-        <v-list key="'list'" v-if="page.list.length > 0">
-          <div v-for="item in page.list" >
-            <card-my :item="item" :post-type="'post'"></card-my>
+        <div key="'list'" v-if="page.list.length > 0" class="text-xs-center mt-3">
+          <div v-for="item in page.list" class="content-card">
+            <content-card :item="item"></content-card>
+            <!-- <card-my :item="item" :post-type="'post'"></card-my> -->
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
           <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
             <v-progress-circular indeterminate color="primary" class="mt-4"></v-progress-circular>
           </v-flex>
-        </v-list>
+        </div>
         <v-flex key="'empty'" v-else>
           <v-flex v-if="!page.isLoading && page.list.length === 0" justify-center text-xs-center>
             글이 없습니다.
@@ -93,7 +96,8 @@
         </v-flex>
         <v-list key="'list'" v-if="page.commentList.length > 0">
           <div v-for="item in page.commentList" >
-            <card-my :item="item" :post-type="'comment'"></card-my>
+            <card-comment :item="item"></card-comment>
+            <!-- <card-my :item="item" :post-type="'comment'"></card-my> -->
           </div>
           <infinite-loading @infinite="infiniteHandler" v-if="page.ableLoading && !page.isLoading"></infinite-loading>
           <v-flex xs12 justify-center text-xs-center v-if="page.ableLoading && page.isLoading">
@@ -172,7 +176,7 @@
               <tbody>
                 <tr>
                   <th>스틱 포인트</th>
-                  <td>{{ steeckyPoint | number }} STEECKY <v-btn outline color="#6633ff">포인트 인출 (개발중)</v-btn></td>
+                  <td>{{ steeckyPoint | number }} STEECKY <v-btn outline color="#6633ff">포인트 인출</v-btn></td>
                 </tr>
                 <tr>
                   <th>스팀</th>
@@ -276,12 +280,15 @@
 
 <script>
   import CardMy from '@/components/post/CardMy'
+  import CardComment from '@/components/post/CardComment'
+  import ContentCard from '@/components/post/ContentCard'
   import InfiniteLoading from 'vue-infinite-loading'
   import steem from '@/services/steem'
   import steemconnect from '@/services/steemconnect'
   import steemutil from '@/mixins/steemutil'
   import ProgressBar from '@/components/ui/ProgressBar'
   import api from '@/api/steecky'
+  import posts from '@/api/posts'
 
   export default {
     name: 'UserView',
@@ -294,7 +301,9 @@
     components: {
       'card-my': CardMy,
       InfiniteLoading,
-      ProgressBar
+      ProgressBar,
+      CardComment,
+      ContentCard
     },
     mixins: [steemutil],
     data () {
@@ -576,41 +585,59 @@
        * @returns {Promise<void>}
        */
       getMyPost: async function () {
-        // let author = 'clayop'
-        let author = this.username
-        let query = {
-          tag: author,
-          limit: this.page.loadingForOnce
+        if (!this.username) {
+          return
         }
-        if (this.page.lastPermlink !== '') {
-          query.start_author = this.page.lastAuthor
-          query.start_permlink = this.page.lastPermlink
-        }
-        await steem.api
-          .getDiscussionsByBlogAsync(query)
-          .then(result => {
-            let resultLength = result.length
-            if (this.page.list.length > 0) {
-              result.shift()
-              this.page.list = this.page.list.concat(result)
-            } else {
-              this.page.list = result
-            }
-            this.page.ableLoading = resultLength === this.page.loadingForOnce
-            if (result.length > 0) {
-              this.page.lastPermlink = result[result.length - 1].permlink
-              this.page.lastAuthor = result[result.length - 1].author
-            }
-            this.page.isLoading = false
+        let vm = this
+        posts.getMy(this.username)
+          .then(res => {
+            vm.page.list = res.data
+            vm.page.isLoading = false
           })
-          .catch(err => {
-            console.log('Error occured ' + err)
-            this.page.isLoading = false
-          })
+
+        // let author = this.username
+        // let query = {
+        //   tag: author,
+        //   limit: this.page.loadingForOnce
+        // }
+        // if (this.page.lastPermlink !== '') {
+        //   query.start_author = this.page.lastAuthor
+        //   query.start_permlink = this.page.lastPermlink
+        // }
+        // await steem.api
+        //   .getDiscussionsByBlogAsync(query)
+        //   .then(result => {
+        //     let resultLength = result.length
+        //     if (this.page.list.length > 0) {
+        //       result.shift()
+        //       this.page.list = this.page.list.concat(result)
+        //     } else {
+        //       this.page.list = result
+        //     }
+        //     this.page.ableLoading = resultLength === this.page.loadingForOnce
+        //     if (result.length > 0) {
+        //       this.page.lastPermlink = result[result.length - 1].permlink
+        //       this.page.lastAuthor = result[result.length - 1].author
+        //     }
+        //     this.page.isLoading = false
+        //   })
+        //   .catch(err => {
+        //     console.log('Error occured ' + err)
+        //     this.page.isLoading = false
+        //   })
       },
       getBookMark: function () {
         this.resetPageContent()
-        console.log('get bookmark')
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
+        let vm = this
+        posts.getBookmarks(this.$store.state.auth.username)
+          .then(res => {
+            vm.page.list = res.data
+            vm.page.isLoading = false
+          })
       },
       /**
        * 댓글 로딩
@@ -829,35 +856,53 @@
 
 <style lang="scss" scoped>
   @import "../colorset";
+  .content-card {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  @media only screen and (max-width: 600px) {
+    .content-card {
+      margin: 0 -20px;
+    }
+  }
   .my-profile {
     border: 0.5px solid #c3c3c3;
-    padding-top: 15px;
-    padding-bottom: 20px;
     background-position: center;
     background-size: cover;
 
+    .my-profile-inner {
+      background-color: rgba(0,0,0,.4);
+      padding-top: 15px;
+      padding-bottom: 20px;
+    }
     .my-me-name {
       font-size: 1.8rem;
       font-weight: 600;
       color: #425363;
+      color: #fff;
     }
     .my-me-about {
       font-size: .9rem;
       color: #989898;
+      color: #fff;
     }
     .my-me-follow-count {
       font-size: 1.5rem;
       font-weight: 600;
       color: #425363;
+      color: #fff;
     }
     .my-me-follow-text {
       color: #425363;
+      color: #fff;
     }
     .my-me-created {
       color: #425363;
+      color: #fff;
     }
     .my-me-link a {
       color: #425363;
+      color: #fff;
     }
   }
 
@@ -939,7 +984,7 @@
     border-spacing: 0;
 
     th {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       text-align: left;
       color: #414d6b;
@@ -960,12 +1005,21 @@
     }
   }
 
+  @media only screen and (max-width: 600px) {
+    .wallet-summary {
+      th, td {
+        font-size: 14px;
+        padding: 10px 10px;
+      }
+    }
+  }
+
   .wallet-box {
     border-radius: 2px;
     border: 1px solid #c3c3c3;
 
     .wallet-box__title {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 500;
       color: #414d6b;
       opacity: .8;
@@ -976,12 +1030,12 @@
       padding: 30px 15px;
 
       .title {
-        font-size: 20px;
+        font-size: 16px !important;
         font-weight: 500;
         color: #414d6b;
       }
       .value {
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 500;
         text-align: right;
         color: #989898;
@@ -995,7 +1049,7 @@
       border: solid 1.5px #6633ff;
       color: #6633ff !important;
       height: 50px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
     }
     .trend {

@@ -42,5 +42,23 @@ export default {
   },
   getFeed (data) {
     return http.post('posts/feed', data)
+  },
+  getBookmark (username, postId) {
+    return http.get('posts/bookmark/' + username + '/' + postId)
+  },
+  getBookmarks (username) {
+    return http.get('posts/bookmark/' + username)
+  },
+  addBookmark (data) {
+    return http.post('posts/bookmark', data)
+  },
+  removeBookmark (data) {
+    return http.post('posts/delbookmark', data)
+  },
+  getRandom () {
+    return http.get('posts/get/random')
+  },
+  getMy (username) {
+    return http.get('posts/author/' + username)
   }
 }

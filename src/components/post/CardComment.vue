@@ -16,35 +16,37 @@
           <div>
             <span class="author">{{ item.author }} ({{ reputationCount }})</span> <span class="created">{{ item.last_update | convdate | ago }}</span>
           </div>
-          <v-flex xs12 v-html="markedBody" class="pa-0 pt-2 area-comment MarkdownViewer Markdown"></v-flex>
-          <!--실패시-->
-          <v-alert :value="actionFail" type="error" transition="scale-transition">
-            작업을 완료하지 못했습니다.
-          </v-alert>
-          <!--보팅관련 -->
-          <v-flex v-if="false">
-            <v-layout row justify-start>
-              <div class="block-cus_icon" @click="openVote">
-                <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
-                <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
-              </div>
-              <div class="ml-1 mr-3">{{ parseFloat(item.pending_payout_value).toFixed(2) | kwn | number }}원</div>
-              <a @click="viewVotes = !viewVotes">{{ item.active_votes.length }}보팅</a>
-              <a class="mx-2" v-if="item.author === $store.state.me.account.name" @click="openConfirm = true">삭제</a>
-              <a class="mx-2" @click="editComment.openEdit = true">댓글</a>
-            </v-layout>
-          </v-flex>
-
-          <!--코멘트 컴포넌트-->
-          <v-slide-y-transition class="py-0" tag="v-flex">
-            <edit-comment v-if="editComment.openEdit" :item="item" :condition="editComment" :complete="completeInComment"></edit-comment>
-          </v-slide-y-transition>
-          <!--보트 컴포넌트-->
-          <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
-            <vote :item="item" :close="closeVote" :complete="completeVote"></vote>
-          </v-slide-y-transition>
         </div>
       </v-layout>
+      <div>
+        <div v-html="markedBody" class="pa-0 pt-2 area-comment MarkdownViewer Markdown"></div>
+        <!--실패시-->
+        <v-alert :value="actionFail" type="error" transition="scale-transition">
+          작업을 완료하지 못했습니다.
+        </v-alert>
+        <!--보팅관련 -->
+        <v-flex v-if="false">
+          <v-layout row justify-start>
+            <div class="block-cus_icon" @click="openVote">
+              <v-icon size="20" color="primary" v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
+              <v-icon size="20" :color="isVoted ? 'rgb(255,255,255)' : 'primary'" v-text="'keyboard_arrow_up'"></v-icon>
+            </div>
+            <div class="ml-1 mr-3">{{ parseFloat(item.pending_payout_value).toFixed(2) | kwn | number }}원</div>
+            <a @click="viewVotes = !viewVotes">{{ item.active_votes.length }}보팅</a>
+            <a class="mx-2" v-if="item.author === $store.state.me.account.name" @click="openConfirm = true">삭제</a>
+            <a class="mx-2" @click="editComment.openEdit = true">댓글</a>
+          </v-layout>
+        </v-flex>
+
+        <!--코멘트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex">
+          <edit-comment v-if="editComment.openEdit" :item="item" :condition="editComment" :complete="completeInComment"></edit-comment>
+        </v-slide-y-transition>
+        <!--보트 컴포넌트-->
+        <v-slide-y-transition class="py-0" tag="v-flex" v-if="dialog">
+          <vote :item="item" :close="closeVote" :complete="completeVote"></vote>
+        </v-slide-y-transition>
+      </div>
       <v-dialog v-model="openConfirm" persistent max-width="290">
         <v-card>
           <v-card-title class="title">삭제</v-card-title>

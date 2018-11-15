@@ -187,6 +187,13 @@
   min-width: 10px;
   margin: 0;
   height: 48px;
+  background-color: #6644ff !important;
+  color: #fff !important;
+}
+.btn-comment.theme--light.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat) {
+  background-color: #fff !important;
+  color: #6644ff !important;
+  border: 1px solid #6644ff;
 }
 .v-menu__content {
   background-color: #fff;

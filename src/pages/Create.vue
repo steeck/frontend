@@ -11,15 +11,19 @@
           :items="categories"
           v-model="category"
           label="카테고리"
+          color="#6644ff"
         ></v-select>
       </v-flex>
       <v-flex xs12 sm4 md6>
-        <v-text-field placeholder="제목" v-model="title"></v-text-field>
+        <v-text-field
+          color="#6644ff"
+          placeholder="제목" v-model="title"
+        ></v-text-field>
       </v-flex>
       <v-flex xs12 sm2 md2 justify-end>
         <v-btn
           round flat outline
-          color="deep-purple"
+          color="#6644ff"
           v-on:click="publish"
         >
           발행하기
@@ -72,14 +76,17 @@
       </v-flex>
 
       <v-flex xs12 sm6 md8>
-        <v-layout flex align-center justify-center>
-          <v-flex xs1>
+        <v-layout align-center justify-center>
+          <v-flex
+            v-if="$vuetify.breakpoint.smAndUp"
+            sm1
+          >
             <v-btn flat icon color="black" theme--dark backgroud-color="black" @click="navigation('prev')">
               <v-icon>arrow_left</v-icon>
             </v-btn>
           </v-flex>
 
-          <v-flex xs10>
+          <v-flex xs12 sm10>
             <h3 class="mb-3">스티커
               - <span v-if="selected === 0">표지</span>
               <span v-else>{{ selected }}</span>
@@ -104,18 +111,29 @@
                 </v-btn>
               </div>
               <div class="pa-3">
-                <textarea
-                  box
+                <v-textarea
+                  v-if="selected > 0"
+                  solo
                   rows="12"
                   v-model="text"
                   class="text-field"
                   @keyup="bindText"
-                ></textarea>
+                ></v-textarea>
+                <span v-else>{{ title }}</span>
               </div>
+              <v-btn v-if="$vuetify.breakpoint.xsOnly" class="btn-nav-prev-xs" flat icon color="black" theme--dark backgroud-color="black" @click="navigation('prev')">
+                <v-icon>arrow_left</v-icon>
+              </v-btn>
+              <v-btn v-if="$vuetify.breakpoint.xsOnly" class="btn-nav-next-xs" flat icon color="black" theme--dark backgroud-color="black" @click="navigation('next')">
+                <v-icon>arrow_right</v-icon>
+              </v-btn>
             </div>
           </v-flex>
 
-          <v-flex xs1>
+          <v-flex
+            v-if="$vuetify.breakpoint.smAndUp"
+            sm1
+          >
             <v-btn flat icon color="black" theme--dark backgroud-color="black" @click="navigation('next')">
               <v-icon>arrow_right</v-icon>
             </v-btn>
@@ -420,7 +438,9 @@ export default {
   width: 100%;
 }
 
-
+.v-text-field__details {
+  display: none;
+}
 
 
 
@@ -492,5 +512,15 @@ export default {
   }
   .v-btn {
     min-width: 0;
+  }
+  .btn-nav-prev-xs {
+    position: absolute;
+    top: 50%;
+    left: -48px;
+  }
+  .btn-nav-next-xs {
+    position: absolute;
+    top: 50%;
+    right: -48px;
   }
 </style>
