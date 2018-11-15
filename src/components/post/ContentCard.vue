@@ -234,10 +234,10 @@
         return steem.formatter.reputation(this.content.steem.author_reputation)
       },
       isMyFollowing: function () {
-        if (!this.$store.state.me.account.name) {
+        if (!this.$store.state.auth.username) {
           return false
         }
-        return this.$store.state.me.following.indexOf(this.content.steem.author) > -1
+        return this.$store.state.me.following.indexOf(this.content.data.author) > -1
       },
       isFollowProcessing: function () {
         return this.$store.state.me.followDoing
@@ -307,11 +307,15 @@
           })
       },
       getVoted: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
+
         let vm = this
         this.isVoted = false
         if (this.content.steem) {
           this.content.steem.active_votes.forEach(function (obj) {
-            if (obj.voter === vm.$store.state.me.account.name) {
+            if (obj.voter === vm.$store.state.auth.username) {
               if (obj.percent > 0) {
                 vm.isVoted = true
               }
@@ -321,6 +325,11 @@
         }
       },
       addFollowing: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
+
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -337,6 +346,11 @@
         })
       },
       removeFollowing: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
+
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -353,6 +367,11 @@
         })
       },
       addIgnore: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
+
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -369,6 +388,10 @@
         })
       },
       removeIgnore: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
@@ -385,7 +408,7 @@
         })
       },
       jumpToUserPage: function () {
-        this.$router.push('/user/' + this.content.steem.author)
+        this.$router.push('/user/' + this.content.data.author)
       },
       openToUserPage: function (user) {
         window.open('/user/' + user)

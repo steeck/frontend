@@ -67,7 +67,7 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs2 class="text-xs-right">
-              <v-btn outline color="#6633ff" class="btn-comment" style="padding: 0px 36px !important;" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
+              <v-btn outline block color="#6633ff" class="btn-comment" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
             </v-flex>
           </v-layout>
         </div>
@@ -123,6 +123,10 @@
         this.loadComment()
       },
       pushComment: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+          return
+        }
         // console.log('pushComment')
         this.processComment = true
         let parentAuthor = this.item.author

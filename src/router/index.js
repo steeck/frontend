@@ -116,11 +116,18 @@ const router = new Router({
   ]
 })
 router.beforeResolve((to, from, next) => {
+  if (!store.state.auth.username) {
+    if (['Lease', 'Delegate', 'RequestVote', 'Create', 'Feeds', 'Activities', 'Transactions', 'My'].indexOf(to.name) >= 0) {
+      alert('로그인 후 이용이 가능합니다')
+      return
+    }
+  }
+
   const defaultLayout = ['My', 'User', 'PostView']
   const centerLayout = ['Lease', 'Delegate', 'RequestVote', 'Transactions']
-  const viewLayout = ['Feeds', 'View', 'Search']
+  const viewLayout = []
   const listLayout = ['Activities']
-  const categoryLayout = ['Categories']
+  const categoryLayout = ['Feeds', 'Categories', 'Search', 'View']
 
   // const appLayout = ['Delegate']
   if (to.name === 'Main') {

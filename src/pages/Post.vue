@@ -156,7 +156,8 @@
     },
     methods: {
       addFollowing: function () {
-        if (this.$store.state.me.account.name === null) {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
           return
         }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
@@ -173,7 +174,8 @@
         })
       },
       removeFollowing: function () {
-        if (this.$store.state.me.account.name === null) {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
           return
         }
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
@@ -191,10 +193,13 @@
         })
       },
       getVoted: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
         let vm = this
         this.isVoted = false
         this.content.active_votes.forEach(function (obj) {
-          if (obj.voter === vm.$store.state.me.account.name) {
+          if (obj.voter === vm.$store.state.auth.username) {
             if (obj.percent > 0) {
               vm.isVoted = true
             }

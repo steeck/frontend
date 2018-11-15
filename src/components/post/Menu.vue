@@ -17,8 +17,8 @@
         <v-list-tile @click="dialog = true" :key="'cardMenu3'" v-if="isVoted && isLogin">
           <v-list-tile-title>다운보트</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="report" :key="'cardMenu4'">
-          <v-list-tile-title>신고하기</v-list-tile-title>
+        <v-list-tile :key="'cardMenu4'">
+          <v-list-tile-title><a href="mailto:one@steeck.io" class="link">신고하기</a></v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-menu>
@@ -87,13 +87,18 @@ export default {
     }
   },
   methods: {
-    report: function () {
-      let subject = '[신고] : (제목을 넣어주세요)'
-      let body = '게시글 링크 : ' + this.permlink
-      let win = window.open('mailto:' + this.$store.state.manage.mail.report + '?subject=' + subject + '&body=' + body, 'report')
-      win.close()
-    },
+    // report: function () {
+    //   let subject = '[신고] : (제목을 넣어주세요)'
+    //   let body = '게시글 링크 : ' + this.permlink
+    //   let win = window.open('mailto:' + this.$store.state.manage.mail.report + '?subject=' + subject + '&body=' + body, 'report')
+    //   win.close()
+    // },
     followingAction: function () {
+      if (!this.$store.state.auth.username) {
+        alert('로그인 후 이용이 가능합니다')
+        return
+      }
+
       let vm = this
       this.$store.state.me.followDoing = true
       steemconnect.follow(this.$store.state.me.account.name, this.author, function (err, res) {
@@ -108,9 +113,14 @@ export default {
       })
     },
     unFollowingAction: function () {
+      if (!this.$store.state.auth.username) {
+        alert('로그인 후 이용이 가능합니다')
+        return
+      }
+
       let vm = this
       this.$store.state.me.followDoing = true
-      steemconnect.unfollow(this.$store.state.me.account.name, this.author, function (err, res) {
+      steemconnect.unfollow(this.$store.state.auth.username, this.author, function (err, res) {
         console.log(err, res)
         if (!err) {
           vm.$store.commit('me/removeFollowing', vm.author)
@@ -122,10 +132,14 @@ export default {
       })
     },
     getVoted: function () {
+      if (!this.$store.state.auth.username) {
+        return
+      }
+
       let vm = this
       this.isVoted = false
       this.item.active_votes.forEach(function (obj) {
-        if (obj.voter === vm.$store.state.me.account.name) {
+        if (obj.voter === vm.$store.state.auth.username) {
           if (obj.percent > 0) {
             vm.isVoted = true
           }
@@ -134,6 +148,11 @@ export default {
       })
     },
     downVote: function () {
+      if (!this.$store.state.auth.username) {
+        alert('로그인 후 이용이 가능합니다')
+        return
+      }
+
       this.downVoteDoing = true
       let vote = {
         voter: this.$store.state.auth.username,
@@ -176,5 +195,8 @@ export default {
 </script>
 
 <style scoped>
-
+.link {
+  color: inherit;
+  text-decoration: none;
+}
 </style>

@@ -6,7 +6,7 @@
   >
     <ul>
       <li v-bind:class="{ active: menu == 'Lease'}"><router-link to="/center/lease">SP 빌리기</router-link></li>
-      <li v-bind:class="{ active: menu == 'Delegate'}"><router-link to="/center/delegate">내 SP 빌려주기</router-link></li>
+      <li v-bind:class="{ active: menu == 'Delegate'}"><router-link to="/center/delegate">SP 빌려주기</router-link></li>
       <li v-bind:class="{ active: menu == 'RequestVote'}"><router-link to="/center/request_vote">보팅 의뢰</router-link></li>
       <!-- <li v-bind:class="{ active: menu == 'Transactions'}"><router-link to="/center/transactions">내 거래현황보기</router-link></li> -->
     </ul>
@@ -43,6 +43,11 @@
 .main-toolbar .active a {
   font-weight: bold;
   color: #6633ff;
+}
+@media only screen and (max-width: 600px) {
+  .main-toolbar ul li {
+    padding: 1rem .5rem;
+  }
 }
 </style>
 

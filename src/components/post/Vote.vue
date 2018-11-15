@@ -2,12 +2,13 @@
   <v-menu
     bottom
     :close-on-content-click="false"
-    :disabled="isVoted"
+    :open-on-click="this.$store.state.auth.username"
     v-model="show"
   >
     <v-btn icon flat
       slot="activator"
       class="btn-vote"
+      @click="openVote()"
     >
       <v-icon
         size="20"
@@ -102,9 +103,14 @@
       this.getVoted()
     },
     methods: {
+      openVote: function () {
+        if (!this.$store.state.auth.username) {
+          alert('로그인 후 이용이 가능합니다')
+        }
+      },
       getVoteValue: function () {
         const sp = this.getSteemPower()
-        const vp = this.me.voting_power
+        const vp = this.calculateVotingPower(this.me)
         const i = this.fond.rewardBalance / this.fond.recentClaims
         const a = this.$store.state.global.properties.fund / this.$store.state.global.properties.shares
         const r = sp / a
@@ -122,6 +128,9 @@
           -parseFloat(this.me.delegated_vesting_shares)
       },
       getVoted: function () {
+        if (!this.$store.state.auth.username) {
+          return
+        }
         let vm = this
         this.isVoted = false
         if (this.item) {
