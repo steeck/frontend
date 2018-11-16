@@ -40,8 +40,8 @@
       color="indigo" dark fixed app
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-toolbar-title><router-link to="/"><img src="https://s3.ap-northeast-2.amazonaws.com/steeck/main_logo.png" class="logo"> <span class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
-      <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-5 hidden-sm-and-down"></v-text-field>
+      <v-toolbar-title><router-link to="/"><img src="https://s3.ap-northeast-2.amazonaws.com/steeck/main_logo.png" class="logo"> <span v-if="$vuetify.breakpoint.smAndUp" class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
+      <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-3" :class="{ 'ml-5': $vuetify.breakpoint.smAndUp }"></v-text-field>
       <v-spacer></v-spacer>
       <router-link to="/create"
         v-if="this.$store.state.auth.accessToken"
@@ -89,6 +89,7 @@
 }
 >>>.v-toolbar__title {
   margin-left: 5px;
+  overflow: inherit;
 }
 >>>.v-toolbar__title a {
   color: #fff;
