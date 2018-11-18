@@ -11,7 +11,7 @@
             <v-flex class="" xs12 text-xs-left pa-1>프로파일 사진 경로</v-flex>
             <v-flex xs12 sm6 >
               <input type="text" title="" class="in-input" v-model="jsonMetaData.profile.profile_image">
-              <span class="btn-upload" @click="openUpload('profile')">upload an image</span>
+              <span class="btn-upload" @click="openUpload('profile')">Upload an image</span>
             </v-flex>
           </v-layout>
 
@@ -20,7 +20,7 @@
             <v-flex class="" xs12 text-xs-left pa-1>커버이미지 사진 경로</v-flex>
             <v-flex xs12 sm6 >
               <input type="text" title="" class="in-input" v-model="jsonMetaData.profile.cover_image">
-              <span class="btn-upload" @click="openUpload('cover')">upload an image</span>
+              <span class="btn-upload" @click="openUpload('cover')">Upload an image</span>
             </v-flex>
           </v-layout>
 
@@ -50,14 +50,14 @@
 
           <!--웹싸이트-->
           <v-layout row wrap pa-2 class="block-input">
-            <v-flex class="" xs12 text-xs-left pa-1>웹싸이트</v-flex>
+            <v-flex class="" xs12 text-xs-left pa-1>웹사이트</v-flex>
             <v-flex xs12 sm6 >
               <input type="text" title="" class="in-input" v-model="jsonMetaData.profile.website">
             </v-flex>
           </v-layout>
 
           <v-flex xs12 text-xs-left pt-3>
-            <v-btn outline style="    border-color: #999999;" @click="unit.saveDialog = true">저장</v-btn>
+            <v-btn outline color="#6644ff" @click="unit.saveDialog = true">저장</v-btn>
           </v-flex>
 
         </v-flex>

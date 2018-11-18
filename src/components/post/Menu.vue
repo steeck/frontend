@@ -8,17 +8,19 @@
         <v-list-tile @click="copyLink()" :key="'cardMenu1'">
           <v-list-tile-title>게시글 주소 복사</v-list-tile-title>
         </v-list-tile>
-        <v-list-tile @click="unFollowingAction" :key="'cardMenu2'" v-if="isMyFollowing && isLogin">
-          <v-list-tile-title>팔로우 취소</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="followingAction" :key="'cardMenu2'" v-else-if="isLogin">
-          <v-list-tile-title>팔로우</v-list-tile-title>
-        </v-list-tile>
-        <v-list-tile @click="dialog = true" :key="'cardMenu3'" v-if="isVoted && isLogin">
-          <v-list-tile-title>다운보트</v-list-tile-title>
-        </v-list-tile>
+        <div v-if="author !== $store.state.auth.username">
+          <v-list-tile @click="unFollowingAction" :key="'cardMenu2'" v-if="isMyFollowing && isLogin">
+            <v-list-tile-title>팔로우 취소</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile @click="followingAction" :key="'cardMenu2'" v-else-if="isLogin">
+            <v-list-tile-title>팔로우</v-list-tile-title>
+          </v-list-tile>
+          <v-list-tile @click="dialog = true" :key="'cardMenu3'" v-if="isVoted && isLogin">
+            <v-list-tile-title>다운보트</v-list-tile-title>
+          </v-list-tile>
+        </div>
         <v-list-tile :key="'cardMenu4'">
-          <v-list-tile-title><a href="mailto:one@steeck.io" class="link">신고하기</a></v-list-tile-title>
+          <v-list-tile-title><a href="mailto:support@steeck.io" class="link">신고하기</a></v-list-tile-title>
         </v-list-tile>
       </v-list>
     </v-menu>
@@ -191,6 +193,7 @@ export default {
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
+      alert('주소가 복사되었습니다')
     }
   }
 }

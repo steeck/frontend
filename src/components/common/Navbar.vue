@@ -22,8 +22,8 @@
             <li><router-link to="/center/lease">자산센터</router-link></li>
           </ul>
           <ul class="mt-2">
-            <li>고객지원</li>
-            <li>제휴문의</li>
+            <li><a href="mailto:support@steeck.io">고객지원</a></li>
+            <li><a href="mailto:support@steeck.io">제휴문의</a></li>
             <li>약관</li>
           </ul>
           <ul class="mt-2">
@@ -38,11 +38,16 @@
     <v-toolbar
       :clipped-left="$vuetify.breakpoint.lgAndUp"
       color="indigo" dark fixed app
+      :extended="extended"
     >
       <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
       <v-toolbar-title><router-link to="/"><img src="https://s3.ap-northeast-2.amazonaws.com/steeck/main_logo.png" class="logo"> <span v-if="$vuetify.breakpoint.smAndUp" class="v-toolbar__subtitle">스틱베타</span></router-link></v-toolbar-title>
-      <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-3" :class="{ 'ml-5': $vuetify.breakpoint.smAndUp }"></v-text-field>
+      <v-text-field v-if="$vuetify.breakpoint.smAndUp" flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-5"></v-text-field>
       <v-spacer></v-spacer>
+      <img v-if="$vuetify.breakpoint.xs" src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/group-4%402x.png" @click="extended = !extended" style="width: 24px;">
+      <v-toolbar-title slot="extension" v-if="extended" style="width: 100%;">
+        <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요."></v-text-field>
+      </v-toolbar-title>
       <router-link to="/create"
         v-if="this.$store.state.auth.accessToken"
         class="btn-create"
@@ -174,6 +179,7 @@ export default {
   },
   data () {
     return {
+      extended: false,
       drawer: false,
       categories: [
         { value: 'hot', text: '핫이슈' },

@@ -358,7 +358,7 @@ export default {
           //       allow_curation_rewards: true,
           //       max_accepted_payout: '1000000.000 SBD',
           //       percent_steem_dollars: 10000,
-          //       extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1500 }] }]]
+          //       extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1000 }] }]]
           //     }
           //
           //     if (vm.reward === 'all') {
@@ -514,13 +514,13 @@ export default {
     min-width: 0;
   }
   .btn-nav-prev-xs {
-    position: absolute;
-    top: 50%;
-    left: -48px;
+    position: absolute !important;
+    top: 50% !important;
+    left: -48px !important;
   }
   .btn-nav-next-xs {
-    position: absolute;
-    top: 50%;
-    right: -48px;
+    position: absolute !important;
+    top: 50% !important;
+    right: -48px !important;
   }
 </style>

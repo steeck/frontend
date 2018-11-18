@@ -86,7 +86,7 @@ export default {
   props: ['item', 'rating'],
   data () {
     return {
-      defaultThumbnail: 'https://via.placeholder.com/350x130'
+      defaultThumbnail: ''//'https://via.placeholder.com/350x130'
     }
   },
   mounted () {

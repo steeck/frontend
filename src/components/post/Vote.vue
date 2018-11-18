@@ -12,12 +12,12 @@
       <v-icon
         size="20"
         :color="isVoted ? '#6633ff' : '#414d6b'"
-        v-text="isVoted ? 'lens' : 'panorama_fish_eye'"></v-icon>
+        v-text="isVoted ? 'lens' : 'panorama_fish_eye'" @click="openVote()"></v-icon>
       <v-icon
         size="20"
         :color="isVoted ? '#fff' : '#414d6b'"
         :style="'position: absolute; left: 0; top: 0;'"
-        v-text="'keyboard_arrow_up'"
+        v-text="'keyboard_arrow_up'" @click="openVote()">
       ></v-icon>
     </v-btn>
     <!-- <v-list>

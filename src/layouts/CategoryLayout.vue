@@ -47,7 +47,8 @@
 }
 .categories {
   text-align: center;
-  padding: 1rem;
+  padding: 1rem .5rem;
+  font-size: .95rem;
   border: 0.5px solid #dedede;
 }
 .categories a {

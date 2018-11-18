@@ -9,12 +9,14 @@
           </v-avatar>
           <div class="ml-3">
             <div class="card-author">
-              <router-link :to="{ name: 'User', params: { username: item.author } }" target="_user" class="link">{{ item.author }}</router-link>
+              <router-link :to="{ name: 'User', params: { username: item.author } }" target="_user" class="link">{{ item.author }} <span title='평판'>({{ reputationCount }})</span></router-link>
             </div>
-            <div class="card-created caption">{{ item.created_at | ago }}</div>
+            <div class="card-created caption">{{ item.created_at | ago }} · {{ category }}</div>
           </div>
-          <v-btn small outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
-          <v-btn small dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
+          <div v-if="item.author !== $store.state.auth.username">
+            <v-btn  outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
+            <v-btn  dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
+          </div>
           <v-spacer></v-spacer>
           <card-menu :item="item"></card-menu>
         </v-layout>
@@ -62,10 +64,10 @@
                 <div v-if="i === 0" class="card-firstpage px-4 py-3">
                   <v-layout row wrap>
                     <v-flex xs10 class="text-xs-left pb-0">
-                      <h3>{{ card.text }}</h3>
+                      <h3>{{ content.data.title }}</h3>
                     </v-flex>
                     <v-flex xs2
-                      v-if
+                      v-if="false"
                       class="text-xs-right"
                       style="padding-bottom: 0;"
                     >
@@ -73,7 +75,7 @@
                       <v-icon v-else @click="addBookmark()">bookmark_border</v-icon>
                     </v-flex>
                   </v-layout>
-                  <v-layout align-center row>
+                  <v-layout align-center row v-if="false">
                     <div class="ml-3">
                       <v-avatar
                         :size="40"
@@ -112,7 +114,7 @@
                       <v-avatar size="80" color="grey lighten-4">
                         <img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'" alt="avatar">
                       </v-avatar>
-                      <div class="my-me-name">{{ author.name }}</div>
+                      <div class="my-me-name">{{ content.data.author }} <span title='평판'>({{ reputationCount }})</span></div>
                       <div class="my-me-about">
                         {{ author.json_metadata.profile.about }}
                       </div>
@@ -140,25 +142,25 @@
                     </div>
                     <div>
                       <div class="related mt-5">
-                        <img src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/btn-symbol@2x.png" style="width: 20px;"> 이 에디터의 다른 스티커 보기
+                        <img src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/btn-symbol@2x.png" style="width: 16px;"> 에디터의 다른 스티커 보기
                       </div>
-                      <div v-if="randoms.length > 0" class="related mt-2">
+                      <div v-if="randoms.length > 0" class="related mt-2 text-xs-left">
                         <router-link
                           :to="{ name: 'View', params: { id: randoms[0].id } }"
                           class="link"
-                        >이전 스티커 | {{ randoms[0].title }}</router-link>
+                        >이전 스티커 | <span class="related-title">{{ randoms[0].title }}</span></router-link>
                       </div>
-                      <div v-if="randoms.length > 1" class="related mt-2">
+                      <div v-if="randoms.length > 1" class="related mt-2 text-xs-left">
                         <router-link
                           :to="{ name: 'View', params: { id: randoms[1].id } }"
                           class="link"
-                        >다음 스티커 | {{ randoms[1].title }}</router-link>
+                        >다음 스티커 | <span class="related-title">{{ randoms[1].title }}</span></router-link>
                       </div>
-                      <div v-if="randoms.length > 2" class="related mt-2">
+                      <div v-if="randoms.length > 2" class="related mt-2 text-xs-left">
                         <router-link
                           :to="{ name: 'View', params: { id: randoms[2].id } }"
                           class="link"
-                        >인기 스티커 | {{ randoms[2].title }}</router-link>
+                        >인기 스티커 | <span class="related-title">{{ randoms[2].title }}</span></router-link>
                       </div>
                     </div>
                   </div>
@@ -171,10 +173,13 @@
           </v-carousel>
         </div>
 
-        <div class="ma-2 area-tag">
+        <div class="ma-2 area-tag text-xs-left">
           <v-chip
             v-if="tag !== 'steeck'"
-            outline class="tag" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></v-chip>
+            outline class="tag" v-for="(tag, i) in content.data.json_metadata.tags" :key="'tag-' + i"
+          >
+            <router-link :to="{ name: 'Search', params: { q: tag } }" class="link"><span class="blue-grey--text text--darken-4">#{{ tag }}</span></router-link>
+          </v-chip>
         </div>
       </v-flex>
 
@@ -196,8 +201,8 @@
             </v-layout>
           </v-flex>
           <v-flex xs2 class="text-xs-right">
-            <v-icon v-if="bookmark" @click="removeBookmark()">bookmark</v-icon>
-            <v-icon v-else @click="addBookmark()">bookmark_border</v-icon>
+            <v-icon v-if="bookmark" color="#6644ff" @click="removeBookmark()">bookmark</v-icon>
+            <v-icon v-else color="#6644ff" @click="addBookmark()">bookmark_border</v-icon>
           </v-flex>
           <v-flex xs12 v-if="showComment">
             <comment :show="showComment" :item="content.steem" :list="commentList" :complete="completeComment" @child-event="showComment = !showComment"></comment>
@@ -734,13 +739,16 @@
     white-space: pre-line;
   }
   .related {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 80%;
     margin: 0 auto;
+  }
+  .related-title {
+    font-weight: 400;
   }
 
   .vote-list >>>.v-toolbar__content {

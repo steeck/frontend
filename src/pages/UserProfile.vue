@@ -6,7 +6,7 @@
         <v-avatar size="80" color="grey lighten-4">
           <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
         </v-avatar>
-        <div class="my-me-name">{{ username }}</div>
+        <div class="my-me-name">{{ username }} ({{ reputationCount }})</div>
         <div class="my-me-about">
           {{ me.json_metadata.profile.about }}
         </div>
@@ -56,9 +56,12 @@
         <!--MY or 북마크 선택 -->
         <v-flex sm12 justify-center class="area-submenu"  transition="slide-y-transition" key="'menu'">
           <v-flex text-xs-left>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'my'}" @click="setSubMenu('my')">MY</v-flex>
-            <v-flex d-inline-block class="item-separator">|</v-flex>
-            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'bookmark'}" @click="setSubMenu('bookmark')">북마크</v-flex>
+            <v-flex d-inline-block class="item" :class="{'active' : page.subSelect === 'my'}" @click="setSubMenu('my')">
+              <span v-if="username === $store.state.auth.username">MY</span>
+              <span v-else>작성 스티커</span>
+            </v-flex>
+            <v-flex v-if="username === $store.state.auth.username" d-inline-block class="item-separator">|</v-flex>
+            <v-flex v-if="username === $store.state.auth.username" d-inline-block class="item" :class="{'active' : page.subSelect === 'bookmark'}" @click="setSubMenu('bookmark')">북마크</v-flex>
           </v-flex>
         </v-flex>
 
@@ -179,7 +182,7 @@
               <tbody>
                 <tr>
                   <th>스틱 포인트</th>
-                  <td>{{ steeckyPoint | number }} STEECKY <v-btn outline color="#6633ff">포인트 인출</v-btn></td>
+                  <td><v-btn outline color="#6633ff" @click="test()">포인트 인출</v-btn> {{ steeckyPoint | number }} STEECKY</td>
                 </tr>
                 <tr>
                   <th>스팀</th>
@@ -422,6 +425,9 @@
           point += item.point
         })
         return point
+      },
+      reputationCount: function () {
+        return steem.formatter.reputation(this.me.reputation)
       }
     },
     watch: {
@@ -582,6 +588,9 @@
       },
       setSubMenu: function (value) {
         this.page.subSelect = value
+      },
+      test: function () {
+        alert('준비중 입니다')
       },
       /**
        * 내 글 가져오기

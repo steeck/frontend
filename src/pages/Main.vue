@@ -193,10 +193,15 @@
   margin: 0 5px;
 }
 .editors-list {
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
   white-space: nowrap;
   padding-left: 0;
+}
+@media only screen and (max-width: 1264px) {
+  .editors-list {
+    overflow-x: auto;
+  }
 }
 .editors-item {
   display: inline-block;
@@ -204,7 +209,7 @@
   width: 170px;
 }
 .editors-item + .editors-item {
-  margin-left: 24px;
+  margin-left: 23px;
 }
 .asd {
   margin: auto -12px !important;
@@ -302,13 +307,13 @@ export default {
           text1: '스틱에서 대학생 에디터를 모십니다',
           text2: '블록체인이 변화시킬 세상을 위해<br>이제 그대들이 나설 차례!',
           text3: '참가대상: 자신만의 콘텐츠를 만들어낼 수 있는 대학생<br>참여보상: 콘텐츠당 30스팀달러'
-        },
-        {
-          url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png',
-          text1: '암호화폐',
-          text2: 'UIOEX거래소 슬레이트 사기사건!',
-          text3: '슬레이트 본사도 모르는 슬레이트(SLX)코인이<br>UIO거래소에 상장되고<br>300~400명의 피해자가 발생...'
         }
+        // {
+        //   url: 'https://s3.ap-northeast-2.amazonaws.com/steeck/images/03_banner_main_steeck.png',
+        //   text1: '암호화폐',
+        //   text2: 'UIOEX거래소 슬레이트 사기사건!',
+        //   text3: '슬레이트 본사도 모르는 슬레이트(SLX)코인이<br>UIO거래소에 상장되고<br>300~400명의 피해자가 발생...'
+        // }
       ]
     }
   },

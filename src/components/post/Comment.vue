@@ -31,7 +31,8 @@
                 ></v-text-field>
               </v-flex>
               <v-flex xs2 class="text-xs-right">
-                <v-btn outline color="#6633ff" class="btn-comment" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
+                <v-btn outline color="#6633ff" style="background-color: #fff !important" class="btn-comment" v-if="markedBody === ''">작성</v-btn>
+                <v-btn dark color="#6633ff" class="btn-comment" :loading="processComment" v-else @click="pushComment">작성</v-btn>
               </v-flex>
             </v-layout>
                 <!-- <v-alert :value="actionFail" type="error" transition="scale-transition">
@@ -67,7 +68,8 @@
               ></v-text-field>
             </v-flex>
             <v-flex xs2 class="text-xs-right">
-              <v-btn outline block color="#6633ff" class="btn-comment" :loading="processComment" :disabled="markedBody === ''" @click="pushComment">작성</v-btn>
+              <v-btn block outline color="#6633ff" style="background-color: #fff !important" class="btn-comment" v-if="markedBody === ''">작성</v-btn>
+              <v-btn block dark color="#6633ff" class="btn-comment" :loading="processComment" v-else @click="pushComment">작성</v-btn>
             </v-flex>
           </v-layout>
         </div>
@@ -187,14 +189,14 @@
   min-width: 10px;
   margin: 0;
   height: 48px;
-  background-color: #6644ff !important;
-  color: #fff !important;
+  /* background-color: #6644ff !important;
+  color: #fff !important; */
 }
-.btn-comment.theme--light.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat) {
+/* .btn-comment.theme--light.v-btn.v-btn--disabled:not(.v-btn--icon):not(.v-btn--flat) {
   background-color: #fff !important;
   color: #6644ff !important;
   border: 1px solid #6644ff;
-}
+} */
 .v-menu__content {
   background-color: #fff;
   padding-bottom: 8px;
