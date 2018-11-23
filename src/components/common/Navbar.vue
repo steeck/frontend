@@ -20,7 +20,7 @@
           <ul>
             <li><a href="http://about.steeck.io" target="about">스틱소개</a></li>
             <li><router-link to="/center/lease">자산센터</router-link></li>
-            <li v-if="$store.state.auth.username === 'steeck'"><router-link to="/center/steecky">스틱토큰</router-link></li>
+            <li v-if="$store.state.auth.username === 'steeck' || $store.state.auth.username === 'smtion'"><router-link to="/center/steecky">스틱토큰</router-link></li>
           </ul>
           <ul class="mt-2">
             <li><a href="mailto:support@steeck.io">고객지원</a></li>
