@@ -121,18 +121,18 @@ export default {
     return {
       json_metadata: {
         profile: {
-          cover_image: 'https://via.placeholder.com/110x80',
+          cover_image: '', // 'https://via.placeholder.com/110x80',
           about: 'No about'
         }
       },
-      defaultThumbnail: 'https://via.placeholder.com/110x80'
+      defaultThumbnail: '' // 'https://via.placeholder.com/110x80'
     }
   },
   mounted () {
     this.json_metadata = JSON.parse(this.editor.json_metadata)
     if (!this.json_metadata.profile) {
       this.json_metadata.profile = {
-        cover_image: 'https://via.placeholder.com/110x80',
+        cover_image: '', // 'https://via.placeholder.com/110x80',
         about: 'No about'
       }
     }

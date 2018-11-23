@@ -143,7 +143,11 @@
             website: ''
           }
         }
-        return Object.assign(tmp, JSON.parse(this.$store.state.me.account.json_metadata))
+        if (this.$store.state.me.account.json_metadata) {
+          return Object.assign(tmp, JSON.parse(this.$store.state.me.account.json_metadata))
+        } else {
+          return tmp
+        }
       }
     },
     methods: {

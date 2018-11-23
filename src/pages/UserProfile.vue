@@ -776,7 +776,7 @@
         this.page.lastCommentPermlink = ''
         this.page.reward.lastId = -1
         this.page.isLoading = false
-        this.page.ableLoading = true
+        this.page.ableLoading = false
         this.page.steemRewardLoadingCount = 30
       },
       getRC: function () {

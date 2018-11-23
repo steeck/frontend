@@ -60,5 +60,11 @@ export default {
   },
   getMy (username) {
     return http.get('posts/author/' + username)
+  },
+  getPopularEditors () {
+    return http.get('posts/popular/editors')
+  },
+  updatePost (id, data) {
+    return http.put('posts/' + id, data)
   }
 }

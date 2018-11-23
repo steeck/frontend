@@ -14,7 +14,7 @@
     </v-card-title>
     <v-card-text>
       <span class="category">{{ category }}</span><span class="author">{{ item.author }}</span>
-      <span class="reward">{{ item.pending_payout_value | kwn | number }}원</span>
+      <span class="reward">{{ payouts | kwn | number }}원</span>
     </v-card-text>
   </v-card>
 </template>
@@ -82,14 +82,18 @@
 </style>
 
 <script>
+import steem from '@/services/steem'
+
 export default {
   props: ['item', 'rating'],
   data () {
     return {
-      defaultThumbnail: ''//'https://via.placeholder.com/350x130'
+      steemdata: {},
+      defaultThumbnail: ''// 'https://via.placeholder.com/110x80'
     }
   },
   mounted () {
+    this.getSteemContent()
   },
   computed: {
     thumbnail () {
@@ -97,9 +101,23 @@ export default {
     },
     category () {
       return this.$store.state.terms.categories[this.item.category]
+    },
+    payouts () {
+      if (parseFloat(this.steemdata.total_payout_value)) {
+        return parseFloat(this.steemdata.total_payout_value) + parseFloat(this.steemdata.curator_payout_value)
+      } else {
+        return parseFloat(this.steemdata.pending_payout_value)
+      }
     }
   },
   methods: {
+    getSteemContent: function () {
+      let vm = this
+      steem.api.getContent(this.item.author, this.item.permlink, function (err, res) {
+        if (err) {}
+        vm.steemdata = res
+      })
+    }
   }
 }
 </script>

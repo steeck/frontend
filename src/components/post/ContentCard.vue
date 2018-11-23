@@ -59,8 +59,9 @@
             v-model="cardIndex" ref="carousel"
           >
             <v-carousel-item v-for="(card, i) in content.data.contents" :key="(i+1)">
-              <v-flex xs12 pa-0 style="position: relative;">
-                <ui-image :src="card.url"></ui-image>
+              <v-flex xs12 pa-0 style="position: relative;" @click="isHide = !isHide">
+                <iframe v-if="card.youtube" class="youtube" width="100%" height="600px" :src="card.youtube" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <ui-image v-else :src="card.url"></ui-image>
                 <div v-if="i === 0" class="card-firstpage px-4 py-3">
                   <v-layout row wrap>
                     <v-flex xs10 class="text-xs-left pb-0">
@@ -166,7 +167,7 @@
                   </div>
                 </div>
                 <div v-else class="card-text">
-                  {{ card.text }}
+                  <span v-if="!isHide">{{ card.text }}</span>
                 </div>
               </v-flex>
             </v-carousel-item>
@@ -192,8 +193,8 @@
         <v-layout justify-space-between wrap row fill-height>
           <v-flex xs10>
             <v-layout row wrap pa-3 xs12>
-              <vote :item="content.steem" :complete="completeVote"></vote>
-              <div class="ml-1 mr-2 btn-link">{{ parseFloat(content.steem.pending_payout_value).toFixed(2) | kwn | number }}원</div> |
+              <vote :item="content.steem" :content="content.data" :complete="completeVote"></vote>
+              <div class="ml-1 mr-2 btn-link">{{ payouts | kwn | number }}원</div> |
               <a class="mx-2 btn-link" @click="viewVotes = !viewVotes">보팅 {{ content.steem.active_votes.length }}</a> |
               <a class="mx-2 btn-link" @click="showComment = !showComment"
               >댓글 {{ commentList.length }}</a>
@@ -260,6 +261,7 @@
     },
     data: function () {
       return {
+        isHide: false,
         loadingComplete: false,
         content: {
           data: {
@@ -355,6 +357,13 @@
       },
       created () {
         return this.author.created ? this.author.created.substr(0, 10).replace(/-/g, '/') : ''
+      },
+      payouts () {
+        if (parseFloat(this.content.steem.total_payout_value)) {
+          return parseFloat(this.content.steem.total_payout_value) + parseFloat(this.content.steem.curator_payout_value)
+        } else {
+          return parseFloat(this.content.steem.pending_payout_value)
+        }
       }
     },
     watch: {
@@ -514,7 +523,7 @@
         steem.api.getContentRepliesAsync(this.content.data.author, this.content.data.permlink)
           .then((res) => {
             this.commentList = res
-            console.log(res)
+            // console.log(res)
           })
       },
       completeComment: function () {
@@ -524,7 +533,11 @@
         let vm = this
         steem.api.getAccounts([this.content.data.author], function (err, res) {
           if (err) {}
-          res[0].json_metadata = Object.assign(vm.author.json_metadata, JSON.parse(res[0].json_metadata))
+          if (res[0].json_metadata) {
+            res[0].json_metadata = Object.assign(vm.author.json_metadata, JSON.parse(res[0].json_metadata))
+          } else {
+            res[0].json_metadata = vm.author.json_metadata
+          }
           vm.author = res[0]
         })
       },
@@ -753,5 +766,10 @@
 
   .vote-list >>>.v-toolbar__content {
     padding: 0;
+  }
+  @media only screen and (max-width: 600px) {
+    .youtube {
+      height: 100vw;
+    }
   }
 </style>

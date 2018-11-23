@@ -57,6 +57,7 @@
   import steemutil from '@/mixins/steemutil'
   import steemconnect from '@/services/steemconnect'
   import api from '@/api/steecky'
+  import post from '@/api/posts'
 
   export default {
     name: 'Vote',
@@ -102,7 +103,7 @@
         return this.$store.getters.steemPrice
       },
       getPayoutValue: function () {
-        return parseFloat(this.item.pending_payout_value.replace(' SBD', '')).toFixed(2)
+        return parseFloat(this.item.pending_payout_value).toFixed(2)
       }
     },
     mounted () {
@@ -124,6 +125,16 @@
         const m = parseInt(((vp * this.weight / 100) + 49) / 50)
         const l = parseInt(r * m * 100) * i * this.steemPrice
         return isNaN(l) ? '(계산 중...)' : l.toFixed(2)
+      },
+      getVotingManaValue: function (weight) {
+        const sp = this.getSteemPower()
+        const vp = weight
+        const i = this.fond.rewardBalance / this.fond.recentClaims
+        const a = this.$store.state.global.properties.fund / this.$store.state.global.properties.shares
+        const r = sp / a
+        const m = parseInt(((vp * this.weight / 100) + 49) / 50)
+        const l = parseInt(r * m * 100) * i * this.steemPrice
+        return isNaN(l) ? 0 : l.toFixed(2)
       },
       getSteemPower: function () {
         const vestingShares = this.getVestingShares()
@@ -165,13 +176,15 @@
         // old steemconnect
         steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
           if (!err) {
-            // console.log('ok')
             vm.isVoted = true
             let now = new Date()
             let global = new Date(now.setMinutes(now.getMinutes() + now.getTimezoneOffset()))
+            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) + parseFloat(this.getVoteValue()) + ' SBD'
             vm.item.active_votes.push({voter: vote.voter, percent: vote.weight, time: global.toISOString()})
-
             vm.createSteecky()
+            if (parseFloat(vm.item.pending_payout_value)) {
+              vm.updatePost(parseFloat(vm.item.pending_payout_value))
+            }
             vm.complete()
             vm.show = false
           } else {
@@ -197,6 +210,10 @@
           if (!err) {
             // console.log('ok')
             vm.isVoted = false
+            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) - parseFloat(this.getVoteValue()) + ' SBD'
+            if (parseFloat(vm.item.pending_payout_value)) {
+              vm.updatePost(parseFloat(vm.item.pending_payout_value))
+            }
             vm.complete()
             vm.show = false
           } else {
@@ -220,6 +237,18 @@
         }
 
         api.create({username: this.$store.state.auth.username, type: 'vote', permlink: this.item.permlink})
+          .then(res => {
+            console.log(res)
+          }).catch(error => {
+            console.log(error)
+          })
+      },
+      updatePost: function (value) {
+        if (!this.$store.state.auth.username) {
+          return
+        }
+
+        post.updatePost(this.content.id, {pending_payout_value: value})
           .then(res => {
             console.log(res)
           }).catch(error => {

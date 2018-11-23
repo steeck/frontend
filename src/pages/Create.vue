@@ -128,6 +128,16 @@
                 <v-icon>arrow_right</v-icon>
               </v-btn>
             </div>
+            <div v-if="selected > 0" class="mt-4">
+              <h3>유튜브 동영상 삽입</h3>
+              <v-text-field
+                color="#6644ff"
+                placeholder="유튜브 임베드 링크" v-model="youtube" @keyup="bindYoutube"
+              ></v-text-field>
+              <div class="mt-2" style="font-size: .8rem;">
+                *저작권 등 다른 사람의 권리를 침해하거나 명예를 훼손하는 이미지 또는 동영상은 이용약관 및 관련법률에 의해 제재를 받으실 수 있습니다.
+              </div>
+            </div>
           </v-flex>
 
           <v-flex
@@ -190,6 +200,7 @@ export default {
     return {
       selected: 0,
       url: '',
+      youtube: '',
       text: '',
       tag: '',
       categories: [
@@ -214,7 +225,7 @@ export default {
       reward: 'half',
       category: '',
       title: '',
-      contents: [{url: null, text: ''}],
+      contents: [{url: null, youtube: null, text: ''}],
       tags: [],
       toggle_exclusive: 2,
       toggle_multiple: [0, 1, 2],
@@ -235,6 +246,8 @@ export default {
   },
   mounted () {
     steemconnect.setAccessToken(this.$store.state.auth.accessToken)
+  },
+  computed: {
   },
   methods: {
     addTag: function (e) {
@@ -258,10 +271,12 @@ export default {
       if (direction === 'prev' && this.selected !== 0) {
         this.selected--
         this.url = this.contents[this.selected].url
+        this.youtube = this.contents[this.selected].youtube
         this.text = this.contents[this.selected].text
       } else if (direction === 'next' && this.selected < this.contents.length - 1) {
         this.selected++
         this.url = this.contents[this.selected].url
+        this.youtube = this.contents[this.selected].youtube
         this.text = this.contents[this.selected].text
       }
     },
@@ -272,13 +287,17 @@ export default {
     selectCard: function (index) {
       this.selected = index
       this.url = this.contents[this.selected].url
+      this.youtube = this.contents[this.selected].youtube
       this.text = this.contents[this.selected].text
     },
     bindText: function () {
       this.contents[this.selected].text = this.text
     },
+    bindYoutube: function () {
+      this.contents[this.selected].youtube = this.youtube
+    },
     addCard: function () {
-      this.contents.push({ url: null, text: '' })
+      this.contents.push({ url: null, youtube: null, text: '' })
       this.selected++
       this.selectCard(this.selected)
     },
@@ -304,7 +323,7 @@ export default {
       this.contents.forEach((item, i) => {
         if (!item.url && !item.text) {  // remove empty card
           this.contents.splice(i, 1)
-        } else if (!item.url) {
+        } else if (!item.url && !item.youtube) {
           alert('스티커 카드마다 이미지 첨부는 필수입니다.')
           this.selected = i
           isValid = false
@@ -323,10 +342,10 @@ export default {
         author: this.$store.state.me.account.name,
         title: this.title,
         contents: this.contents,
-        layout: { 'width': '700', 'height': '700', 'layout': 'bottom' },
-        pending_payout_value: (Math.random() * 100).toFixed(3),
-        children: 8,
-        net_votes: 13,
+        layout: { 'width': '600', 'height': '600', 'layout': 'bottom' },
+        pending_payout_value: 0,
+        children: 0,
+        net_votes: 0,
         json_metadata: {
           tags: ['steeck'].concat(this.tags),
           format: 'html'
@@ -341,9 +360,14 @@ export default {
           // @TODO 스팀에 브로드캐스팅은 나중에...
           // let steemContentsBody = '<html>'
           // for (let i in data.contents) {
-          //   let img = data.contents[i].url ? '<p><img src="' + data.contents[i].url + '"></p>' : ''
-          //   let text = data.contents[i].text ? '<p>' + data.contents[i].text + '</p>' : ''
-          //   steemContentsBody += img + text + '<br>'
+          // let img = ''
+          // if (data.contents[i].youtube) {
+          //   img = '<iframe width="560" height="315" src="' + data.contents[i].youtube + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
+          // } else {
+          //   img = data.contents[i].url ? '<p><img src="' + data.contents[i].url + '"></p>' : ''
+          // }
+          // let text = data.contents[i].text ? '<p>' + data.contents[i].text + '</p>' : ''
+          // steemContentsBody += img + text + '<br>'
           // }
           // steemContentsBody += '</html>'
           // steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)

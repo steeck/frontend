@@ -62,7 +62,8 @@
           class="elevation-1"
         >
           <template slot="items" slot-scope="props">
-            <td class="text-xs-left">{{ props.item.url }}</td>
+            <td class="text-xs-center">{{ props.item.username }}</td>
+            <td class="text-xs-left" style="word-break: break-all;">{{ props.item.url }}</td>
             <td class="text-xs-center">{{ props.item.amount }}</td>
             <td class="text-xs-center">{{ props.item.payment_type }}</td>
             <td class="text-xs-center">{{ props.item.created_at | moment('YYYY-MM-DD HH:mm:ss') }}</td>
@@ -126,6 +127,7 @@ export default {
         agree: [v => !!v || '사용자 동의가 필요합니다']
       },
       headers: [
+        {text: '요청자', align: 'center', sortable: false, value: 'username'},
         {text: '스티커 주소', align: 'center', sortable: false, value: 'url'},
         {text: '송금액', align: 'center', sortable: false, value: 'amount'},
         {text: '송금액 종류', align: 'center', sortable: false, value: 'payment_type'},

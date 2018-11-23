@@ -18,6 +18,9 @@ export default {
   },
   requestVote (data) {
     return http.post('/voting_requests', data)
+  },
+  getSteecky () {
+    return http.get('/steecky/center/total')
   }
 }
 

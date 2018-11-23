@@ -293,7 +293,7 @@ export default {
         { value: 'essey', text: '공감·에세이' },
         { value: 'sponsor', text: '스폰서' }
       ],
-      usernames: ['meno', 'jjogorae', 'marlon6', 'chibera', 'isaria', 'onepercentbetter'],
+      usernames: [],
       editors: [],
       banners: [
         {
@@ -382,11 +382,16 @@ export default {
     // },
     getEditors: function () {
       let vm = this
-
-      steem.api.getAccounts(this.usernames, function (err, res) {
-        if (err) {}
-        vm.editors = res
-      })
+      api.getPopularEditors()
+        .then(res => {
+          res.data.forEach(item => {
+            vm.usernames.push(item.author)
+          })
+          steem.api.getAccounts(vm.usernames, function (err, res) {
+            if (err) {}
+            vm.editors = res
+          })
+        })
     }
   }
 }

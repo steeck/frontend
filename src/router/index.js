@@ -12,6 +12,7 @@ import Lease from '@/pages/center/Lease'
 import Delegate from '@/pages/center/Delegate'
 import Transactions from '@/pages/center/Transactions'
 import RequestVote from '@/pages/center/RequestVote'
+import Steecky from '@/pages/center/Steecky'
 import UserProfile from '@/pages/UserProfile'
 import Post from '@/pages/Post'
 import View from '@/pages/View'
@@ -87,6 +88,11 @@ const router = new Router({
       component: Transactions
     },
     {
+      path: '/center/steecky',
+      name: 'Steecky',
+      component: Steecky
+    },
+    {
       path: '/create',
       name: 'Create',
       component: Create
@@ -117,8 +123,21 @@ const router = new Router({
 })
 router.beforeResolve((to, from, next) => {
   if (!store.state.auth.username) {
-    if (['Lease', 'Delegate', 'RequestVote', 'Create', 'Feeds', 'Activities', 'Transactions', 'My'].indexOf(to.name) >= 0) {
+    if (['Lease', 'Delegate', 'RequestVote', 'Create', 'Feeds', 'Activities', 'Transactions', 'My', 'Steecky'].indexOf(to.name) >= 0) {
       alert('로그인 후 이용이 가능합니다')
+      return
+    }
+  }
+  if (to.name === 'Steecky') {
+    if (!store.state.auth.username || store.state.auth.username !== 'steeck') {
+      alert('접근이 거부되었습니다')
+      return
+    }
+  }
+  if (['Lease', 'Delegate', 'RequestVote', 'Create'].indexOf(to.name) >= 0) {
+    if (store.state.me.following.indexOf('steeck') === -1 && store.state.auth.username === 'steeck') {
+      alert('에디터 권한이 필요합니다')
+      // router.go(-1)
       return
     }
   }
