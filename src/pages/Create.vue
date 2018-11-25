@@ -25,6 +25,7 @@
           round flat outline
           color="#6644ff"
           v-on:click="publish"
+          :loading="isPublishing"
         >
           발행하기
         </v-btn>
@@ -66,7 +67,8 @@
                     :src="item.url ? item.url : 'https://user-images.githubusercontent.com/24529218/46792326-16fc3180-cd7e-11e8-80dc-2842504d6b52.png'"
                   ></v-img>
                   <v-card-text class="preview-text">
-                    {{ item.text }}
+                    <span v-if="i === 0">{{ title }}</span>
+                    <span v-else>{{ item.text }}</span>
                   </v-card-text>
                 </v-card>
               </div>
@@ -159,15 +161,15 @@
               <v-text-field v-model="tag"
                 label="태그단어"
                 single-line
-                color="#6633ff"
+                color="#6644ff"
                 v-on:keyup.enter="addTag"
               ></v-text-field>
               <v-layout row wrap align-center >
                 <v-btn v-for="(tag, i) in tags" :key="i"
-                  class="black--text caption"
                   depressed small
                   round
                   outline
+                  color="#6644ff"
                   @click="removeTag(i)"
                 >{{ tag }} X</v-btn>
               </v-layout>
@@ -199,6 +201,7 @@ export default {
   data () {
     return {
       selected: 0,
+      isPublishing: false,
       url: '',
       youtube: '',
       text: '',
@@ -321,12 +324,13 @@ export default {
     publish: function () { // create the contents
       let isValid = true
       this.contents.forEach((item, i) => {
-        if (!item.url && !item.text) {  // remove empty card
+        if (!item.url && i > 0 && !item.text) {  // remove empty card
           this.contents.splice(i, 1)
         } else if (!item.url && !item.youtube) {
           alert('스티커 카드마다 이미지 첨부는 필수입니다.')
           this.selected = i
           isValid = false
+          return false
         }
       })
       if (!this.contents.length) {
@@ -337,6 +341,17 @@ export default {
         return
       }
 
+      this.contents.forEach((item, i) => {
+        if (item.youtube) {
+          let url = this.contents[i].youtube
+          this.contents[i].youtube = 'https://www.youtube.com/embed' + url.substr(url.lastIndexOf('/'))
+        }
+      })
+      // console.log(this.contents)
+      // return
+
+      let vm = this
+      let id = 0
       let data = {
         category: this.category,
         author: this.$store.state.me.account.name,
@@ -352,66 +367,71 @@ export default {
         },
         reputation: steem.formatter.reputation(this.$store.state.me.account.reputation)
       }
+      vm.isPublishing = true
 
       api.create(data)
         .then(res => {
           data.permlink = res.data.permlink
-
+          id = res.data.id
           // @TODO 스팀에 브로드캐스팅은 나중에...
-          // let steemContentsBody = '<html>'
-          // for (let i in data.contents) {
-          // let img = ''
-          // if (data.contents[i].youtube) {
-          //   img = '<iframe width="560" height="315" src="' + data.contents[i].youtube + '" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'
-          // } else {
-          //   img = data.contents[i].url ? '<p><img src="' + data.contents[i].url + '"></p>' : ''
-          // }
-          // let text = data.contents[i].text ? '<p>' + data.contents[i].text + '</p>' : ''
-          // steemContentsBody += img + text + '<br>'
-          // }
-          // steemContentsBody += '</html>'
-          // steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)
-          //   .then(res => {
-          //     console.log('works')
-          //     console.log(res)
-          //
-          //     let commentOptionsConfig = {
-          //       author: data.author,
-          //       permlink: data.permlink,
-          //       allow_votes: true,
-          //       allow_curation_rewards: true,
-          //       max_accepted_payout: '1000000.000 SBD',
-          //       percent_steem_dollars: 10000,
-          //       extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1000 }] }]]
-          //     }
-          //
-          //     if (vm.reward === 'all') {
-          //       commentOptionsConfig.percent_steem_dollars = 0
-          //     } else if (vm.reward === 'none') {
-          //       commentOptionsConfig.max_accepted_payout = '0.000 SBD'
-          //     }
-          //     steemconnect.broadcast([['comment_options', commentOptionsConfig]])
-          //       .then(res => {
-          //         console.log(res)
-          //       })
-          //       .catch(error => {
-          //         console.log('err', error)
-          //       })
-          //   })
-          //   .catch(err => {
-          //     if (err) {}
-          //     api.delete(data.permlink)
-          //       .then(res2 => {
-          //         console.log(data.permlink, 'deleted')
-          //       })
-          //       .catch(error => {
-          //         console.log('api del error', error)
-          //       })
-          //   })
-          alert('새로운 글이 등록되었습니다.')
-          this.$router.push('/posts/' + res.data.id)
+          let steemContentsBody = '<html>'
+          for (let i in data.contents) {
+            let img = ''
+            if (data.contents[i].youtube) {
+              img = '<p>' + data.contents[i].youtube + '</p>'
+            } else {
+              img = data.contents[i].url ? '<p><img src="' + data.contents[i].url + '"></p>' : ''
+            }
+            let text = data.contents[i].text ? '<p>' + data.contents[i].text + '</p>' : ''
+            steemContentsBody += img + text + '<br>'
+          }
+          steemContentsBody += '</html>'
+
+          steemconnect.comment('', 'steeck', data.author, data.permlink, data.title, steemContentsBody, data.json_metadata)
+            .then(res => {
+              // console.log('works')
+              // console.log(res)
+              let commentOptionsConfig = {
+                author: data.author,
+                permlink: data.permlink,
+                allow_votes: true,
+                allow_curation_rewards: true,
+                max_accepted_payout: '1000000.000 SBD',
+                percent_steem_dollars: 10000,
+                extensions: [[0, { beneficiaries: [{ account: 'steeck', weight: 1500 }] }]]
+              }
+
+              if (vm.reward === 'all') {
+                commentOptionsConfig.percent_steem_dollars = 0
+              } else if (vm.reward === 'none') {
+                commentOptionsConfig.max_accepted_payout = '0.000 SBD'
+              }
+              steemconnect.broadcast([['comment_options', commentOptionsConfig]])
+                .then(res => {
+                  // console.log(res)
+                  alert('새로운 글이 등록되었습니다.')
+                  this.$router.push('/posts/' + id)
+                })
+                .catch(error => {
+                  vm.isPublishing = false
+                  console.log('err', error)
+                })
+            })
+            .catch(err => {
+              alert('아직 새로운 글을 등록할 수 없습니다.\n5분 후에 다시 시도해주세요.')
+              vm.isPublishing = false
+              if (err) {}
+              api.delete(data.permlink)
+                .then(res2 => {
+                  console.log(data.permlink, 'deleted')
+                })
+                .catch(error => {
+                  console.log('api del error', error)
+                })
+            })
         })
         .catch(error => {
+          vm.isPublishing = false
           console.log('err', error)
         })
     }

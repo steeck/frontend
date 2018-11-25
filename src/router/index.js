@@ -135,7 +135,7 @@ router.beforeResolve((to, from, next) => {
     }
   }
   if (['Lease', 'Delegate', 'RequestVote', 'Create'].indexOf(to.name) >= 0) {
-    if (store.state.me.following.indexOf('steeck') === -1 && ['steeck'].indexOf(store.state.auth.username) === -1) {
+    if (store.state.me.follower.indexOf('steeck') === -1 && ['steeck', 'smtion'].indexOf(store.state.auth.username) === -1) {
       alert('에디터 권한이 필요합니다')
       // router.go(-1)
       return

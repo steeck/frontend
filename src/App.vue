@@ -87,7 +87,7 @@ export default {
       })
     },
     loadFollower: function () {
-      steem.api.callAsync('get_followers', [this.$store.state.me.account.name, this.lastFollowerName, 'blog', this.onceForCall])
+      steem.api.callAsync('get_followers', [this.$store.state.auth.username, this.lastFollowerName, 'blog', this.onceForCall])
         .then(result => {
           let arrResult = this.getArrByArrKey(result, 'follower')
           if (this.$store.state.me.follower.length === 0) {
@@ -105,7 +105,7 @@ export default {
         })
     },
     loadFollowing: function () {
-      steem.api.callAsync('get_following', [this.$store.state.me.account.name, this.lastFollowingName, 'blog', this.onceForCall])
+      steem.api.callAsync('get_following', [this.$store.state.auth.username, this.lastFollowingName, 'blog', this.onceForCall])
         .then(result => {
           let arrResult = this.getArrByArrKey(result, 'following')
           if (this.$store.state.me.following.length === 0) {
