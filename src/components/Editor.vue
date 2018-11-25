@@ -129,7 +129,9 @@ export default {
     }
   },
   mounted () {
-    this.json_metadata = JSON.parse(this.editor.json_metadata)
+    if (this.editor.json_metadata) {
+      this.json_metadata = JSON.parse(this.editor.json_metadata)
+    }
     if (!this.json_metadata.profile) {
       this.json_metadata.profile = {
         cover_image: '', // 'https://via.placeholder.com/110x80',

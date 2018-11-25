@@ -429,10 +429,10 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.follow(this.$store.state.auth.username, this.author.name, function (err, res) {
+        steemconnect.follow(this.$store.state.auth.username, vm.content.data.author, function (err, res) {
           if (!err) {
-            vm.$store.commit('me/addFollowing', vm.author.name)
-            vm.$store.commit('me/removeIgnore', vm.author.name)
+            vm.$store.commit('me/addFollowing', vm.content.data.author)
+            vm.$store.commit('me/removeIgnore', vm.content.data.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -450,10 +450,10 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.unfollow(this.$store.state.auth.username, this.author.name, function (err, res) {
+        steemconnect.unfollow(this.$store.state.auth.username, vm.content.data.author, function (err, res) {
           console.log(err, res)
           if (!err) {
-            vm.$store.commit('me/removeFollowing', vm.author.name)
+            vm.$store.commit('me/removeFollowing', vm.content.data.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -471,10 +471,10 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.ignore(this.$store.state.auth.username, this.author.name, function (err, res) {
+        steemconnect.ignore(this.$store.state.auth.username, vm.content.data.author, function (err, res) {
           if (!err) {
-            vm.$store.commit('me/addIgnore', vm.author.name)
-            vm.$store.commit('me/removeFollowing', vm.author.name)
+            vm.$store.commit('me/addIgnore', vm.content.data.author)
+            vm.$store.commit('me/removeFollowing', vm.content.data.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
@@ -491,10 +491,10 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         this.page.isFollowProcessing = true
         let vm = this
-        steemconnect.unfollow(this.$store.state.auth.username, this.author.name, function (err, res) {
+        steemconnect.unfollow(this.$store.state.auth.username, vm.content.data.author, function (err, res) {
           console.log(err, res)
           if (!err) {
-            vm.$store.commit('me/removeIgnore', vm.author.name)
+            vm.$store.commit('me/removeIgnore', vm.content.data.author)
             vm.$store.dispatch('me/getFollowInfo').catch(err => {
               console.log(err)
             })
