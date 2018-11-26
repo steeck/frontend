@@ -104,6 +104,7 @@
 
 <script>
   import steem from '@/services/steem'
+  import steemconnect from '@/services/steemconnect'
   import api from '@/api/posts'
 
   export default {
@@ -178,11 +179,17 @@
         })
       },
       updateMetaData: function () {
+        // steemconnect.updateUserMetadata(this.jsonMetaData, function (err, result) {
+        //   console.log(err)
+        //   console.log(result)
+        // })
+        // return
         let vm = this
         let privKeys = steem.auth.getPrivateKeys(this.account.name, this.unit.pwd)
         this.unit.processDoing = true
+
         steem.broadcast.accountUpdateAsync(
-          privKeys.owner,
+          this.unit.pwd,
           this.account.name,
           undefined,
           undefined,
@@ -190,6 +197,8 @@
           this.account.memo_key,
           JSON.stringify(this.jsonMetaData),
           function (err, result) {
+            console.log(err)
+            console.log(result)
             if (err) {
               vm.unit.successText = '공개 프로필정보변경에 실패했습니다.'
               vm.unit.successDialog = true
