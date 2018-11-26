@@ -104,7 +104,7 @@
 
 <script>
   import steem from '@/services/steem'
-  import steemconnect from '@/services/steemconnect'
+  // import steemconnect from '@/services/steemconnect'
   import api from '@/api/posts'
 
   export default {

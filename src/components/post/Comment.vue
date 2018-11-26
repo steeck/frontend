@@ -210,6 +210,12 @@
   color: #333;
   font-size: 0.9em;
 }
+>>>.Markdown {
+  font-family: Roboto, sans-serif !important;
+}
+.Markdown {
+  font-family: Roboto, sans-serif !important;
+}
 >>>.v-footer {
   min-height: 64px;
 }
