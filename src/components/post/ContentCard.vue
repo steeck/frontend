@@ -64,7 +64,7 @@
                 <ui-image v-else :src="card.url"></ui-image>
                 <div v-if="i === 0" class="card-firstpage px-4 py-3">
                   <v-layout row wrap>
-                    <v-flex xs10 class="text-xs-left pb-0">
+                    <v-flex xs10 class="text-xs-left">
                       <h3>{{ content.data.title }}</h3>
                     </v-flex>
                     <v-flex xs2
@@ -633,9 +633,12 @@
     color: #333333;
   }
 
+  .card-author {
+    text-align: left;
+  }
   .cc-top .card-created {
     color: gray;
-
+    text-align: left;
   }
 
   .link {
@@ -684,6 +687,7 @@
     right: 16px;
     z-index: 2;
     color: white;
+    text-align: left;
     background: rgba(0,0,0,.4);
   }
   .border-bottom {

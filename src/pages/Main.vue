@@ -18,9 +18,9 @@
     <v-container grid-list-xl>
       <v-layout row wrap class="list-menubar">
         <v-flex xs6 class="list-menubar-lg">
-          <span class="list-menubar__steeck" :class="{ 'active': selected.lg == 'steeck' }" @click="selected.lg = 'steeck'">스틱30</span>
+          <span class="list-menubar__steeck" :class="{ 'active': selected.lg == 'steeck' }" @click="selected.lg = 'steeck'">스틱50</span>
           <span class="list-menubar-divider">|</span>
-          <span class="list-menubar__newbie" :class="{ 'active': selected.lg == 'newbie' }" @click="selected.lg = 'newbie'">뉴비30</span>
+          <span class="list-menubar__newbie" :class="{ 'active': selected.lg == 'newbie' }" @click="selected.lg = 'newbie'">뉴비50</span>
         </v-flex>
         <v-flex xs6 class="list-menubar-sm">
           <span class="list-menubar__pending" :class="{ 'active': selected.sm == 'pending' }" @click="selected.sm = 'pending'">실시간</span>

@@ -268,7 +268,7 @@
                   {{ cryptoPrice.sbd.price | kwn | number }}원
                   <span class="trend" :class="{ 'trend-up': cryptoPrice.sbd.direction == 'up' }">
                     ({{ cryptoPrice.sbd.difference }}%)
-                    <v-icon v-if="cryptoPrice.steem.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
+                    <v-icon v-if="cryptoPrice.sbd.direction == 'up'" class="trend-icon">arrow_drop_up</v-icon>
                     <v-icon v-else class="trend-icon">arrow_drop_down</v-icon>
                   </span>
                 </div>

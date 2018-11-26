@@ -46,7 +46,7 @@
       <v-text-field v-if="$vuetify.breakpoint.smAndUp" flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요." class="ml-5"></v-text-field>
       <v-spacer></v-spacer>
       <img v-if="$vuetify.breakpoint.xs" src="https://s3.ap-northeast-2.amazonaws.com/steeck/icons/group-4%402x.png" @click="extended = !extended" style="width: 24px;">
-      <v-toolbar-title slot="extension" v-if="extended" style="width: 100%;">
+      <v-toolbar-title slot="extension" v-if="extended && $vuetify.breakpoint.xs" style="width: 100%;">
         <v-text-field flat solo hide-details prepend-inner-icon="search" v-model="q" @keyup.enter="search" label="검색어를 입력해주세요."></v-text-field>
       </v-toolbar-title>
       <router-link to="/create"
@@ -127,6 +127,9 @@
 }
 >>>.v-navigation-drawer > .v-list .v-list__tile {
   font-weight: 600;
+}
+>>>.v-toolbar__extension > .v-toolbar__title {
+  margin-left: 0 !important;
 }
 .btn-create {
   color: #fff;

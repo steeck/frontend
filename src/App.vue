@@ -48,6 +48,8 @@ export default {
   mounted () {
     this.updateFollowInfo()
     this.$store.dispatch('global/getProperties')
+    this.$store.dispatch('me/getAccount')
+    this.$store.dispatch('me/getRC')
   },
   computed: {
     layout () {
