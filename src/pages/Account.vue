@@ -81,7 +81,7 @@
         width="500"
       >
         <div  style="background-color: white;padding: 1rem; border: 1px solid #e5e5e5; border-radius: 4px;">
-          <h4 class="mb-3">비밀번호를 입력해주세요.</h4>
+          <h4 class="mb-3">액티브키를 입력해주세요.</h4>
           <input type="password" v-model="unit.pwd" class="in-input pwd-input">
           <div class="text-xs-right">
             <v-btn outline @click="updateMetaData" :loading="unit.processDoing">변경하기</v-btn>

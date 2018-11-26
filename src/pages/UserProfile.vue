@@ -1,12 +1,12 @@
 <template>
   <!--보상영역 스팀보상 스틱보상-->
   <v-container grid-list-xl v-else>
-    <div class="my-profile text-xs-center" v-bind:style="[me.json_metadata.profile.profile_image ? { 'background-image': 'url(' + me.json_metadata.profile.profile_image + ')' } : {}]">
+    <div class="my-profile text-xs-center" v-bind:style="[me.json_metadata.profile.cover_image ? { 'background-image': 'url(' + me.json_metadata.profile.cover_image + ')' } : {}]">
       <div class="my-profile-inner">
         <v-avatar size="80" color="grey lighten-4">
           <img :src="'https://steemitimages.com/u/' + username + '/avatar'" alt="avatar">
         </v-avatar>
-        <div class="my-me-name">{{ username }} ({{ reputationCount }})</div>
+        <div class="my-me-name"><span v-if="me.json_metadata.profile.name">{{ me.json_metadata.profile.name }}</span><span v-else>{{ username }}</span> ({{ reputationCount }})</div>
         <div class="my-me-about">
           {{ me.json_metadata.profile.about }}
         </div>
@@ -22,6 +22,7 @@
         </v-layout>
         <div class="my-me-created">가입일 {{ created }}</div>
         <div class="my-me-link">
+          <span v-if="me.json_metadata.profile.location" :class="{ 'mr-3': me.json_metadata.profile.website }">{{ me.json_metadata.profile.location }}</span>
           <a :href="me.json_metadata.profile.website" target="website">{{ me.json_metadata.profile.website }}</a>
         </div>
         <div v-if="username !== $store.state.me.account.name">
@@ -910,6 +911,9 @@
     }
     .my-me-created {
       color: #425363;
+      color: #fff;
+    }
+    .my-me-link {
       color: #fff;
     }
     .my-me-link a {

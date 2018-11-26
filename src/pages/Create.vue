@@ -134,11 +134,11 @@
               <h3>유튜브 동영상 삽입</h3>
               <v-text-field
                 color="#6644ff"
-                placeholder="유튜브 임베드 링크" v-model="youtube" @keyup="bindYoutube"
+                placeholder="YouTube 동영상 URL을 입력하세요. 예) https://youtu.be/고유번호" v-model="youtube" @keyup="bindYoutube"
               ></v-text-field>
-              <div class="mt-2" style="font-size: .8rem;">
-                *저작권 등 다른 사람의 권리를 침해하거나 명예를 훼손하는 이미지 또는 동영상은 이용약관 및 관련법률에 의해 제재를 받으실 수 있습니다.
-              </div>
+            </div>
+            <div class="mt-2" style="font-size: .8rem;">
+              *저작권 등 다른 사람의 권리를 침해하거나 명예를 훼손하는 이미지 또는 동영상은 이용약관 및 관련법률에 의해 제재를 받으실 수 있습니다.
             </div>
           </v-flex>
 
@@ -324,7 +324,7 @@ export default {
     publish: function () { // create the contents
       let isValid = true
       this.contents.forEach((item, i) => {
-        if (!item.url && i > 0 && !item.text) {  // remove empty card
+        if (i > 0 && !item.url && !item.youtube && !item.text) {  // remove empty card
           this.contents.splice(i, 1)
         } else if (!item.url && !item.youtube) {
           alert('스티커 카드마다 이미지 첨부는 필수입니다.')
@@ -347,8 +347,6 @@ export default {
           this.contents[i].youtube = 'https://www.youtube.com/embed' + url.substr(url.lastIndexOf('/'))
         }
       })
-      // console.log(this.contents)
-      // return
 
       let vm = this
       let id = 0

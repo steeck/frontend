@@ -91,7 +91,7 @@
   export default {
     name: 'Comment',
     mixins: [steemutil],
-    props: ['list', 'item', 'show'],
+    props: ['list', 'item', 'show', 'complete'],
     components: {
       EditComment,
       CardComment
@@ -115,7 +115,7 @@
     },
     methods: {
       loadComment: function () {
-        steem.api.getContentRepliesAsync(this.content.data.author, this.content.data.permlink)
+        steem.api.getContentRepliesAsync(this.item.author, this.item.permlink)
           .then((res) => {
             this.list = res
             // console.log(res)
@@ -130,6 +130,7 @@
           return
         }
         // console.log('pushComment')
+        let vm = this
         this.processComment = true
         let parentAuthor = this.item.author
         let parentPermlink = this.item.permlink
@@ -142,15 +143,16 @@
         steemconnect.comment(parentAuthor, parentPermlink, author, permlink, title, body, jsonMetadata)
           .then((res) => {
             console.log(res)
-            this.complete()
-            this.condition.openEdit = false
-            this.processComment = false
-            this.createSteecky()
+            vm.inputBody = ''
+            vm.complete()
+            // vm.condition.openEdit = false
+            vm.processComment = false
+            vm.createSteecky()
           })
           .catch(err => {
             console.log(err)
-            this.actionFail = true
-            this.processComment = false
+            vm.actionFail = true
+            vm.processComment = false
           })
       },
       close: function () {

@@ -175,20 +175,20 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         // old steemconnect
         steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
-          if (!err) {
+          if (err) {
+            alert('보팅할 수 없습니다')
+            vm.show = false
+          } else {
             vm.isVoted = true
             let now = new Date()
             let global = new Date(now.setMinutes(now.getMinutes() + now.getTimezoneOffset()))
-            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) + parseFloat(this.getVoteValue()) + ' SBD'
+            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) + parseFloat(vm.getVoteValue()) + ' SBD'
             vm.item.active_votes.push({voter: vote.voter, percent: vote.weight, time: global.toISOString()})
             vm.createSteecky()
             if (parseFloat(vm.item.pending_payout_value)) {
               vm.updatePost(parseFloat(vm.item.pending_payout_value))
             }
             vm.complete()
-            vm.show = false
-          } else {
-            alert('보팅할 수 없습니다')
             vm.show = false
           }
           vm.isVoting = false
@@ -207,17 +207,17 @@
         steemconnect.setAccessToken(this.$store.state.auth.accessToken)
         // old steemconnect
         steemconnect.vote(vote.voter, vote.author, vote.permlink, vote.weight, function (err, result) {
-          if (!err) {
+          if (err) {
+            alert('보팅할 수 없습니다')
+            vm.show = false
+          } else {
             // console.log('ok')
             vm.isVoted = false
-            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) - parseFloat(this.getVoteValue()) + ' SBD'
+            vm.item.pending_payout_value = parseFloat(vm.item.pending_payout_value) - parseFloat(vm.getVoteValue()) + ' SBD'
             if (parseFloat(vm.item.pending_payout_value)) {
               vm.updatePost(parseFloat(vm.item.pending_payout_value))
             }
             vm.complete()
-            vm.show = false
-          } else {
-            alert('보팅할 수 없습니다')
             vm.show = false
           }
           vm.isVoting = false

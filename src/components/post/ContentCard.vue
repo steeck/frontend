@@ -14,8 +14,8 @@
             <div class="card-created caption">{{ item.created_at | ago }} · {{ category }}</div>
           </div>
           <div v-if="item.author !== $store.state.auth.username">
-            <v-btn  outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
-            <v-btn  dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
+            <v-btn outline round color="deep-purple" class="ml-3" v-if="!isMyFollowing" :loading="isFollowProcessing" @click="addFollowing">+팔로우</v-btn>
+            <v-btn dark round color="deep-purple" class="ml-3" v-else :loading="isFollowProcessing" @click="removeFollowing">팔로잉중</v-btn>
           </div>
           <v-spacer></v-spacer>
           <card-menu :item="item"></card-menu>
