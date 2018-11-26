@@ -39,14 +39,14 @@
           <v-btn small fab dark right absolute
             v-if="cardIndex+1 !== (content.data.contents.length)"
             class="ccp-arrow-btn"
-            @click="$refs.carousel.next()"
+            @click="next()"
           >
             <v-icon dark size="35">chevron_right</v-icon>
           </v-btn>
           <v-btn small fab dark left absolute
             v-if="cardIndex !== 0"
             class="ccp-arrow-btn"
-            @click="$refs.carousel.prev()"
+            @click="prev()"
           >
             <v-icon dark size="35">chevron_left</v-icon>
           </v-btn>
@@ -60,7 +60,7 @@
           >
             <v-carousel-item v-for="(card, i) in content.data.contents" :key="(i+1)">
               <v-flex xs12 pa-0 style="position: relative;" @click="isHide = !isHide">
-                <iframe v-if="card.youtube" class="youtube" width="100%" height="600px" :src="card.youtube" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe v-if="card.youtube" class="youtube" width="100%" height="600px" :src="card.youtube + '?enablejsapi=1'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <ui-image v-else :src="card.url"></ui-image>
                 <div v-if="i === 0" class="card-firstpage px-4 py-3">
                   <v-layout row wrap>
@@ -386,6 +386,16 @@
       }
     },
     methods: {
+      next: function () {
+        this.$refs.carousel.next()
+        // console.log(this.$el.querySelector('.youtube'))
+        this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+      },
+      prev: function () {
+        this.$refs.carousel.prev()
+        // console.log(this.$el.querySelector('.youtube'))
+        this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+      },
       markedCardBody: function (str) {
         return str ? md.render(str) : ''
       },

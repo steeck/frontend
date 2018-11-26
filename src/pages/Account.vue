@@ -185,7 +185,7 @@
         // })
         // return
         let vm = this
-        let privKeys = steem.auth.getPrivateKeys(this.account.name, this.unit.pwd)
+        // let privKeys = steem.auth.getPrivateKeys(this.account.name, this.unit.pwd)
         this.unit.processDoing = true
 
         steem.broadcast.accountUpdateAsync(
