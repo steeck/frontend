@@ -783,8 +783,8 @@
   }
   .youtube {
     background-color: #000;
-    padding-top: 10%;
-    padding-bottom: 10%;
+    padding-top: 15%;
+    padding-bottom: 15%;
   }
   @media only screen and (max-width: 600px) {
     .youtube {
