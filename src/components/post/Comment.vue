@@ -212,9 +212,10 @@
 }
 >>>.Markdown {
   font-family: Roboto, sans-serif !important;
+  word-break: break-all !important;
 }
-.Markdown {
-  font-family: Roboto, sans-serif !important;
+>>>.Markdown table td {
+  word-break: break-all !important;
 }
 >>>.v-footer {
   min-height: 64px;

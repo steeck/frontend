@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-container py-0 :class="{ 'px-0': $vuetify.breakpoint.smAndDown }">
-      <v-carousel fullscreen height="300">
+      <v-carousel fullscreen height="300" hide-controls>
         <v-carousel-item v-for="(banner, i) in banners" :key="i" :src="banner.url">
           <div v-if="banner.text1" class="banner-text1">
             <span v-html="banner.text1"></span>

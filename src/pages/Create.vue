@@ -558,11 +558,11 @@ export default {
   .btn-nav-prev-xs {
     position: absolute !important;
     top: 50% !important;
-    left: -48px !important;
+    left: -38px !important;
   }
   .btn-nav-next-xs {
     position: absolute !important;
     top: 50% !important;
-    right: -48px !important;
+    right: -38px !important;
   }
 </style>
