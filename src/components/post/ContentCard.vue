@@ -115,7 +115,7 @@
                       <v-avatar size="80" color="grey lighten-4">
                         <img :src="'https://steemitimages.com/u/' + content.data.author + '/avatar'" alt="avatar">
                       </v-avatar>
-                      <div class="my-me-name">{{ content.data.author }} <span title='평판'>({{ reputationCount }})</span></div>
+                      <div class="my-me-name"><router-link :to="{ name: 'User', params: {username: content.data.author} }" class="link">{{ content.data.author }} <span title='평판'>({{ reputationCount }})</span></router-link></div>
                       <div class="my-me-about">
                         {{ author.json_metadata.profile.about }}
                       </div>
