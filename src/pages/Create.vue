@@ -3,7 +3,7 @@
     <v-layout row wrap>
       <v-flex xs12 sm3 md2>
         <v-btn flat outline color="grey" @click="addCard">
-          <v-icon>add</v-icon> <span style="color:grey;">카드추가</span>
+          <v-icon>add</v-icon> <span style="color:grey;">스티커추가</span>
         </v-btn>
       </v-flex>
       <v-flex xs12 sm3 md2>

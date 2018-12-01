@@ -389,12 +389,16 @@
       next: function () {
         this.$refs.carousel.next()
         // console.log(this.$el.querySelector('.youtube'))
-        this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+        if (this.$el.querySelector('.youtube')) {
+          this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+        }
       },
       prev: function () {
         this.$refs.carousel.prev()
         // console.log(this.$el.querySelector('.youtube'))
-        this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+        if (this.$el.querySelector('.youtube')) {
+          this.$el.querySelector('.youtube').contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', '*')
+        }
       },
       markedCardBody: function (str) {
         return str ? md.render(str) : ''

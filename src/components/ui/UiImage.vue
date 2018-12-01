@@ -7,10 +7,24 @@
 <script>
 export default {
   props: ['src'],
+  watch: {
+    'src': {
+      handler: function (val, oldVal) {
+        this.mount()
+      }
+    }
+  },
   mounted () {
     // console.log(this.src)
-    let el = this.$el.getElementsByClassName('image-inner')
-    el[0].style.backgroundImage = `url(${this.src})`
+    // let el = this.$el.getElementsByClassName('image-inner')
+    // el[0].style.backgroundImage = `url(${this.src})`
+    this.mount()
+  },
+  methods: {
+    mount: function () {
+      let el = this.$el.getElementsByClassName('image-inner')
+      el[0].style.backgroundImage = `url(${this.src})`
+    }
   }
 }
 </script>
