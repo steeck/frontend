@@ -58,7 +58,7 @@
             class="elevation-0"
             v-model="cardIndex" ref="carousel"
           >
-            <v-carousel-item v-for="(card, i) in content.data.contents" :key="(i+1)">
+            <v-carousel-item v-for="(card, i) in content.data.contents" :key="(content.data.id + '_' + i)">
               <v-flex xs12 pa-0 style="position: relative;" @click="isHide = !isHide">
                 <iframe v-if="card.youtube" class="youtube" width="100%" height="600px" :src="card.youtube + '?enablejsapi=1'" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 <ui-image v-else :src="card.url"></ui-image>
@@ -376,6 +376,7 @@
       'id': {
         handler: function (val, oldVal) {
           this.content.data.id = null
+          this.cardIndex = 0
           this.getContent()
         },
         deep: true
