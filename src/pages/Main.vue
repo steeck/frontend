@@ -231,8 +231,10 @@
   padding: 0 1000px; */
 }
 .popular-editors__mobile {
-  margin: 0 -16px;
-  padding: 0 16px;
+  /* margin: 0 -16px;
+  padding: 0 16px; */
+  margin: 0;
+  padding: 0;
 }
 .popular-editors .inner {
   padding: 24px 0;
