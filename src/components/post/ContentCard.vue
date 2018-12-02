@@ -376,7 +376,6 @@
       'id': {
         handler: function (val, oldVal) {
           this.content.data.id = null
-          this.cardIndex = 0
           this.getContent()
         },
         deep: true
@@ -415,6 +414,7 @@
             this.getFollow()
             this.loadComment()
             vm.loadingComplete = true
+            vm.cardIndex = 0
           })
       },
       getVoted: function () {
