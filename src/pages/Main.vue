@@ -49,20 +49,28 @@
               </router-link>
             </v-flex>
           </v-layout>
-          <div class="popular-editors" :class="{ 'popular-editors__mobile': $vuetify.breakpoint.smAndDown }">
-            <div class="inner">
-              <div class="title">
-                인기 에디터를 팔로우하세요
-              </div>
-              <ul class="editors-list">
-                <li class="editors-item" v-for="(editor, i) in editors" :key="editor.name">
-                  <router-link :to="{ name: 'User', params: { username: editor.name } }" class="link">
-                    <editor :editor="editor"></editor>
-                  </router-link>
-                </li>
-              </ul>
-            </div>
+        </div>
+      </div>
+    </v-container>
+    <div class="popular-editors" :class="{ 'popular-editors__mobile': $vuetify.breakpoint.smAndDown }">
+      <v-container grid-list-xl class="py-0">
+        <div class="inner">
+          <div class="title">
+            인기 에디터를 팔로우하세요
           </div>
+          <ul class="editors-list">
+            <li class="editors-item" v-for="(editor, i) in editors" :key="editor.name">
+              <router-link :to="{ name: 'User', params: { username: editor.name } }" class="link">
+                <editor :editor="editor"></editor>
+              </router-link>
+            </li>
+          </ul>
+        </div>
+      </v-container>
+    </div>
+    <v-container grid-list-xl>
+      <div class="list">
+        <div v-if="!isLoading">
           <v-layout row wrap class="asd">
             <v-flex xs12 sm6 v-for="(card, i) in list.slice(9)" :key="card.permlink">
               <router-link :to="{ name: 'View', params: { id: card.id } }" class="link">
@@ -219,8 +227,8 @@
 }
 .popular-editors {
   background-color: #f6f6f6;
-  margin: 12px -1000px;
-  padding: 0 1000px;
+  /* margin: 12px -1000px;
+  padding: 0 1000px; */
 }
 .popular-editors__mobile {
   margin: 0 -16px;
