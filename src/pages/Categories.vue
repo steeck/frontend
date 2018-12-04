@@ -57,6 +57,7 @@ export default {
   watch: {
     category () {
       console.log(this.category)
+      this.list = []
       this.getContents()
     }
   },
